@@ -1,0 +1,25 @@
+{
+  "name": "@stack-ui/tokens",
+  "version": "0.1.0",
+  "description": "Stack design tokens as CSS custom properties (light and dark, or light only) and JSON.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    "./tokens.css": "./css/tokens.css",
+    "./tokens-light.css": "./css/tokens-light.css",
+    "./tokens.json": "./src/tokens.json"
+  },
+  "files": [
+    "css",
+    "src"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

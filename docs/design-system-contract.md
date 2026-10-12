@@ -27,9 +27,9 @@ Evidence for every constraint below is in `docs/audit.md`.
 
 | Package | Contents | Runtime deps | Consumers |
 |---|---|---|---|
-| `tokens` | `tokens.css` (custom properties, light + dark), `tokens.json` | none | all |
-| `core` | `core.css` (component classes), `states.js` (pure tone/label/glyph resolution), `dom.js` (optional helpers that build DOM with `createElement`/`textContent`, never `innerHTML`), and `stack-ui-core.js`, a strict-mode classic-script build of `states.js` + `dom.js` exposing one global `StackUI` | none | all; vendored by Compute |
-| `react` | Thin React 18/19 components over `core` classes | peer `react` | FeltDB Studio, AuthBoundry portal |
+| `tokens` | `tokens.css` (custom properties, light + dark), `tokens-light.css` (light only), `tokens.json` | none | all |
+| `core` | `core.css` (component classes), `states.js` (pure tone/label/glyph resolution), `view.js` (each component's DOM structure as a plain tree), `dom.js` (renders those trees with `createElement`/`textContent`, never markup parsing), and `stack-ui-core.js`, a strict-mode classic-script build of all three exposing one global `StackUI` | none | all; vendored by Compute |
+| `react` | Thin React 18/19 components rendering the same `view.js` trees | peers `react`, `@stack-ui/core` | FeltDB Studio, AuthBoundry portal |
 
 Final package names, scope and repository are in `docs/adoption-plan.md` §1
 and `docs/decisions.md` (D1, D9).
@@ -238,6 +238,8 @@ values render `unknown` tone with the raw value as label, and a test lists them.
 | `DeploymentStatus` (`compute:crates/compute-state/src/model.rs:647`) | active, complete | pending, starting, ready, network_ready, switching, draining | — | failed, rolled_back | — | — |
 | `VersionStatus` (`compute:crates/compute-state/src/model.rs:489`) | published | publishing | — | failed | — | — |
 | `RolloutStatus` (`compute:crates/compute-state/src/model.rs:562`) | active | applying | — | failed | superseded | — |
+| Stored `ComputerStatus` (`compute:crates/compute-core/src/computers.rs:51`) | running | pending, provisioning, resuming, stopping, destroying | — | failed, lost | stopped, destroyed, expired | unreachable |
+| Process word (`ObservedProcess::status`, `compute:crates/compute-core/src/computers.rs:929-945`, plus `pending` and the machine's observed word when the machine is not running) | ready, running | pending, starting, stopping | unready | failed, lost | stopped, exited, destroyed, expired | unverified, unreachable |
 | Job (`compute:crates/compute-core/src/jobs.rs:191`) | succeeded | created, accepted, queued, waiting_for_capacity, reserved, admitted, preparing, running | — | failed, rejected, timed_out | cancelled | — |
 | Computer observed (`compute:packages/compute-appport/src/computers.ts:49`) | running | starting, reconciling, stopping | — | failed, lost | stopped, destroyed, expired | unverified, unreachable |
 | Requirement check (`compute:crates/compute-core/src/project.rs:327`) | → Goal axis: satisfied / unsatisfied / not_evaluated; `not_required` hides the row | | | | | |
