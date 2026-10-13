@@ -1,6 +1,6 @@
 {
   "name": "@stack-ui/core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Stack design-system core: component structure, state semantics, framework-free DOM rendering and styles.",
   "type": "module",
   "license": "UNLICENSED",
@@ -13,7 +13,8 @@
     "./view": "./src/view.js",
     "./dom": "./src/dom.js",
     "./core.css": "./src/core.css",
-    "./classic": "./classic/stack-ui-core.js"
+    "./classic": "./classic/stack-ui-core.js",
+    "./theme": "./src/theme.js"
   },
   "files": [
     "src",

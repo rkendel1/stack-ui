@@ -2,10 +2,11 @@
 // in light and dark, plus keyboard focus visibility and narrow-viewport layout.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { FIXTURES } from '../fixtures.mjs';
+import { FIXTURES, REPLACE_SOURCE } from '../fixtures.mjs';
 import { openPage, assets } from './harness.mjs';
 
 async function renderGallery(page, theme) {
+  await page.addScriptTag({ content: REPLACE_SOURCE });
   await page.evaluate(({ fixtures, theme }) => {
     if (theme) document.documentElement.setAttribute('data-stack-theme', theme);
     const root = document.getElementById('root');
@@ -17,9 +18,10 @@ async function renderGallery(page, theme) {
       const label = document.createElement('h2');
       label.textContent = name;
       section.appendChild(label);
-      const resolved = { ...props };
-      for (const key of ['onClick', 'onRetry']) if (resolved[key] === true) resolved[key] = () => {};
-      section.appendChild(window.StackUI.dom[name](resolved));
+      // The Shell owns the page's main landmark, so it is tested on its own
+      // page (shell.test.mjs) rather than nested inside the gallery.
+      if (name === 'Shell') continue;
+      section.appendChild(window.StackUI.dom[name](window.__withHandlers(props, () => {})));
       root.appendChild(section);
     }
   }, { fixtures: FIXTURES, theme });

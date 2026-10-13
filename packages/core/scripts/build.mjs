@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
-const ORDER = ['states.js', 'view.js', 'dom.js'];
+const ORDER = ['states.js', 'view.js', 'dom.js', 'theme.js'];
 
 const names = [];
 const body = ORDER.map((file) => {

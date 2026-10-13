@@ -65,6 +65,39 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   PR6 needs only CSS, so it is not blocked, but AppBoundry cannot publish an
   `AppPort/ui/1` contribution until it consumes the published protocol.
 
+### D11 — Visual regression — Deferred again (PR3 → after PR4)
+- **Decision:** no screenshot baselines yet. Layout and accessibility are
+  asserted instead: axe in both themes at 1280 and 640px in each product and
+  also at 320px on the design-system shell page, no page-level horizontal
+  scroll, and DOM parity between React and `dom.js`.
+- **Why:** baselines are only stable when they are recorded on the same image
+  that compares them. Font rasterization differs between a developer machine
+  and the GitHub runner image, and the token font stack falls back to system
+  fonts, so baselines recorded here would fail in CI for reasons unrelated to
+  the code. Doing it properly means pinning a webfont in the gallery and
+  recording baselines from a CI job, which is worth doing once a third product
+  (AppPort services, PR4) consumes the components.
+- **Revisit when:** PR4 lands, or sooner if a visual regression slips past
+  review.
+
+### D12 — Icons stay as text glyphs — Decided (PR3)
+- **Decision:** the sort indicators (`▲ ▼ ↕`), status glyphs and the shell's
+  product mark stay as text, marked `aria-hidden` where a word already says the
+  same thing. No SVG icon set.
+- **Why:** PR3 added tables and tabs but no menus, and every glyph sits next to
+  text that carries the meaning, so an icon set would add assets and a
+  licensing choice without changing what anyone can read. Revisit when a
+  component needs an icon with no text beside it.
+
+### D13 — Search is a product slot — Decided (PR3)
+- **Decision:** the shell's `search` is a slot the product fills with its own
+  control. A shared search component (input, result list, keyboard model) is
+  deferred.
+- **Why:** of the two hosts only Studio has a search, and its behaviour
+  (entity paths, flow names) is its own. One implementation is not enough to
+  design a shared component from. Revisit when a second product exposes a
+  supported search interface.
+
 ## Verified facts versus unresolved questions
 
 | Verified (see audit citations) | Unresolved |
@@ -79,8 +112,7 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
 ## Intentionally deferred until implementation
 
 - Exact token values and the product-mark treatment (PR2a).
-- Icon set: glyphs remain in PR2; an SVG icon set is evaluated in PR3 when menus
-  and tables arrive.
+- Icon set: evaluated in PR3 and kept as glyphs (D12).
 - Data table virtualization, charting, diff viewers (product-owned until two
   products need the same one).
 - Internationalization: all products are English-only today; components accept

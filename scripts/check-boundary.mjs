@@ -24,6 +24,10 @@ const FORBIDDEN = [
   [/import\(\s*['"]@(feltdb|appport|authboundry|compute)\//, 'product package import'],
 ];
 
+// Exact paths only: a new file named theme.js elsewhere is still checked.
+const STORAGE_ALLOWED = new Set(['packages/core/src/theme.js', 'packages/core/classic/stack-ui-core.js']);
+const STORAGE_TYPES = new Set(['packages/react/src/index.d.ts']);
+
 const walk = (dir) => readdirSync(dir).flatMap((name) => {
   const path = join(dir, name);
   if (name === 'node_modules') return [];
@@ -50,6 +54,12 @@ for (const pkg of readdirSync(packagesDir)) {
       // Comments may name forbidden APIs to explain the rule; code may not use them.
       const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"`])\/\/.*$/gm, '$1');
       for (const [pattern, why] of FORBIDDEN) {
+        // The theme preference is the one thing the design system stores
+        // (docs/product-shell.md §5), and only theme.js may do it.
+        // Type declarations only describe the theme functions' storage parameter.
+        if (why === 'persistent storage' && STORAGE_TYPES.has(relative(root, file))) continue;
+        // The classic bundle is a concatenation of those same checked sources.
+        if (why === 'persistent storage' && STORAGE_ALLOWED.has(relative(root, file)) && !/\b(sessionStorage|indexedDB)\b/.test(code)) continue;
         if (pattern.test(code)) failures.push(`${relative(root, file)}: ${why}`);
       }
     }
