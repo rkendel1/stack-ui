@@ -1,6 +1,6 @@
 {
   "name": "@stack-ui/tokens",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Stack design tokens as CSS custom properties (light and dark, or light only) and JSON.",
   "type": "module",
   "license": "UNLICENSED",
