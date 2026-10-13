@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm check:boundary
+      - run: pnpm test:unit
+      - name: Install Chromium
+        run: pnpm exec playwright-core install --with-deps chromium
+      - run: pnpm test:browser
+      - name: Package static assets
+        run: node scripts/package-static.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stack-ui-static
+          path: release/*.tar.gz

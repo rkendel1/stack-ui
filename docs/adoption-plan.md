@@ -9,9 +9,9 @@ owned by the platform owner, containing three packages:**
 
 | Package (scope provisional) | Ships | Distribution |
 |---|---|---|
-| `@stack-ui/tokens` | `tokens.css`, `tokens.json` | npm, public, provenance |
-| `@stack-ui/core` | `core.css`, `states.js`, `dom.js` (ES2020 modules, zero deps), `stack-ui-core.js` (classic-script build, global `StackUI`) | npm, plus a GitHub release asset `stack-ui-static-{version}.tar.gz` with `SHA256SUMS` for vendoring |
-| `@stack-ui/react` | React 18/19 components over `core` | npm, public, peer `react` |
+| `@stack-ui/tokens` | `css/tokens.css` (light + dark), `css/tokens-light.css` (light only, for light-only products), `src/tokens.json` | npm, public, provenance |
+| `@stack-ui/core` | `src/`: `core.css`, `states.js`, `view.js`, `dom.js` (ES2020 modules, zero deps); `classic/stack-ui-core.js` (classic-script build, global `StackUI`) | npm, plus a GitHub release asset `stack-ui-static-{version}.tar.gz` with `SHA256SUMS` for vendoring |
+| `@stack-ui/react` | React 18/19 components over `core` | npm, public; peers `react` and `@stack-ui/core` (the product owns the single copy of core it already installs for `core.css`) |
 
 Why this location (evidence in `docs/audit.md`):
 
@@ -129,7 +129,7 @@ PR2 is three PRs, merged in order:
 - Add `packages/studio/test/browser/*.test.mjs` (Playwright). Harness, all
   configuration and no product code: build the app (`vite build --mode app`),
   start `feltdb-server` with the Studio origin allowed (`--allow-origin` /
-  `FELTDB_ALLOWED_ORIGINS`), open Studio with `?authority=<server>`
+  `FELTDB_ALLOWED_ORIGINS`), open Studio with `?connect=<server>`
   (`flow_db:packages/studio/src/main.tsx`), and seed a state resource with
   revisions over HTTP as `flow_db:e2e/studio-control-plane.test.mjs` does, so the
   history tab is reachable. Add a
@@ -138,9 +138,18 @@ PR2 is three PRs, merged in order:
 
 **Changes PR2 is allowed to make in products, and nothing else:** UI source
 files and styles; Compute's three UI asset constants; Compute's `api()` reading
-headers already sent; Studio's package manifest, one extracted component and
-tests; CI steps for the new tests. No server handlers, schemas, API routes,
-API-client methods or new requests.
+headers already sent and the `request_id` of an error body it already parses;
+Studio's package manifest, one extracted component and tests; CI steps for the
+new tests. No server handlers, schemas, API routes, API-client methods or new
+requests.
+
+**As built (PR2):** generated package files live in `css/` and `classic/`, not
+`dist/`, because FeltDB's repository check rejects any tracked `dist/` path.
+Until the packages are on npm (D9), FeltDB vendors them as unpacked package
+directories (its policy forbids committed tarballs) and depends on them with
+`file:` paths; Compute vendors the static release. Studio, being light-only,
+imports `tokens-light.css` rather than pinning a theme attribute, so embedding
+Studio never brings dark rules into a host page.
 
 ### 2.3 Acceptance criteria (all testable)
 
@@ -150,10 +159,10 @@ Design-system repository
 3. For each of the 11 components, the React render and the `dom.js` render of the same fixture produce identical DOM (normalized `outerHTML` equality).
 4. axe reports zero serious or critical violations on the component gallery in light and dark.
 5. `states.js` unit tests: every value of each mapped source field resolves to a tone; `VerificationBadge` with empty `checks` cannot render `verified`; Compute deployment `rolled_back` resolves to `critical` and `complete`/`active` keep distinct labels; an unmapped value renders `unknown` tone with the raw value as label.
-6. Packages have zero runtime dependencies (`react` is a peer).
+6. Packages have zero runtime dependencies (`react` and `@stack-ui/core` are peers of `@stack-ui/react`).
 
 Compute
-7. `cargo test --workspace --locked` passes, including `parity.rs` and `service_ui.rs` unchanged.
+7. `cargo test --workspace --locked` passes, with `parity.rs` unchanged and `service_ui.rs` changed only as criterion 11 requires.
 8. Existing browser suites pass unchanged: `packages/compute-ui-e2e` `npm test`, `work_mode_ui`, `product_journey`.
 9. New browser assertions on the environment page: every `.state` element has non-empty visible text and a `data-tone` attribute; the header status of a running environment has `data-tone="positive"`; a `FreshnessLabel` is present; axe reports zero serious/critical violations in light and dark (`page.emulateMedia({ colorScheme })`).
 10. A JS unit test shows `FreshnessLabel` renders "Stale · as of …" for `X-Compute-State: stale`; the existing Rust test `reads_say_how_fresh_they_are` (`compute:crates/compute-environment/tests/availability.rs:311`) remains the authority that the header is produced.
@@ -190,10 +199,12 @@ and needs no adoption.
 - Contrast: token pair test (both themes).
 - Boundary: static check of package sources (product-shell §5).
 - DOM parity: React vs `dom.js` per component.
-- Browser: Playwright gallery in light, dark, 320px width, 200% zoom; axe zero
-  serious/critical; keyboard tests for interactive components.
-- Visual regression: Playwright screenshot comparison of the gallery, committed
-  baselines, reviewed on change.
+- Browser: Playwright gallery in light, dark and both forced themes, 320px
+  width; axe zero serious/critical; keyboard focus ring. (Built in PR2.)
+- Deferred to PR3: a 200% zoom check, keyboard tests for menus and dialogs
+  (none exist yet), and visual regression (Playwright screenshot comparison of
+  the gallery with committed baselines), which needs a pinned font stack to be
+  stable across CI runners.
 
 **Each adopting product**
 - Existing tests unchanged and passing.
@@ -205,7 +216,8 @@ and needs no adoption.
 ## 5. Compatibility and release considerations
 
 - **Browsers:** evergreen Chromium, Firefox, Safari (last two versions). No
-  product declares a browserslist today; PR2a adds one to `stack-ui`.
+  product declares a browserslist today; one is deferred to PR3, since PR2's
+  sources use only ES2020 and widely supported CSS.
 - **CSS isolation:** all classes prefixed `stack-`; tokens prefixed `--stack-`.
   No element selectors or resets in `core.css`, so existing global CSS
   (FeltDB `index.css`, AuthBoundry `globals.css` reset) keeps working. Products
