@@ -300,11 +300,17 @@ fields, not with `VerificationBadge`.
 **AppBoundry**
 | Field (source) | positive | progress | attention | critical | neutral | unknown |
 |---|---|---|---|---|---|---|
-| Application phase (`appboundry:packages/core/src/application-lifecycle.ts:5`) | ACTIVE | DRAFT, VALIDATED, REGISTERED | CHANGE_PROPOSED | — | RETIRED | — |
-| Implementation (`appboundry:packages/core/src/application-implementation.ts:26`) | → Verification: verified = verified; failed = verification_failed; stale = not_verified + attention; revoked = critical | | | | | |
-| Contract attestation (`appboundry:packages/core/src/contract-attestation.ts:30`) | → Verification: verified = verified; CONTRACT_MISMATCH, IDENTITY_MISMATCH = verification_failed (the failed check is named by the value) | | | | | |
-| Conformance report (`appboundry:packages/core/src/application-conformance.ts:57`) | → Verification: CONFORMING = verified (checks = report checks); NON_CONFORMING = verification_failed | | | | | |
-| Execution (`appboundry:packages/core/src/appboundry-execution.ts:29`) | COMPLETED | CREATED, MATERIALIZED, RUNNING | — | MATERIALIZATION_FAILED, EXECUTION_FAILED | — | — |
+| Application phase `appboundry.lifecycle.phase` (`appboundry:packages/core/src/application-lifecycle.ts:5`) | ACTIVE | DRAFT, VALIDATED, REGISTERED | CHANGE_PROPOSED | — | RETIRED | — |
+| Execution ledger `appboundry.execution.status` (`appboundry:packages/core/src/execution-ledger.ts:11`) | succeeded | running | — | failed, timed_out | cancelled | — |
+| Source `appboundry.source.status` (`appboundry:packages/core/src/application-source.ts:20`; `pending` is never written) | connected | — | stale | failed | disconnected | — |
+| Implementation condition `appboundry.implementation.status` (`appboundry:packages/core/src/application-implementation.ts:26`; `failed` is never written) | verified ("Current") | — | stale | revoked | — | — |
+| Provider compatibility `appboundry.provider.compatible` (`appboundry:apps/cloud-portal/src/read-model.ts:113`) | true | — | false ("Incompatible") | — | — | — |
+| Provider eligibility `appboundry.provider.eligibility` (`appboundry:apps/cloud-portal/src/authority.ts:152`) | ELIGIBLE | — | — | — | INELIGIBLE | — |
+| Portal health `appboundry.health.ready`, `appboundry.health.check` (`appboundry:apps/cloud-portal/src/read-model.ts:28-33`) | true; available | — | degraded | false ("Not ready"); unavailable | — | — |
+| Implementation `appboundry.implementation.verification` | → Verification: verified = verified; stale = not_verified (the contract changed since). Checks: source verified, capability covered by source, contract fingerprint matches. Revoked has no verification | | | | | |
+| Contract attestation `appboundry.attestation.status` (`appboundry:packages/core/src/contract-attestation.ts:30`) | → Verification: verified = verified; CONTRACT_MISMATCH, IDENTITY_MISMATCH = verification_failed (the failed check is named by the value) | | | | | |
+| Conformance report `appboundry.conformance.status` (`appboundry:packages/core/src/application-conformance.ts:57`) | → Verification: CONFORMING = verified (checks = report checks, PASS → passed, FAIL → failed); NON_CONFORMING = verification_failed | | | | | |
+| Execution (`appboundry:packages/core/src/appboundry-execution.ts:29`), not shown by the cloud portal | COMPLETED | CREATED, MATERIALIZED, RUNNING | — | MATERIALIZATION_FAILED, EXECUTION_FAILED | — | — |
 
 Completing these tables for every field a screen uses is part of each product's
 adoption PR, reviewed by that product's owner.
