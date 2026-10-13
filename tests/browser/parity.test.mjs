@@ -5,27 +5,28 @@ import assert from 'node:assert/strict';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import * as Stack from '@stack-ui/react';
-import { FIXTURES, COMPONENT_NAMES, withHandlers } from '../fixtures.mjs';
+import { FIXTURES, COMPONENT_NAMES, withHandlers, REPLACE_SOURCE } from '../fixtures.mjs';
 import { openPage } from './harness.mjs';
 
 let browser;
 let page;
-before(async () => ({ browser, page } = await openPage()));
+before(async () => {
+  ({ browser, page } = await openPage());
+  await page.addScriptTag({ content: REPLACE_SOURCE });
+});
 after(async () => browser && browser.close());
 
 test('every component has at least one fixture', () => {
   const covered = new Set(FIXTURES.map(([name]) => name));
   assert.deepEqual(COMPONENT_NAMES.filter((name) => !covered.has(name)), []);
-  assert.equal(COMPONENT_NAMES.length, 11);
+  assert.equal(COMPONENT_NAMES.length, 18);
 });
 
 for (const [index, [name, props]] of FIXTURES.entries()) {
   test(`${name} #${index}: React and dom.js render identical DOM`, async () => {
     const markup = renderToStaticMarkup(createElement(Stack[name], withHandlers(props, () => {})));
     const [fromReact, fromDom] = await page.evaluate(({ name, props, markup }) => {
-      const handler = () => {};
-      const resolved = { ...props };
-      for (const key of ['onClick', 'onRetry']) if (resolved[key] === true) resolved[key] = handler;
+      const resolved = window.__withHandlers(props, () => {});
       const template = document.createElement('template');
       template.setHTMLUnsafe ? template.setHTMLUnsafe(markup) : (template.innerHTML = markup); // test-only parse of React's output
       const reactNode = template.content.firstElementChild;

@@ -29,6 +29,15 @@ export function toDom(value, doc) {
   throw new TypeError('toDom: unsupported child');
 }
 
+/// Moves focus to the shell's main landmark after a route change, so keyboard
+/// and screen-reader users start at the new page's content.
+export function focusMain(id, doc) {
+  const d = doc || document;
+  // The same normalisation Shell applies to its mainId.
+  const main = d.getElementById(String(id || 'stack-main').replace(/[^A-Za-z0-9_-]/g, '-'));
+  if (main && typeof main.focus === 'function') main.focus({ preventScroll: true });
+}
+
 /// Each component as a function returning a DOM element, e.g.
 ///   StackUI.dom.StatusIndicator({ field: 'compute.health', value: 'healthy' })
 export const dom = Object.freeze(Object.fromEntries(

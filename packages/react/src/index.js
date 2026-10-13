@@ -16,16 +16,32 @@ export function toReact(value, key) {
   }
   if (isValidElement(value)) return key === undefined ? value : createElement(Fragment, { key }, value);
   if (isTree(value)) {
-    const props = key === undefined ? {} : { key };
+    const identity = value.k === undefined ? key : value.k;
+    const props = identity === undefined ? {} : { key: identity };
     for (const [name, attr] of Object.entries(value.a)) {
       if (attr === null || attr === undefined || attr === false) continue;
       props[RENAMED[name] || name] = attr;
     }
+    const control = value.t === 'input' || value.t === 'select' || value.t === 'textarea';
     for (const [event, handler] of Object.entries(value.on || {})) {
       if (!EVENTS[event]) throw new Error(`toReact: unsupported event ${event}`);
-      props[EVENTS[event]] = handler;
+      // React form controls report every edit through onChange.
+      props[control && (event === 'input' || event === 'change') ? 'onChange' : EVENTS[event]] = handler;
     }
-    const children = value.c.map((child, index) => toReact(child, index));
+    let childTrees = value.c;
+    if (value.t === 'select') {
+      // React selects by the select's value, not an option's `selected`.
+      const chosen = childTrees.find((child) => isTree(child) && child.t === 'option' && child.a.selected);
+      childTrees = childTrees.map((child) => (isTree(child) && child.t === 'option' && child.a.selected
+        ? { ...child, a: { ...child.a, selected: false } } : child));
+      if (chosen) props.value = chosen.a.value;
+    }
+    if (control && 'value' in props && !props.onChange) {
+      // Without a handler the control is uncontrolled; React must not freeze it.
+      props.defaultValue = props.value;
+      delete props.value;
+    }
+    const children = childTrees.map((child, index) => toReact(child, index));
     return createElement(value.t, props, ...children);
   }
   throw new TypeError('toReact: unsupported child');
@@ -49,5 +65,17 @@ export const MetadataList = bind('MetadataList');
 export const ResourceIdentity = bind('ResourceIdentity');
 export const PageHeader = bind('PageHeader');
 export const Button = bind('Button');
+export const Breadcrumbs = bind('Breadcrumbs');
+export const Tabs = bind('Tabs');
+export const TabPanel = bind('TabPanel');
+export const DataTable = bind('DataTable');
+export const FilterBar = bind('FilterBar');
+export const Pagination = bind('Pagination');
+export const Shell = bind('Shell');
+export {
+  readThemePreference, storeThemePreference, applyThemePreference, initThemePreference, setThemePreference,
+  THEME_PREFERENCES, THEME_STORAGE_KEY,
+} from '@stack-ui/core/theme';
 
 export { resolve, verification, verificationOf, freshnessOf, capability, humanize, TONES, GLYPHS } from '@stack-ui/core/states';
+export { focusMain } from '@stack-ui/core/dom';

@@ -30,6 +30,8 @@ for (const bg of backgrounds) {
 for (const tone of TONES) pairs.push([`color-status-${tone}-fg`, `color-status-${tone}-bg`, 4.5]);
 for (const kind of ['verified', 'unverified']) pairs.push([`color-evidence-${kind}-fg`, `color-evidence-${kind}-bg`, 4.5]);
 pairs.push(['color-notice-info-fg', 'color-notice-info-bg', 4.5]);
+// Selected table rows put body text on the progress background.
+pairs.push(['color-text-default', 'color-status-progress-bg', 4.5]);
 for (const intent of ['primary', 'secondary', 'danger']) {
   for (const s of ['bg', 'bg-hover', 'bg-active']) pairs.push([`color-action-${intent}-fg`, `color-action-${intent}-${s}`, 4.5]);
 }
@@ -54,7 +56,7 @@ for (const theme of ['light', 'dark']) {
 }
 
 test('the pair list covers every declared pair', () => {
-  assert.equal(pairs.length, 80, 'update this count when pairs are added or removed');
+  assert.equal(pairs.length, 81, 'update this count when pairs are added or removed');
 });
 
 test('the light-only stylesheet carries no dark values and no colour scheme', async () => {

@@ -12,9 +12,12 @@ owns no product state, authorization or execution.
 | `@stack-ui/core` | Component structure, field-keyed state semantics, a framework-free DOM renderer, `core.css`, and `stack-ui-core.js` (a strict classic-script build exposing `window.StackUI`) |
 | `@stack-ui/react` | React 18/19 components that render the same DOM as the core renderer (peers: `react`, `@stack-ui/core`) |
 
-Eleven components: `StatusIndicator`, `VerificationBadge`, `FreshnessLabel`,
+Eighteen components: `StatusIndicator`, `VerificationBadge`, `FreshnessLabel`,
 `Unavailable`, `Loading`, `EmptyState`, `ErrorPanel`, `MetadataList`,
-`ResourceIdentity`, `PageHeader`, `Button`. State mappings cover the Compute
+`ResourceIdentity`, `PageHeader`, `Button`, `Breadcrumbs`, `Tabs`, `TabPanel`,
+`DataTable`, `FilterBar`, `Pagination` and the product `Shell`
+([docs/product-shell.md](docs/product-shell.md)). The theme preference
+(`theme.js`) is the only value any package stores. State mappings cover the Compute
 and FeltDB fields the first adopting screens render
 (`packages/core/src/states.js`). Not published to npm yet (scope: D9).
 
@@ -42,7 +45,7 @@ parent.appendChild(el);
 
 ```sh
 pnpm install
-pnpm test            # build, boundary check, unit tests, browser tests (Chromium + axe)
+pnpm test            # build, boundary check, type check, unit tests, browser tests (Chromium + axe)
 node scripts/package-static.mjs   # release/stack-ui-static-<version>{/,.tar.gz} with SHA256SUMS
 ```
 
@@ -54,7 +57,7 @@ Browser tests use `playwright-core`; install Chromium with
 | [docs/audit.md](docs/audit.md) | What exists today in each product, with repository evidence |
 | [docs/design-system-contract.md](docs/design-system-contract.md) | Tokens, components, interaction patterns, accessibility, state and evidence semantics, versioning |
 | [docs/product-shell.md](docs/product-shell.md) | Shared shell as a UI composition contract |
-| [docs/adoption-plan.md](docs/adoption-plan.md) | Package ownership, the Compute + FeltDB slice (PR2), migration order, CI |
+| [docs/adoption-plan.md](docs/adoption-plan.md) | Package ownership, the Compute + FeltDB slices (PR2, PR3), migration order, CI |
 | [docs/decisions.md](docs/decisions.md) | Decisions, alternatives, open and deferred questions |
 
 ## Checking citations
