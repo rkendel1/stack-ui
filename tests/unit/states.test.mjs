@@ -72,6 +72,26 @@ const SOURCE = {
   'appport.schedule.enabled': ['true', 'false'],
   // appport-services: `ConfigurationSecretView.configured` is the literal `true`
   'appport.configuration.secret.configured': ['true'],
+  // appboundry: packages/core/src/application-lifecycle.ts `ApplicationLifecyclePhase`
+  'appboundry.lifecycle.phase': ['DRAFT', 'VALIDATED', 'REGISTERED', 'ACTIVE', 'CHANGE_PROPOSED', 'RETIRED'],
+  // appboundry: compatibility[].compatible (boolean)
+  'appboundry.provider.compatible': ['true', 'false'],
+  // appboundry: packages/core/src/execution-ledger.ts `ExecutionStatus`
+  'appboundry.execution.status': ['running', 'succeeded', 'failed', 'cancelled', 'timed_out'],
+  // appboundry: application-source.ts `ApplicationSourceStatus` minus `pending`, which nothing writes
+  'appboundry.source.status': ['connected', 'stale', 'disconnected', 'failed'],
+  // appboundry: application-implementation.ts statuses that are written (not `failed`)
+  'appboundry.implementation.status': ['verified', 'stale', 'revoked'],
+  'appboundry.implementation.verification': ['verified', 'stale'],
+  // appboundry: contract-attestation.ts `ContractAttestationStatus`
+  'appboundry.attestation.status': ['verified', 'CONTRACT_MISMATCH', 'IDENTITY_MISMATCH'],
+  // appboundry: application-conformance.ts `ConformanceReport.status`
+  'appboundry.conformance.status': ['CONFORMING', 'NON_CONFORMING'],
+  // appboundry: apps/cloud-portal/src/authority.ts provider eligibility
+  'appboundry.provider.eligibility': ['ELIGIBLE', 'INELIGIBLE'],
+  // appboundry: apps/cloud-portal/src/read-model.ts health
+  'appboundry.health.ready': ['true', 'false'],
+  'appboundry.health.check': ['available', 'degraded', 'unavailable'],
 };
 
 for (const [field, values] of Object.entries(SOURCE)) {
@@ -185,4 +205,48 @@ test('evidence never claims a check that was not made', () => {
   assert.match(evidenceText({ claims: [{ label: 'C', value: 'v', verification: 'not_verified', checks: ['Hash'] }] }), /0 of 1 checked claims verified/);
   assert.match(evidenceText({ claims: [{ label: 'A', value: 'a', verification: 'verified', checks: ['x'] }, { label: 'B', value: 'b', verification: 'verified', checks: ['y'] }] }), /All 2 claims verified/);
   assert.match(evidenceText({ claims: [{ label: 'Policy', value: null }] }), /—/);
+});
+
+test('AppBoundry: a contract phase is not a verification, and failures are critical', () => {
+  assert.equal(resolve('appboundry.lifecycle.phase', 'ACTIVE').tone, 'positive');
+  assert.equal(resolve('appboundry.lifecycle.phase', 'REGISTERED').tone, 'progress');
+  assert.equal(resolve('appboundry.lifecycle.phase', 'CHANGE_PROPOSED').label, 'Change proposed');
+  assert.equal(resolve('appboundry.lifecycle.phase', 'RETIRED').tone, 'neutral');
+  // The cloud portal showed every one of these, and every execution outcome
+  // other than success, in the same amber.
+  assert.equal(resolve('appboundry.execution.status', 'failed').tone, 'critical');
+  assert.equal(resolve('appboundry.execution.status', 'timed_out').label, 'Timed out');
+  assert.equal(resolve('appboundry.execution.status', 'cancelled').tone, 'neutral');
+  assert.equal(resolve('appboundry.source.status', 'failed').tone, 'critical');
+  assert.equal(resolve('appboundry.source.status', 'disconnected').tone, 'neutral');
+  assert.equal(resolve('appboundry.health.ready', false).tone, 'critical');
+  assert.equal(resolve('appboundry.health.check', 'degraded').tone, 'attention');
+  // The page's own upper-casing is not silently mapped.
+  assert.equal(resolve('appboundry.execution.status', 'SUCCEEDED').tone, 'unknown');
+  // Declared values that nothing writes are not mapped.
+  assert.equal(resolve('appboundry.source.status', 'pending').mapped, false);
+  assert.equal(resolve('appboundry.implementation.status', 'failed').mapped, false);
+});
+
+test('AppBoundry: implementation, attestation and conformance are verifications with checks', () => {
+  const checks = ['Source verified', 'Capability covered', 'Contract fingerprint matches'];
+  assert.equal(verificationOf('appboundry.implementation.verification', 'verified', checks).state, 'verified');
+  assert.equal(verificationOf('appboundry.implementation.verification', 'stale', checks).state, 'not_verified');
+  // Revocation says nothing about verification.
+  assert.equal(verificationOf('appboundry.implementation.verification', 'revoked', checks).state, 'not_evaluated');
+  assert.equal(resolve('appboundry.implementation.status', 'revoked').tone, 'critical');
+  assert.equal(resolve('appboundry.implementation.status', 'verified').label, 'Current');
+  assert.equal(verificationOf('appboundry.attestation.status', 'verified', ['Repository identity', 'Contract fingerprint']).state, 'verified');
+  const mismatch = verificationOf('appboundry.attestation.status', 'CONTRACT_MISMATCH', ['Contract fingerprint']);
+  assert.equal(mismatch.state, 'verification_failed');
+  assert.equal(mismatch.checks[0].status, 'failed');
+  assert.match(text(VerificationBadge(mismatch)), /Verification failed · Contract fingerprint/);
+  // A conforming report with no checks listed is not evaluated, not verified.
+  assert.equal(verificationOf('appboundry.conformance.status', 'CONFORMING').state, 'not_evaluated');
+  const report = verificationOf('appboundry.conformance.status', 'CONFORMING', [
+    { label: 'manifest', status: 'passed' }, { label: 'artifact hash', status: 'passed' },
+  ]);
+  assert.equal(report.state, 'verified');
+  // A report that says CONFORMING beside a failed check is not verified.
+  assert.equal(verificationOf('appboundry.conformance.status', 'CONFORMING', [{ label: 'artifact hash', status: 'failed' }]).state, 'verification_failed');
 });

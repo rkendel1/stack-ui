@@ -161,6 +161,30 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   regression or a stale test is a security question for the AuthBoundry
   owner, not something a UI PR should settle by editing the assertion.
 
+### D20 — `public/app.js` is the AppBoundry portal's source — Decided (PR6)
+- **Decision:** the cloud portal client is edited as the hand-written file it
+  is; PR6 changes it in place and adds no build step.
+- **Why:** nothing in the repository generates it (no bundler config, no
+  script writes it, and the single squashed history has no source beside it),
+  and four test files assert its text. Introducing a build would be a second
+  change riding on a UI adoption.
+
+### D21 — String-rendered pages serialize stack-ui's DOM output — Decided (PR6)
+- **Decision:** a page that renders HTML strings gets each state from
+  `StackUI.dom.<Component>(props).outerHTML` (the AppBoundry portal's
+  `status()` and `verifiedBy()` helpers), never from markup it writes itself.
+- **Why:** it is the same `createElement`/`textContent` path as every other
+  product, the browser does the escaping, and the parity test can compare a
+  page's states with `StackUI.dom` exactly. A screen that moves off strings
+  returns a view tree and is mounted by `toDom` (the executions screen first).
+
+### D22 — Conformance has a mapping but no portal view — Decided (PR6)
+- **Decision:** `appboundry.conformance.status` is mapped and tested, but the
+  cloud portal shows no conformance badge.
+- **Why:** conformance reports are produced by the CLI
+  (`appboundry:packages/cli/src/conformance.ts`) and no portal route returns
+  them; showing one would need a server change, which PR6 does not make.
+
 ## Verified facts versus unresolved questions
 
 | Verified (see audit citations) | Unresolved |
@@ -169,7 +193,7 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
 | FeltDB Studio is React with honest-unavailable primitives; no browser tests | Which Studio users reach (D7); driving a reconciliation through the UI in a browser test (PR2 tests the committed card by server rendering instead) |
 | AppPort core/SDK/protocol are in `rkendel1/appport`; `AppPort/ui/1` is published | Whether `appport()` serves management HTML (Compute docs say no) |
 | AuthBoundry portal is Next + Tailwind with no tokens; not in CI | Runtime behaviour of `/authorization` (shape mismatch verified in source only) |
-| AppBoundry portal is a 99 KB string-template SPA, dark only, two badge tones | Whether `public/app.js` has an untracked source |
+| AppBoundry portal is a 99 KB string-template SPA, dark only, two badge tones | `public/app.js` is hand-written (D20) |
 | No a11y or visual regression tests anywhere | Real keyboard/screen-reader behaviour (nothing was run) |
 
 ## Intentionally deferred until implementation

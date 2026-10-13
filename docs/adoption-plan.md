@@ -468,6 +468,114 @@ AuthBoundry portal
 Both
 15. The diff touches only what §2.6.1 allows.
 
+### 2.7 Fifth slice: the AppBoundry cloud portal (PR6)
+
+PR6 brings the AppBoundry cloud portal (`appboundry:apps/cloud-platform`) onto
+the design system: a hand-written, string-template client
+(`appboundry:apps/cloud-platform/public/app.js`) inside a Next 16 shell, dark
+only, with one `badge()` helper whose only tones were "ok" and "warn". Version
+0.5.0 of all three packages; no new component.
+
+#### 2.7.1 PR6 scope (exact)
+
+**PR6a — this repository**
+- `states.js`, AppBoundry fields (contract §6.3): `appboundry.lifecycle.phase`,
+  `appboundry.execution.status` (the execution ledger the portal lists),
+  `appboundry.source.status`, `appboundry.implementation.status` (whether an
+  implementation may still be selected), `appboundry.provider.compatible`,
+  `appboundry.provider.eligibility`, `appboundry.health.ready`,
+  `appboundry.health.check`; and on the verification axis
+  `appboundry.implementation.verification`, `appboundry.attestation.status`
+  and `appboundry.conformance.status`. Values that are declared but never
+  written (`ApplicationSourceStatus` `pending`,
+  `ApplicationImplementationStatus` `failed`) are not mapped, so they would
+  show as unknown rather than as a guess.
+- Decisions D20–D22.
+
+**PR6b — the AppBoundry cloud portal adopts (hand-written client)**
+- The 0.5.0 static release vendored unmodified with `SHA256SUMS`
+  (`appboundry:apps/cloud-platform/public/vendor/stack-ui`). The layout links
+  `tokens.css` and `core.css`; `app.js` imports the classic build before it
+  renders.
+- Light theme: `appboundry:apps/cloud-platform/public/portal-theme.css` maps
+  the portal's nine CSS variables and its hand-coloured surfaces onto the
+  tokens, scoped to pages that mount the portal, so the marketing pages and
+  the WASM build (which inlines only the four original stylesheets) are
+  unchanged. AppBoundry's cyan stays in the logo, which now has a light
+  variant. The theme follows the system; Settings → Appearance stores a
+  choice (the only thing the design system stores). Keyboard focus is
+  visible; nothing styled it before.
+- States: every status the portal shows is a `StatusIndicator` or
+  `VerificationBadge` built by `@stack-ui/core` and serialized from its DOM
+  nodes (D21); `badge()` remains only as a plain label (organization, role,
+  event kind). Failures are critical (failed and timed-out executions, failed
+  sources, revoked implementations), where everything but success was amber.
+- Verification: implementations show their condition and a
+  `VerificationBadge` with the three checks their record implies; source
+  attestations show a `VerificationBadge` that names the failed check; the
+  application page's hard-coded "TRUSTED" card with four ✓ marks is an
+  `EvidenceSummary` in which only attestations and implementations count as
+  checks. Conformance reports have a mapping but no portal route returns
+  them, so the portal does not show one (D22).
+- Screen by screen: the executions screen is the first built from
+  `@stack-ui/core` view trees (`DataTable`, `StatusIndicator`, `EmptyState`)
+  and mounted by `render()`; the other screens keep their string templates.
+- Corrections where the portal showed something it had not observed:
+  - The sidebar always said "Authority connected · Durable lifecycle online",
+    and Settings always showed "HEALTHY" and a green "Platform ready" or
+    "RECOVERABLE"; they now come from the read's health checks.
+  - The placeholder used while the catalog loads and after a failed read
+    reported the runtime, journeys and activity as available and the
+    authority as degraded; it now records only that the catalog could not
+    be read. Loading is shown as loading, not as unavailable, and counts are
+    `—`, not 0; pages that need the catalog say it is unavailable instead
+    of "No applications" or "No execution history yet".
+  - Implementations were matched with `item.capability === "name@version"`,
+    but `capability` is `{name, version}`
+    (`appboundry:packages/core/src/application-implementation.ts:29-35`), so
+    the implementations view never listed one and the connect page printed
+    "[object Object]". Non-verified implementations were hidden.
+  - A hosted deployment record was badged "RUNNING" without any observation.
+  - The footer named a read time when no read had succeeded.
+  - A stale or disconnected source keeps the attestation it had, which no
+    longer holds; its verification is shown only while the source is
+    connected or failed. A stale implementation's contract-fingerprint check
+    is shown as failed.
+  - Two crashes: a change link to an unknown application, and
+    `history.replaceState` for a signed-in user with no organization (the
+    module's `history(id)` view shadows `window.history`).
+- CI (`appboundry:.github/workflows/cloud-portal.yml`): `next build`, the
+  vendored checksums, the portal unit tests, and browser tests that sign in
+  against a real portal API and render every state from fixture records
+  shaped like the core types.
+
+**Changes PR6 is allowed to make in AppBoundry, and nothing else:** the
+portal client, its stylesheets and layout, the vendored release, portal tests
+and CI. No server, route, schema or API-client change.
+
+#### 2.7.2 Acceptance criteria (all testable)
+
+Design-system repository
+1. Each AppBoundry field maps exactly the values its source writes; an upper-cased value and a declared-but-unwritten value are unknown.
+2. Implementation verified/stale are verified/not verified; revoked is a critical condition with no verification; an attestation mismatch is a failed verification; a conformance report without checks is not evaluated.
+3. Unit, browser, contrast, boundary and type checks pass.
+
+AppBoundry portal
+4. `next build` passes; the vendored files match `SHA256SUMS`; every state field `app.js` renders is mapped by the vendored release; no tone is passed to `badge()`.
+5. On the overview, settings, implementations and executions pages, every `.stack-status[data-field]` has the tone `StackUI.resolve` gives its field and value and, unless the page supplies its own label, equals what `StackUI.dom.StatusIndicator` renders; every tone-only status has that tone's glyph and a label.
+6. Implementations: three rows (Current + Verified · 3 checks; Stale + Not verified, its contract-fingerprint check failed; Revoked, no verification badge). A source's attestation is shown only while the source is connected or failed: a stale or disconnected source keeps an attestation that no longer holds.
+7. A contract mismatch shows "Verification failed · Contract fingerprint" and a critical source status; no "[object Object]"; a stale source shows no attestation badge. A change link to an unknown application does not take the portal down.
+8. Application evidence: "2 of 4 checked claims verified · 1 failed · 2 recorded, not checked" for the fixture (the contract and a stale source are records); "Recorded facts · not independently verified" with no sources.
+9. Executions: running progress, succeeded positive, failed and timed out critical, cancelled neutral.
+10. A failed catalog read: authority status unknown, counts `—`, the footer says the state was not read, "Applications unavailable", no "No applications" or "No execution history"; Settings shows Not ready (critical). While loading: progress, "Loading the application catalog…", counts `—`.
+11. axe reports zero serious or critical violations on eight portal pages in light and dark, with no page errors.
+12. The theme follows the system until chosen; the choice sets `data-stack-theme` and the logo variant; only `stack-ui.theme` is added to storage; choosing System removes it.
+13. Keyboard focus has a visible outline.
+14. The existing app.js source-text tests still pass.
+
+Both
+15. The diff touches only what §2.7.1 allows.
+
 ## 3. Migration sequence for the remaining products
 
 | Order | Product and scope | Preconditions | Why this order |
@@ -475,7 +583,7 @@ Both
 | PR3 | **Shell** in `stack-ui` + adopt in Compute and FeltDB Studio; add `DataTable`, `FilterBar`, `Pagination`, `Tabs`, `Breadcrumbs` (built; §2.4) | PR2 merged | Shell needs two real hosts to validate |
 | PR4 | **AppPort services** management pages: inline `tokens.css`/`core.css` in the server-rendered page template; labels on every field; table header/cell parity; current-nav highlight; nav derived from `SURFACES`; `ConfirmAction` replacing `confirm()` (built; §2.5) | Add CI to `appport-services` (none exists; added in PR4) | Smallest UI (10 pages, one template); owns `AppPort/ui/1`; shows the framework-free path for server-rendered HTML |
 | PR5 | **AuthBoundry** portal: map Tailwind theme to `--stack-*` variables (`theme.extend.colors` → `var()`), adopt `StatusIndicator` for decisions and delegations, `ErrorPanel`, `EvidenceSummary` on decision detail; fix the `/authorization` result shape (built; §2.6) | Add `apps/web` lint, typecheck, test and build to CI; add Playwright + axe (added in PR5) | React + Tailwind path; authorization and delegation presentation |
-| PR6 | **AppBoundry** cloud portal: add light theme via tokens; replace `badge()` with `stack-status` (adds a critical tone); `VerificationBadge` for implementation and conformance; then screen-by-screen replacement of `public/app.js` views using `dom.js` | Add `apps/cloud-platform` build and a browser test to CI; decide whether `public/app.js` has an untracked source | Largest and most fragile UI; benefits from every earlier component |
+| PR6 | **AppBoundry** cloud portal: light theme via tokens; `stack-status` for every state (adds critical); `VerificationBadge` for implementations and attestations, `EvidenceSummary` for application trust; executions as the first `dom.js` screen (built; §2.7) | `apps/cloud-platform` build and a browser test in CI (added in PR6); `public/app.js` is the hand-written source (D20) | Largest and most fragile UI; benefits from every earlier component |
 | Later | Remaining Compute and Studio screens; AuthBoundry Rust auth pages and CLI Studio; AppBoundry local studio; FeltDB website Studio (after D7) | — | Lower traffic surfaces |
 
 Out of sequence by design: AppPort core (`rkendel1/appport`) has no product UI

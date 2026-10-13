@@ -120,6 +120,35 @@ const CONDITION = {
   // which is always `true` (a listed secret is a bound one). No other value is
   // mapped, so anything else would show as unknown rather than as a guess.
   'appport.configuration.secret.configured': { true: [P, 'Configured'] },
+  // appboundry: packages/core/src/application-lifecycle.ts `ApplicationLifecyclePhase`
+  'appboundry.lifecycle.phase': {
+    ACTIVE: [P, 'Active'], DRAFT: [G, 'Draft'], VALIDATED: [G, 'Validated'], REGISTERED: [G, 'Registered'],
+    CHANGE_PROPOSED: [A, 'Change proposed'], RETIRED: [N, 'Retired'],
+  },
+  // appboundry: apps/cloud-portal/src/read-model.ts capability provider
+  // `compatibility[].compatible`, from evaluateCompatibility against a consumer.
+  'appboundry.provider.compatible': { true: [P, 'Compatible'], false: [A, 'Incompatible'] },
+  // appboundry: packages/core/src/execution-ledger.ts `ExecutionStatus`, the
+  // ledger record the cloud portal lists. All five are written by
+  // AuthorizedExecutionService (`running` on begin, the others on complete).
+  'appboundry.execution.status': {
+    succeeded: P, running: G, failed: C, timed_out: [C, 'Timed out'], cancelled: N,
+  },
+  // appboundry: packages/core/src/application-source.ts `ApplicationSourceStatus`.
+  // `pending` is declared but no code path writes it, so it is not mapped.
+  'appboundry.source.status': { connected: P, stale: A, failed: C, disconnected: N },
+  // appboundry: packages/core/src/application-implementation.ts
+  // `ApplicationImplementationStatus`, as a condition: whether the
+  // implementation may still be selected. Whether it was verified is the
+  // separate verification field below. `failed` is declared but never written.
+  'appboundry.implementation.status': { verified: [P, 'Current'], stale: A, revoked: C },
+  // appboundry: apps/cloud-portal/src/authority.ts provider `eligibility`
+  // (ELIGIBLE | INELIGIBLE). Not being eligible in a context is not a fault.
+  'appboundry.provider.eligibility': { ELIGIBLE: [P, 'Eligible'], INELIGIBLE: [N, 'Ineligible'] },
+  // appboundry: apps/cloud-portal/src/read-model.ts `health.ready`
+  'appboundry.health.ready': { true: [P, 'Ready'], false: [C, 'Not ready'] },
+  // appboundry: apps/cloud-portal/src/read-model.ts `PortalHealthCheck.status`
+  'appboundry.health.check': { available: P, degraded: A, unavailable: C },
 };
 
 /// Verification-axis mappings: field value → verification state.
@@ -127,6 +156,21 @@ const VERIFICATION = {
   // flow_db: crates/feltdb-server/src/control_plane.rs `revision_to_json` re-checks
   // a revision's content against its id.
   'feltdb.revision.integrity_verified': { true: 'verified', false: 'verification_failed' },
+  // appboundry: packages/core/src/application-implementation.ts. `verified` is
+  // written only after the source is verified, covers the capability and
+  // attests the authoritative contract; `stale` means the contract has since
+  // changed, so that verification no longer holds. `revoked` says nothing
+  // about verification and is shown by the condition field instead.
+  // Same source field as the condition above, on the verification axis.
+  'appboundry.implementation.verification': { verified: 'verified', stale: 'not_verified' },
+  // appboundry: packages/core/src/contract-attestation.ts `ContractAttestationStatus`.
+  // The failed check is named by the value (repository identity or contract).
+  'appboundry.attestation.status': {
+    verified: 'verified', CONTRACT_MISMATCH: 'verification_failed', IDENTITY_MISMATCH: 'verification_failed',
+  },
+  // appboundry: packages/core/src/application-conformance.ts `ConformanceReport.status`;
+  // the checks are the report's own checks, PASS → passed and FAIL → failed.
+  'appboundry.conformance.status': { CONFORMING: 'verified', NON_CONFORMING: 'verification_failed' },
 };
 
 /// Freshness-axis mappings.
