@@ -65,7 +65,7 @@ PR2 is three PRs, merged in order:
 - `core` ships ES modules and one classic-script build, `stack-ui-core.js`,
   exposing a single global `StackUI`, for pages without a module loader
   (Compute loads `app.js` as a classic script,
-  `compute:crates/compute-environment/ui/index.html:32`).
+  `compute:crates/compute-environment/ui/index.html`).
 - `states.js`: the axes of contract §6.1 and mappings for exactly the source
   fields the two adopted screens render:
   - Compute: computer observed reality, `ActualState` with Health (the
@@ -179,12 +179,198 @@ Both
 17. The diff touches only what §2.2 allows (reviewed per PR; Compute `ROUTES` and FeltDB's router in `crates/feltdb-server/src/main.rs` are unchanged).
 18. The same tone renders the same `stack-status` DOM structure in both products (assert class and structure in each product's browser test). Visual sameness is reviewed from screenshots, not asserted.
 
+### 2.4 Second slice: the shell and list components (PR3)
+
+PR3 builds the shell and the list components in this repository and adopts
+them in the two products PR2 already validated. Both hosts are needed: Compute
+renders through `dom.js` from a classic script with hash routes, Studio through
+React with `react-router` history routes. Version 0.2.0 of all three packages.
+
+#### 2.4.1 PR3 scope (exact)
+
+**PR3a — this repository**
+- `view.js`: `Shell`, `Breadcrumbs`, `Tabs` and `TabPanel`, `DataTable`,
+  `FilterBar`, `Pagination` (18 components in all). Each renders in React and
+  `dom.js` from one view tree, as in PR2.
+- `theme.js`: the theme preference (`system | light | dark`), the only value
+  any package stores (product-shell §2). Every storage access is wrapped, so a
+  page whose storage throws still starts.
+- `dom.js`: `focusMain(id)`, for a product to call after it routes.
+- `core.css`: styles for the new parts; below 768px the shell navigation
+  becomes a horizontal strip that scrolls on its own, so the page never does.
+- `@stack-ui/react`: the new components; form controls bind as React
+  controlled inputs when a handler is given; TypeScript declarations for every
+  component, checked by `pnpm check:types` against a usage file that includes
+  `@ts-expect-error` cases.
+- `.browserslistrc` records the supported browsers (§5).
+
+**PR3b — Compute adopts (classic script, `dom.js`)**
+- The shell replaces the page header in `compute:crates/compute-environment/ui/index.html`
+  and is rendered by `compute:crates/compute-environment/ui/app.js`: product
+  link, the Work/Manage mode switcher in the context slot, the daemon and
+  token controls in the account slot, the theme control, and the existing
+  surfaces as navigation, keeping their `data-nav` hooks and mode classes.
+- After each hash route the main landmark takes focus (`focusMain`).
+- Every breadcrumb trail renders through `Breadcrumbs`; the project tabs
+  through `Tabs` and `TabPanel`; the environment page's four tables (software,
+  processes, deployments, projects) through `DataTable`, with their existing
+  `data-*` hooks.
+- `app.css` honours the theme preference (`data-stack-theme`) as well as the
+  operating system.
+- The vendored static release moves to 0.2.0 with new `SHA256SUMS`.
+
+**PR3c — FeltDB Studio adopts (React)**
+- `flow_db:packages/studio/src/app.tsx` renders Studio inside `Shell`: its
+  Operate and Design navigation with the current page marked, the namespace
+  in the context slot and Studio's existing search in the search slot. Links
+  keep the connection query string and route in place through `onNavigate`;
+  the main landmark takes focus on a route change. Studio is light-only, so it
+  offers no theme control.
+- The Data page's record list becomes `FilterBar`, `DataTable` and
+  `Pagination` with loading, error, no-match and empty states; the Operations
+  commit list becomes `FilterBar` and `DataTable`, with filters applied on
+  submit rather than per keystroke; the Overview collections table becomes a
+  `DataTable`.
+- Studio's `Tabs` primitive renders the shared `Tabs` and the `TabPanel` it
+  controls, so every tablist in Studio has a labelled panel.
+- Studio CSS fixes found by the new axe runs: muted text and the primary
+  button meet 4.5:1; the page grid no longer grows past the viewport, and long
+  identifiers wrap.
+- Browser tests share one harness (`flow_db:packages/studio/test/browser/support.mjs`).
+
+**Changes PR3 is allowed to make in products, and nothing else:** UI source,
+styles and markup; vendored design-system files; browser tests. No server
+handlers, schemas, API routes, API-client methods or new requests. Compute's
+`ROUTES` and FeltDB's router are unchanged.
+
+#### 2.4.2 Acceptance criteria (all testable)
+
+Design-system repository
+1. For each of the 18 components, the React and `dom.js` renders of the same fixtures are identical DOM, including fixtures that pass handlers. Handlers are behaviour, not markup: their `dom.js` behaviour is tested here (criteria 3–9) and their React behaviour in Studio's browser test (criterion 16).
+2. axe reports zero serious or critical violations on the gallery in light, dark and both forced themes, and on a shell page at 1280, 640 and 320px in light and dark, with no horizontal page scroll and the current navigation item visible.
+3. The skip link is the first focus stop and moves focus to the main landmark without changing a hash route; exactly one navigation item has `aria-current="page"`.
+4. The theme preference applies at once and persists across reloads; with storage that throws, the page starts and the control still works for the session.
+5. Tabs: arrow keys, Home and End move focus over enabled tabs only, without moving the tab stop off the selected tab; Enter selects.
+6. DataTable: sort state is exposed by `aria-sort`; selectable rows select by click, Enter and Space; the open row is `aria-current="true"` (never `aria-selected`, which needs a grid); a missing cell shows `—`, never a default.
+7. FilterBar: every control has a visible label; Enter submits without navigating or changing the URL; Clear calls the product's `onClear`; the result line is a `status`.
+8. `onNavigate` routes ordinary clicks; modified clicks stay normal links; other products' links are never routed.
+9. Pagination never invents a total: previous is disabled at the start and next only when the product says there is more.
+10. `pnpm check:types`, the boundary check (storage allowed only in `theme.js`) and the contrast test (81 pairs) pass.
+
+Compute
+11. Existing tests pass unchanged: `stack_ui`, `service_ui`, `headless` and `parity` in `compute-environment`; `work_mode_ui` and `product_journey` in `compute-cli`; and the existing browser suite in `packages/compute-ui-e2e`.
+12. A new browser test (`compute:packages/compute-ui-e2e/src/shell.test.mjs`) shows the surfaces with one current item, the mode switcher, the skip link on an environment page leaving the route alone, focus at the new page after routing, the theme preference changing Compute's own colours, keyboard tabs (focus stays on a chosen tab) and table rows, and axe clean at 1280 and 640px in light and dark.
+13. Vendored files match `SHA256SUMS`, and the forbidden-API scan still covers the vendored script.
+
+FeltDB
+14. `npm test --workspace @feltdb/studio`, `npm run check:studio` and `npm run check:repository` pass.
+15. The PR2 browser test still passes on the shared harness.
+16. A new browser test against a real `feltdb-server` with a deployed application of 55 records shows: one current navigation item; navigation without a reload that keeps the connection parameters and moves focus to the main landmark; the skip link; the first page of 50 records, the next page of 5 and back; an owner filter returning exactly the matching records with a result line; a no-match state; Clear restoring the list; a row opened from the keyboard and marked current; keyboard tabs with a single tab stop after arrowing and clicking; and the Operations commit list with its filters. A list shows only the response to its current request (collection, page and filters), so it never counts or shows the previous filter's rows while the next read runs.
+17. axe zero serious or critical on `/overview`, `/data`, `/operations` and `/state` at 1280 and 640px, with no horizontal page scroll and the current navigation item visible.
+
+Both
+18. The diff touches only what §2.4.1 allows.
+19. 200% zoom: a 1280px window at 200% zoom lays out as a 640px viewport, which criteria 2, 12 and 17 test. The 400% case (WCAG 1.4.10 reflow, a 320px viewport) is tested on the design-system shell page (criterion 2) only; the products' own pages at 320px are left to their next adoption PRs.
+
+### 2.5 Third slice: forms, confirmation and AppPort services (PR4)
+
+PR4 adds what server-delivered management pages need — labelled fields, a
+form, dialogs and destructive-action confirmation — and adopts the design
+system in AppPort services' ten packaged pages. It is the first product with
+no framework and no client build: pages are HTML documents its Express router
+already serves. Version 0.3.0 of all three packages.
+
+#### 2.5.1 PR4 scope (exact)
+
+**PR4a — this repository**
+- `view.js`: `TextField` (input or textarea), `Select`, `Form`, `Dialog`,
+  `ConfirmAction` (23 components in all). A field's label is always visible
+  and is its accessible name; hint and error are wired with
+  `aria-describedby`; an error sets `aria-invalid`. `Form` submits without
+  navigating and keeps the browser's own constraint checks. `ConfirmAction`
+  is an `alertdialog` that lists the product's stated consequences, names the
+  action on its button, and with `requireText` stays disabled until that text
+  is typed (contract §7.8).
+- `dom.js`: `openDialog` (modal, focus returned on close), `confirmAction`
+  and `formDialog`, which replace `confirm()` and `prompt()`. With an `action`,
+  the dialog stays open and busy while the product's request runs, cannot be
+  closed with Esc meanwhile, shows the product's error and code in place, and
+  closes only on success.
+- `@stack-ui/react`: the new components; `Dialog` and `ConfirmAction` open as
+  modals while `open` is true, and `ConfirmAction` keeps its typed text unless
+  the product controls it.
+- `states.js`: mappings for the AppPort fields the pages render (contract §6.3).
+- `core.css`: fields, forms and dialogs; `hidden` hides any `stack-*`
+  component; below 768px the navigation strip no longer stretches to fill a
+  short page.
+- A **stateless classic build** (`stack-ui-core-stateless.js`, decisions D15):
+  the full API without the theme preference, for products that keep nothing
+  in browser storage. Both builds ship in the static release.
+
+**PR4b — AppPort services adopts (server-delivered pages)**
+- The page template in `appport-services:src/configuration/ui.ts` inlines the
+  vendored `tokens.css`, `core.css` and stateless build, the package's own
+  `ui/management.css` and `ui/management.js`, and a JSON description of the
+  page. No route is added.
+- The navigation is built from the mounted surfaces (`createUiPages`, the
+  same list the `AppPort/ui/1` contribution describes) and marks the current
+  page (`appport-services:src/runtime/ui.ts`).
+- Every field is labelled; every list is a `DataTable` with one cell per
+  header, a status column on the mapped fields, and loading, empty and error
+  states; a failed read shows the product's error with Retry instead of an
+  empty list.
+- Revoke, delete, disable and remove go through `ConfirmAction` (typed name
+  for named resources); edits that used `prompt()` use `formDialog`; errors
+  that used `alert()` are shown in place.
+- The pages store nothing in the browser (the existing Intelligence test keeps
+  checking this), so there is no theme control; the colour scheme follows the
+  operating system.
+- Two corrections where the old page showed something the product does not
+  do: the Configuration forms drop an Environment select the server ignored
+  (it reads the environment from the query string, which no page sends; the
+  page now says it edits production), and an empty optional file content type
+  is omitted instead of being sent as `""`, which the product rejected.
+- CI for the repository (it had none): unit, contract and package tests, then
+  the browser tests.
+
+**Changes PR4 is allowed to make in AppPort services, and nothing else:** the
+page template and its assets, the navigation list it is given, package
+`files`, tests, docs and CI. No API route, handler, schema, validation or
+authorization change; every request a page makes is one the old page made.
+
+#### 2.5.2 Acceptance criteria (all testable)
+
+Design-system repository
+1. For each of the 23 components, the React and `dom.js` renders of the same fixtures are identical DOM.
+2. Fields: every control's visible label is its accessible name (the required marker is not); hint and error are announced through `aria-describedby`; an error sets `aria-invalid`; no placeholder stands in for a label.
+3. Form: Enter submits without navigating or changing the URL, and an empty required field still blocks submit.
+4. ConfirmAction through `confirmAction`: a modal `alertdialog` named by its title and described by its consequences; the confirm button names the action; focus starts on Cancel (or the typed-text field); Esc cancels; focus returns to the button that asked.
+5. With `requireText`, confirm stays disabled until the exact text is typed; with `action`, the button is busy while it runs, Esc does not close, a failure shows the product's message and code in the dialog and keeps the typed text, and a retry that succeeds closes it.
+6. `formDialog`: labelled fields, Enter submits, a failure keeps what was typed and shows the error in place, Cancel resolves `null`.
+7. axe reports zero serious or critical violations with each dialog open, in light and dark, at 1024 and 320px, and dialogs fit a 320px screen.
+8. The stateless build names no browser storage and exposes the full build's API minus exactly the seven theme names.
+9. `hidden` hides a field and a button; on a narrow, tall screen the navigation strip is only as tall as its links.
+10. In a bundled React app: a field with `onChange` and no `value` accepts typing without warnings; `ConfirmAction` enables confirm on the typed text, ignores Esc while `busy` and reopens if the browser closes it, then asks the product through `onCancel`; `Dialog` reports Esc and browser closes through `onClose`; focus returns to the trigger. The `dom.js` helpers likewise reopen a busy dialog the browser closed and treat any other such close as a cancel.
+11. Contrast (85 pairs, now including critical text on every background), boundary and type checks pass.
+
+AppPort services
+12. `npm test` passes (unit, contract and package tests), including the packed-package test that serves `/services` from the installed tarball.
+13. Every served page inlines the vendored design system unmodified, and the vendored files match `SHA256SUMS`.
+14. The navigation lists exactly the mounted pages: a host mounting two services lists and serves only those two; without configuration, no configuration pages are listed.
+15. The page description cannot end its script element (a hostile title stays data).
+16. The page scripts never parse markup, evaluate code or touch browser storage, and never call `confirm`, `prompt` or `alert`.
+17. In Chromium against the standalone host: each page lists the mounted routes with only itself current, has one `h1`, labels every control and keeps one cell per header; creating an API key shows its secret once and revoking it needs the typed name; a configuration variable is added, edited in a dialog and deleted with typed confirmation; invalid job JSON is refused before sending; the intelligence endpoint field appears only for a custom endpoint; a failed read shows an error with Retry, not "none"; the colour scheme follows the OS and nothing is stored.
+18. axe zero serious or critical on every page at 1280 and 640px in light and dark, with no page-level horizontal scroll, and with a confirm dialog and a form dialog open.
+
+Both
+19. The diff touches only what §2.5.1 allows.
+
 ## 3. Migration sequence for the remaining products
 
 | Order | Product and scope | Preconditions | Why this order |
 |---|---|---|---|
-| PR3 | **Shell** in `stack-ui` + adopt in Compute and FeltDB Studio; add `DataTable`, `FilterBar`, `Pagination`, `Tabs`, `Breadcrumbs` | PR2 merged | Shell needs two real hosts to validate |
-| PR4 | **AppPort services** management pages: inline `tokens.css`/`core.css` in the server-rendered page template; labels on every field; table header/cell parity; current-nav highlight; nav derived from `SURFACES`; `ConfirmAction` replacing `confirm()` | Add CI to `appport-services` (none exists) | Smallest UI (10 pages, one template); owns `AppPort/ui/1`; shows the framework-free path for server-rendered HTML |
+| PR3 | **Shell** in `stack-ui` + adopt in Compute and FeltDB Studio; add `DataTable`, `FilterBar`, `Pagination`, `Tabs`, `Breadcrumbs` (built; §2.4) | PR2 merged | Shell needs two real hosts to validate |
+| PR4 | **AppPort services** management pages: inline `tokens.css`/`core.css` in the server-rendered page template; labels on every field; table header/cell parity; current-nav highlight; nav derived from `SURFACES`; `ConfirmAction` replacing `confirm()` (built; §2.5) | Add CI to `appport-services` (none exists; added in PR4) | Smallest UI (10 pages, one template); owns `AppPort/ui/1`; shows the framework-free path for server-rendered HTML |
 | PR5 | **AuthBoundry** portal: map Tailwind theme to `--stack-*` variables (`theme.extend.colors` → `var()`), adopt `StatusIndicator` for decisions and delegations, `ErrorPanel`, `EvidenceSummary` on decision detail; fix the `/authorization` result shape | Add `apps/web` lint, typecheck, test and build to CI; add Playwright + axe | React + Tailwind path; authorization and delegation presentation |
 | PR6 | **AppBoundry** cloud portal: add light theme via tokens; replace `badge()` with `stack-status` (adds a critical tone); `VerificationBadge` for implementation and conformance; then screen-by-screen replacement of `public/app.js` views using `dom.js` | Add `apps/cloud-platform` build and a browser test to CI; decide whether `public/app.js` has an untracked source | Largest and most fragile UI; benefits from every earlier component |
 | Later | Remaining Compute and Studio screens; AuthBoundry Rust auth pages and CLI Studio; AppBoundry local studio; FeltDB website Studio (after D7) | — | Lower traffic surfaces |
@@ -201,10 +387,14 @@ and needs no adoption.
 - DOM parity: React vs `dom.js` per component.
 - Browser: Playwright gallery in light, dark and both forced themes, 320px
   width; axe zero serious/critical; keyboard focus ring. (Built in PR2.)
-- Deferred to PR3: a 200% zoom check, keyboard tests for menus and dialogs
-  (none exist yet), and visual regression (Playwright screenshot comparison of
-  the gallery with committed baselines), which needs a pinned font stack to be
-  stable across CI runners.
+- Shell page (PR3): axe at 1280, 640 and 320px in light and dark, which also
+  covers 200% and 400% zoom (§2.4.2, criterion 19); keyboard tests for the
+  skip link, tabs, table rows, filters and routing.
+- Dialogs (PR4): keyboard, focus and axe tests for `confirmAction` and
+  `formDialog`, and a React behaviour test (a bundled React app) for fields,
+  `Dialog` and `ConfirmAction`.
+- Still deferred: keyboard tests for menus (none exist yet), and visual
+  regression (decisions D11).
 
 **Each adopting product**
 - Existing tests unchanged and passing.
@@ -215,9 +405,9 @@ and needs no adoption.
 
 ## 5. Compatibility and release considerations
 
-- **Browsers:** evergreen Chromium, Firefox, Safari (last two versions). No
-  product declares a browserslist today; one is deferred to PR3, since PR2's
-  sources use only ES2020 and widely supported CSS.
+- **Browsers:** evergreen Chromium, Firefox, Safari (last two versions),
+  recorded in `.browserslistrc` (PR3). No transpiler reads it yet: the sources
+  use only ES2020 and widely supported CSS.
 - **CSS isolation:** all classes prefixed `stack-`; tokens prefixed `--stack-`.
   No element selectors or resets in `core.css`, so existing global CSS
   (FeltDB `index.css`, AuthBoundry `globals.css` reset) keeps working. Products

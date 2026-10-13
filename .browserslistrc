@@ -1,0 +1,7 @@
+# Browsers the packages support (docs/adoption-plan.md §5).
+# No transpiler reads this yet: the sources use ES2020 and CSS that all of
+# these support. It records the target so a future build step can enforce it.
+last 2 Chrome versions
+last 2 Firefox versions
+last 2 Safari versions
+last 2 Edge versions

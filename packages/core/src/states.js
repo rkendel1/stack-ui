@@ -96,6 +96,21 @@ const CONDITION = {
   'feltdb.authority.availability': { available: P, recovering: G, degraded: A, closed: N, unknown: U },
   // flow_db: /v1/control-plane/overview `authority.lease_clock_healthy` (boolean)
   'feltdb.authority.lease_clock_healthy': { true: [P, 'Healthy'], false: [A, 'Degraded'] },
+  // appport-services: src/jobs/models.ts `JobStatus`
+  'appport.job.status': { completed: P, scheduled: G, pending: G, running: G, retrying: G, failed: C },
+  // appport-services: src/notifications/models.ts `NotificationStatus`
+  'appport.notification.status': { delivered: P, pending: G, failed: C, read: N, acknowledged: N, expired: N },
+  // appport-services: an API key is revoked when its record has `revokedAt`
+  // (src/api-keys). Revocation is a deliberate end state, not a fault.
+  'appport.api_key.revoked': { false: [P, 'Active'], true: [N, 'Revoked'] },
+  // appport-services: a webhook endpoint is disabled when it has `disabledAt`.
+  'appport.webhook.disabled': { false: [P, 'Enabled'], true: [N, 'Disabled'] },
+  // appport-services: src/jobs `Schedule.enabled`.
+  'appport.schedule.enabled': { true: [P, 'Enabled'], false: [N, 'Disabled'] },
+  // appport-services: src/configuration/models.ts `ConfigurationSecretView.configured`,
+  // which is always `true` (a listed secret is a bound one). No other value is
+  // mapped, so anything else would show as unknown rather than as a guess.
+  'appport.configuration.secret.configured': { true: [P, 'Configured'] },
 };
 
 /// Verification-axis mappings: field value → verification state.

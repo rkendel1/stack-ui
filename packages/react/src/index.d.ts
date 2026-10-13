@@ -86,6 +86,160 @@ export interface ButtonProps extends Passthrough {
   onClick?: () => void;
 }
 
+export interface BreadcrumbsProps extends Passthrough {
+  items: Array<{ label: ReactNode; href?: string }>;
+  label?: string;
+}
+export interface TabItem {
+  id: string;
+  label: ReactNode;
+  disabled?: boolean;
+  /** Why a disabled tab cannot be chosen; shown as its title. */
+  reason?: string;
+  badge?: ReactNode;
+  className?: string;
+  attrs?: Record<string, string>;
+}
+export interface TabsProps extends Passthrough {
+  tabs: TabItem[];
+  active?: string;
+  onSelect?: (id: string) => void;
+  /** Accessible name of the tablist. */
+  label?: string;
+  /** Prefix for tab ids (`<prefix>-tab-<id>`); unique per page. */
+  idPrefix?: string;
+  /** Id of the TabPanel the tabs control. */
+  panelId?: string;
+}
+export interface TabPanelProps extends Passthrough {
+  id: string;
+  idPrefix?: string;
+  /** The selected tab's id, which labels the panel. */
+  active?: string;
+  children?: ReactNode;
+}
+export interface DataTableColumn { id: string; header: ReactNode; sortable?: boolean; align?: 'start' | 'end' }
+export interface DataTableRow {
+  /** The row's identity, so a row keeps its DOM (and focus) across pages and filters. */
+  key: string;
+  /** Cell content by column id. Missing or null renders an em dash. */
+  cells: Record<string, ReactNode>;
+  onSelect?: () => void;
+  /** The open row: highlighted, and `aria-current="true"`. */
+  selected?: boolean;
+  className?: string;
+  attrs?: Record<string, string>;
+}
+export interface DataTableProps extends Passthrough {
+  /** The table's accessible name and caption. */
+  label: string;
+  columns: DataTableColumn[];
+  rows: DataTableRow[];
+  sort?: { column: string; direction: 'ascending' | 'descending' };
+  onSort?: (columnId: string) => void;
+  captionVisible?: boolean;
+  loading?: boolean;
+  loadingWhat?: string;
+  error?: { title?: string; message?: ReactNode; code?: string; requestId?: string; onRetry?: () => void } | null;
+  noMatch?: boolean;
+  noMatchTitle?: string;
+  noMatchBody?: ReactNode;
+  emptyTitle?: string;
+  emptyBody?: ReactNode;
+  emptyAction?: ReactNode;
+  emptyHeadingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+}
+export interface FilterField {
+  id: string;
+  label: string;
+  type?: 'text' | 'select';
+  value?: string;
+  placeholder?: string;
+  options?: Array<string | { value: string; label: string }>;
+}
+export interface FilterBarProps extends Passthrough {
+  filters: FilterField[];
+  onChange?: (id: string, value: string) => void;
+  onSubmit?: () => void;
+  onClear?: () => void;
+  /** How many filters are applied; Clear appears when this is above zero. */
+  applied?: number;
+  /** Announced politely, e.g. "3 records match". */
+  result?: string;
+  label?: string;
+  idPrefix?: string;
+  applyLabel?: string;
+  clearLabel?: string;
+}
+export interface PaginationProps extends Passthrough {
+  hasPrevious?: boolean;
+  hasNext?: boolean;
+  onPrevious?: () => void;
+  onNext?: () => void;
+  /** What the product can state truthfully, e.g. "8 shown". Never an invented total. */
+  summary?: ReactNode;
+  label?: string;
+  previousLabel?: string;
+  nextLabel?: string;
+}
+export type ThemePreference = 'system' | 'light' | 'dark';
+export interface ShellNavItem {
+  id: string;
+  label: ReactNode;
+  href: string;
+  group?: string;
+  order?: number;
+  current?: boolean;
+  className?: string;
+  attrs?: Record<string, string>;
+}
+export interface ShellProps extends Passthrough {
+  product: { name: string; homeHref: string; mark?: string };
+  navigation: ShellNavItem[];
+  /** Product-owned context control, e.g. Compute's Work/Manage mode. */
+  context?: ReactNode;
+  /** Product-owned search, where the product supports one. */
+  search?: ReactNode;
+  /** Product-owned account or session controls. */
+  account?: ReactNode;
+  /** Omit for a product drawn in one theme only. */
+  theme?: { preference: ThemePreference; onChange?: (preference: ThemePreference) => void } | null;
+  activityHref?: string;
+  activityLabel?: string;
+  activityCurrent?: boolean;
+  otherProducts?: Array<{ id: string; name: string; href: string }>;
+  /**
+   * For client-side routing: called with the href of an ordinary left click on
+   * the product link or a navigation item, instead of a page load. Clicks with
+   * a modifier key stay normal links. Links to other products are never routed.
+   */
+  onNavigate?: (href: string) => void;
+  /** Id of the main landmark; the skip link targets it. Default `stack-main`. */
+  mainId?: string;
+  mainAttrs?: Record<string, string>;
+  skipLabel?: string;
+  children?: ReactNode;
+}
+
+export declare function Breadcrumbs(props: BreadcrumbsProps): ReactElement;
+export declare function Tabs(props: TabsProps): ReactElement;
+export declare function TabPanel(props: TabPanelProps): ReactElement;
+export declare function DataTable(props: DataTableProps): ReactElement;
+export declare function FilterBar(props: FilterBarProps): ReactElement;
+export declare function Pagination(props: PaginationProps): ReactElement;
+export declare function Shell(props: ShellProps): ReactElement;
+
+export declare const THEME_STORAGE_KEY: string;
+export declare const THEME_PREFERENCES: readonly ThemePreference[];
+type StorageScope = { localStorage?: Storage } | typeof globalThis;
+export declare function readThemePreference(scope?: StorageScope): ThemePreference;
+export declare function storeThemePreference(preference: ThemePreference, scope?: StorageScope): boolean;
+export declare function applyThemePreference(preference: ThemePreference, root?: Element): void;
+export declare function initThemePreference(scope?: StorageScope, root?: Element): ThemePreference;
+export declare function setThemePreference(preference: string, scope?: StorageScope, root?: Element): ThemePreference;
+
+/** Moves focus to the shell's main landmark (by id) after a route change. */
+export declare function focusMain(id?: string, doc?: Document): void;
 export declare function StatusIndicator(props: StatusIndicatorProps): ReactElement;
 export declare function VerificationBadge(props: VerificationBadgeProps): ReactElement;
 export declare function FreshnessLabel(props: FreshnessLabelProps): ReactElement;
@@ -110,3 +264,112 @@ export declare function humanize(value: unknown): string;
 export declare const TONES: readonly Tone[];
 export declare const GLYPHS: Readonly<Record<Tone, string>>;
 export declare function toReact(value: unknown, key?: string | number): ReactNode;
+
+// ---- Forms and dialogs (PR4) ------------------------------------------------
+
+interface FieldBase extends Passthrough {
+  /** Control id; defaults to `stack-field-<name>`. The label, hint and error are wired to it. */
+  id?: string;
+  name?: string;
+  /** Always visible. Never replaced by a placeholder. */
+  label: ReactNode;
+  hint?: ReactNode;
+  error?: ReactNode;
+  required?: boolean;
+  readOnly?: boolean;
+  disabled?: boolean;
+}
+export interface TextFieldProps extends FieldBase {
+  value?: string | number;
+  /** Called with the new value on every edit. Without it the control is uncontrolled. */
+  onChange?: (value: string) => void;
+  type?: 'text' | 'email' | 'url' | 'number' | 'password' | 'search' | 'tel';
+  placeholder?: string;
+  /** A textarea instead of an input. */
+  multiline?: boolean;
+  rows?: number;
+  pattern?: string;
+  min?: string | number;
+  max?: string | number;
+  step?: string | number;
+  minlength?: number;
+  maxlength?: number;
+  autocomplete?: string;
+  inputmode?: string;
+  list?: string;
+  spellcheck?: 'true' | 'false';
+}
+export type SelectOption = string | { value: string; label: string; disabled?: boolean };
+export interface SelectProps extends FieldBase {
+  value?: string;
+  onChange?: (value: string) => void;
+  options: SelectOption[];
+}
+export interface FormProps extends Passthrough {
+  id?: string;
+  /** Accessible name for the form. */
+  label?: string;
+  submitLabel?: string;
+  submitVariant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+  /** Marks the submit button while the product's request is in flight. */
+  busy?: boolean;
+  /** Called on submit; the default navigation is always prevented. */
+  onSubmit?: (event: { preventDefault(): void; target: EventTarget | null }) => void;
+  /** Extra buttons beside submit (e.g. Cancel). */
+  actions?: ReactNode;
+  layout?: 'stacked' | 'inline';
+  children?: ReactNode;
+}
+export interface DialogProps extends Passthrough {
+  id?: string;
+  title: ReactNode;
+  description?: ReactNode;
+  role?: 'dialog' | 'alertdialog';
+  /** React only: shown as a modal while true. */
+  open?: boolean;
+  /** Esc, and the product's own Cancel. */
+  onClose?: () => void;
+  actions?: ReactNode;
+  children?: ReactNode;
+}
+export interface ConfirmActionProps extends Passthrough {
+  id?: string;
+  title: ReactNode;
+  description?: ReactNode;
+  /** What will happen, as the product states it. */
+  consequences?: ReactNode[];
+  /** Names the action, e.g. "Revoke API key". Never "OK". */
+  confirmLabel: string;
+  cancelLabel?: string;
+  /** Typed confirmation for irreversible deletes of named resources. */
+  requireText?: string;
+  requireTextLabel?: string;
+  typed?: string;
+  onTypedChange?: (value: string) => void;
+  busy?: boolean;
+  error?: { title?: string; message?: ReactNode; code?: string; requestId?: string } | null;
+  onConfirm?: () => void;
+  onCancel?: () => void;
+  /** React only: shown as a modal while true. */
+  open?: boolean;
+}
+export declare function TextField(props: TextFieldProps): ReactElement;
+export declare function Select(props: SelectProps): ReactElement;
+export declare function Form(props: FormProps): ReactElement;
+export declare function Dialog(props: DialogProps): ReactElement;
+export declare function ConfirmAction(props: ConfirmActionProps): ReactElement;
+
+/** Framework-free helpers (they render with dom.js into the given document). */
+export declare function openDialog(dialog: HTMLDialogElement, doc?: Document): () => void;
+export declare function confirmAction(
+  props: Omit<ConfirmActionProps, 'open' | 'typed' | 'onTypedChange' | 'onConfirm' | 'onCancel' | 'busy' | 'error'> & { action?: () => Promise<unknown> },
+  doc?: Document,
+): Promise<boolean>;
+export declare function formDialog(
+  props: {
+    id?: string; title: string; description?: string; submitLabel?: string; cancelLabel?: string;
+    fields: Array<(Omit<TextFieldProps, 'onChange'> | Omit<SelectProps, 'onChange'>) & { name: string }>;
+    action?: (values: Record<string, string>) => Promise<unknown>;
+  },
+  doc?: Document,
+): Promise<Record<string, string> | null>;

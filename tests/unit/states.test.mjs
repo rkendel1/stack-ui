@@ -55,6 +55,16 @@ const SOURCE = {
     'stopped', 'failed', 'destroyed', 'expired'],
   // flow_db: crates/feltdb-server/src/main.rs `/health/ready` state
   'feltdb.health.ready_state': ['healthy', 'recovering', 'degraded', 'unavailable'],
+  // appport-services: src/jobs/models.ts `JobStatus`
+  'appport.job.status': ['scheduled', 'pending', 'running', 'retrying', 'completed', 'failed'],
+  // appport-services: src/notifications/models.ts `NotificationStatus`
+  'appport.notification.status': ['pending', 'delivered', 'failed', 'read', 'acknowledged', 'expired'],
+  // appport-services: booleans the pages read from `revokedAt`, `disabledAt`, `enabled`
+  'appport.api_key.revoked': ['false', 'true'],
+  'appport.webhook.disabled': ['false', 'true'],
+  'appport.schedule.enabled': ['true', 'false'],
+  // appport-services: `ConfigurationSecretView.configured` is the literal `true`
+  'appport.configuration.secret.configured': ['true'],
 };
 
 for (const [field, values] of Object.entries(SOURCE)) {
