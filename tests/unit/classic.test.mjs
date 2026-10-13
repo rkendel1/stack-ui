@@ -49,3 +49,26 @@ test('it leaks nothing else into the page', () => {
   const added = Object.keys(context).filter((key) => !before.has(key));
   assert.deepEqual(added, ['StackUI']);
 });
+
+// The stateless build: the same API without the theme preference, for products
+// that keep no browser storage (AppPort services' pages).
+const stateless = readFileSync(new URL('../../packages/core/classic/stack-ui-core-stateless.js', import.meta.url), 'utf8');
+
+test('the stateless build names no browser storage and has no theme preference', () => {
+  assert.doesNotMatch(stateless, /localStorage|sessionStorage|indexedDB/);
+  const context = vm.createContext({});
+  context.window = context;
+  vm.runInContext(stateless, context);
+  const StackUI = context.StackUI;
+  assert.ok(Object.isFrozen(StackUI));
+  assert.equal(StackUI.initThemePreference, undefined);
+  assert.equal(StackUI.setThemePreference, undefined);
+  for (const name of ['dom', 'toDom', 'confirmAction', 'formDialog', 'openDialog', 'focusMain', 'Shell', 'DataTable', 'TextField', 'ConfirmAction', 'formatTime']) {
+    assert.ok(StackUI[name], `stateless build exposes ${name}`);
+  }
+  // Everything it does expose is the full build's, unchanged.
+  const full = load();
+  for (const name of Object.keys(StackUI)) assert.ok(name in full, `${name} is in the full build`);
+  assert.deepEqual(Object.keys(full).filter((name) => !(name in StackUI)).sort(),
+    ['THEME_PREFERENCES', 'THEME_STORAGE_KEY', 'applyThemePreference', 'initThemePreference', 'readThemePreference', 'setThemePreference', 'storeThemePreference']);
+});

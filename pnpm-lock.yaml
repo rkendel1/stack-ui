@@ -20,6 +20,9 @@ importers:
       axe-core:
         specifier: 4.10.3
         version: 4.10.3
+      esbuild:
+        specifier: 0.24.0
+        version: 0.24.0
       playwright-core:
         specifier: 1.56.1
         version: 1.56.1

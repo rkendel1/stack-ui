@@ -1,11 +1,15 @@
 // React 18/19 binding for @stack-ui/core. Renders the same view trees as
 // @stack-ui/core/dom, so a component's DOM is identical in React and
 // framework-free pages. No build step: plain ES modules over React.createElement.
-import { createElement, Fragment, isValidElement } from 'react';
+import { cloneElement, createElement, Fragment, isValidElement, useEffect, useRef, useState } from 'react';
 import { COMPONENTS, isTree } from '@stack-ui/core/view';
 
-const RENAMED = { class: 'className', for: 'htmlFor', datetime: 'dateTime', tabindex: 'tabIndex' };
-const EVENTS = { click: 'onClick', change: 'onChange', input: 'onInput', submit: 'onSubmit', keydown: 'onKeyDown' };
+const RENAMED = {
+  class: 'className', for: 'htmlFor', datetime: 'dateTime', tabindex: 'tabIndex',
+  readonly: 'readOnly', autocomplete: 'autoComplete', inputmode: 'inputMode', maxlength: 'maxLength',
+  minlength: 'minLength', spellcheck: 'spellCheck',
+};
+const EVENTS = { click: 'onClick', change: 'onChange', input: 'onInput', submit: 'onSubmit', keydown: 'onKeyDown', cancel: 'onCancel', close: 'onClose' };
 
 /// Render a view tree (or string, array, React element) as React nodes.
 export function toReact(value, key) {

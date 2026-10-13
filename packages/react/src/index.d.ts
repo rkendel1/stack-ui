@@ -264,3 +264,112 @@ export declare function humanize(value: unknown): string;
 export declare const TONES: readonly Tone[];
 export declare const GLYPHS: Readonly<Record<Tone, string>>;
 export declare function toReact(value: unknown, key?: string | number): ReactNode;
+
+// ---- Forms and dialogs (PR4) ------------------------------------------------
+
+interface FieldBase extends Passthrough {
+  /** Control id; defaults to `stack-field-<name>`. The label, hint and error are wired to it. */
+  id?: string;
+  name?: string;
+  /** Always visible. Never replaced by a placeholder. */
+  label: ReactNode;
+  hint?: ReactNode;
+  error?: ReactNode;
+  required?: boolean;
+  readOnly?: boolean;
+  disabled?: boolean;
+}
+export interface TextFieldProps extends FieldBase {
+  value?: string | number;
+  /** Called with the new value on every edit. Without it the control is uncontrolled. */
+  onChange?: (value: string) => void;
+  type?: 'text' | 'email' | 'url' | 'number' | 'password' | 'search' | 'tel';
+  placeholder?: string;
+  /** A textarea instead of an input. */
+  multiline?: boolean;
+  rows?: number;
+  pattern?: string;
+  min?: string | number;
+  max?: string | number;
+  step?: string | number;
+  minlength?: number;
+  maxlength?: number;
+  autocomplete?: string;
+  inputmode?: string;
+  list?: string;
+  spellcheck?: 'true' | 'false';
+}
+export type SelectOption = string | { value: string; label: string; disabled?: boolean };
+export interface SelectProps extends FieldBase {
+  value?: string;
+  onChange?: (value: string) => void;
+  options: SelectOption[];
+}
+export interface FormProps extends Passthrough {
+  id?: string;
+  /** Accessible name for the form. */
+  label?: string;
+  submitLabel?: string;
+  submitVariant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+  /** Marks the submit button while the product's request is in flight. */
+  busy?: boolean;
+  /** Called on submit; the default navigation is always prevented. */
+  onSubmit?: (event: { preventDefault(): void; target: EventTarget | null }) => void;
+  /** Extra buttons beside submit (e.g. Cancel). */
+  actions?: ReactNode;
+  layout?: 'stacked' | 'inline';
+  children?: ReactNode;
+}
+export interface DialogProps extends Passthrough {
+  id?: string;
+  title: ReactNode;
+  description?: ReactNode;
+  role?: 'dialog' | 'alertdialog';
+  /** React only: shown as a modal while true. */
+  open?: boolean;
+  /** Esc, and the product's own Cancel. */
+  onClose?: () => void;
+  actions?: ReactNode;
+  children?: ReactNode;
+}
+export interface ConfirmActionProps extends Passthrough {
+  id?: string;
+  title: ReactNode;
+  description?: ReactNode;
+  /** What will happen, as the product states it. */
+  consequences?: ReactNode[];
+  /** Names the action, e.g. "Revoke API key". Never "OK". */
+  confirmLabel: string;
+  cancelLabel?: string;
+  /** Typed confirmation for irreversible deletes of named resources. */
+  requireText?: string;
+  requireTextLabel?: string;
+  typed?: string;
+  onTypedChange?: (value: string) => void;
+  busy?: boolean;
+  error?: { title?: string; message?: ReactNode; code?: string; requestId?: string } | null;
+  onConfirm?: () => void;
+  onCancel?: () => void;
+  /** React only: shown as a modal while true. */
+  open?: boolean;
+}
+export declare function TextField(props: TextFieldProps): ReactElement;
+export declare function Select(props: SelectProps): ReactElement;
+export declare function Form(props: FormProps): ReactElement;
+export declare function Dialog(props: DialogProps): ReactElement;
+export declare function ConfirmAction(props: ConfirmActionProps): ReactElement;
+
+/** Framework-free helpers (they render with dom.js into the given document). */
+export declare function openDialog(dialog: HTMLDialogElement, doc?: Document): () => void;
+export declare function confirmAction(
+  props: Omit<ConfirmActionProps, 'open' | 'typed' | 'onTypedChange' | 'onConfirm' | 'onCancel' | 'busy' | 'error'> & { action?: () => Promise<unknown> },
+  doc?: Document,
+): Promise<boolean>;
+export declare function formDialog(
+  props: {
+    id?: string; title: string; description?: string; submitLabel?: string; cancelLabel?: string;
+    fields: Array<(Omit<TextFieldProps, 'onChange'> | Omit<SelectProps, 'onChange'>) & { name: string }>;
+    action?: (values: Record<string, string>) => Promise<unknown>;
+  },
+  doc?: Document,
+): Promise<Record<string, string> | null>;

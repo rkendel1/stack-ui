@@ -270,6 +270,16 @@ screen displays them; the UI shows the observed reality today.
 | `JobStatus` (`appport-services:src/jobs/models.ts:5`) | completed | scheduled, pending, running, retrying | — | failed | — |
 | `WebhookDeliveryStatus` (`appport-services:src/webhooks/models.ts:40`) | delivered | pending, delivering, retrying | — | failed | — |
 | `SecretStatus` (`appport-services:src/secrets/models.ts:1`) | active | — | — | revoked | retired |
+| `NotificationStatus` (`appport-services:src/notifications/models.ts:7`) | delivered | pending | — | failed | read, acknowledged, expired |
+| API key `revokedAt` present (`appport-services:src/api-keys/models.ts:29`) | false ("Active") | — | — | — | true ("Revoked") |
+| Webhook endpoint `disabledAt` present (`appport-services:src/webhooks/models.ts:17`) | false ("Enabled") | — | — | — | true ("Disabled") |
+| Schedule `enabled` (`appport-services:src/jobs/models.ts:54`) | true ("Enabled") | — | — | — | false ("Disabled") |
+| Configuration secret `configured` (`appport-services:src/configuration/models.ts:53`, always `true`) | true ("Configured") | — | — | — | — |
+
+Revoking a key and disabling an endpoint or schedule are deliberate end states
+chosen by an operator, so they are `neutral`, not `critical`. The PR4 pages map
+only these fields (`appport.*` in `core/states`); `WebhookDeliveryStatus` and
+`SecretStatus` are not rendered by any page yet.
 AppPort health (`appport-services:src/runtime/platform.ts:85`) only ever
 answers `{ok: true}`; it has no failed, degraded or starting value. A UI shows
 `positive` on that answer and treats no answer as a request failure

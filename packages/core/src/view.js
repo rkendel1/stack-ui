@@ -570,4 +570,5 @@ export const COMPONENTS = Object.freeze({
   Breadcrumbs, Tabs, TabPanel, DataTable, FilterBar, Pagination, Shell,
   StatusIndicator, VerificationBadge, FreshnessLabel, Unavailable, Loading, EmptyState,
   ErrorPanel, MetadataList, ResourceIdentity, PageHeader, Button,
+  TextField, Select, Form, Dialog, ConfirmAction,
 });

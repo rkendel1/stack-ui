@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Packages the files a no-build product vendors (docs/adoption-plan.md §1):
-//   release/stack-ui-static-<version>/{tokens.css, core.css, stack-ui-core.js, VERSION, SHA256SUMS}
+//   release/stack-ui-static-<version>/{tokens.css, core.css, stack-ui-core.js,
+//   stack-ui-core-stateless.js, VERSION, SHA256SUMS}
 // and a .tar.gz of that directory. Run after `pnpm build`. Zero dependencies
 // (tar from the system).
 import { createHash } from 'node:crypto';
@@ -23,6 +24,8 @@ const files = {
   'tokens.css': 'packages/tokens/css/tokens.css',
   'core.css': 'packages/core/src/core.css',
   'stack-ui-core.js': 'packages/core/classic/stack-ui-core.js',
+  // The same without the theme preference, for products that store nothing.
+  'stack-ui-core-stateless.js': 'packages/core/classic/stack-ui-core-stateless.js',
 };
 for (const [target, source] of Object.entries(files)) copyFileSync(join(root, source), join(out, target));
 writeFileSync(join(out, 'VERSION'), `${version}\n`);
