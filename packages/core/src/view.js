@@ -459,12 +459,17 @@ export function FilterBar(props) {
     node('div', { class: 'stack-filter__controls' }, [
       (props.filters || []).map((filter) => filterControl(filter, prefix, props.onChange)),
       node('div', { class: 'stack-filter__actions' }, [
-        Button({ label: props.applyLabel || 'Apply', type: 'submit', variant: 'secondary' }),
+        // Live filters apply as they change, so there is nothing to submit.
+        props.live ? null : Button({ label: props.applyLabel || 'Apply', type: 'submit', variant: 'secondary' }),
         applied && props.onClear ? Button({ label: props.clearLabel || 'Clear', variant: 'ghost', onClick: props.onClear }) : null,
       ]),
     ]),
     node('p', { class: 'stack-filter__result', role: 'status', 'aria-live': 'polite' }, present(props.result) ? props.result : ''),
-  ], props.onSubmit ? { submit: (event) => { event.preventDefault(); props.onSubmit(); } } : undefined);
+  ], props.onSubmit || props.live ? {
+    // Submitting a filter form never navigates (a single text field submits
+    // on Enter even with no button).
+    submit: (event) => { event.preventDefault(); if (props.onSubmit) props.onSubmit(); },
+  } : undefined);
 }
 
 /// Cursor pagination: previous and next, and whatever summary the product can
@@ -745,9 +750,70 @@ export function ConfirmAction(props) {
   });
 }
 
+// ---- Evidence (PR5) -------------------------------------------------------
+
+/// What a record shows and on what basis (contract §5, §7.9). Each claim has
+/// its own label and value. A claim the product checked carries its
+/// verification, shown with VerificationBadge; a claim without one is a
+/// recorded fact, and the summary says so instead of implying it was checked.
+export function EvidenceSummary(props) {
+  const id = idPart(props.id || 'stack-evidence');
+  const claims = (props.claims || []).filter((claim) => claim && present(claim.label));
+  // A claim counts as checked only when a check was made: verified, failed,
+  // or not verified. "Not evaluated" (including "verified" with no check
+  // listed) is a record, like a claim with no verification at all.
+  const states = claims.map((claim) => (present(claim.verification) ? verification(claim.verification, claim.checks).state : 'not_evaluated'));
+  const checked = states.filter((value) => value !== 'not_evaluated');
+  const verified = checked.filter((value) => value === 'verified').length;
+  const failed = checked.filter((value) => value === 'verification_failed').length;
+  const recorded = states.length - checked.length;
+  const state = checked.length === 0 ? 'recorded' : verified === checked.length && recorded === 0 ? 'verified' : 'partial';
+  const recordedNote = recorded ? ` · ${recorded} recorded, not checked` : '';
+  const summary = state === 'recorded'
+    ? 'Recorded facts · not independently verified'
+    : state === 'verified'
+      ? (checked.length === 1 ? 'Verified' : `All ${checked.length} claims verified`)
+      : `${verified} of ${checked.length} checked claims verified${failed ? ` · ${failed} failed` : ''}${recordedNote}`;
+  return node('section', {
+    class: cx('stack-evidence', `stack-evidence--${state}`, props.className),
+    'aria-labelledby': `${id}-title`,
+    'data-evidence': state,
+    ...passthrough(props.attrs),
+  }, [
+    node('div', { class: 'stack-evidence__header' }, [
+      node(heading(props.headingLevel || 2), { class: 'stack-evidence__title', id: `${id}-title` }, present(props.title) ? props.title : 'Evidence'),
+      props.outcome ? node('div', { class: 'stack-evidence__outcome' }, props.outcome) : null,
+    ]),
+    node('p', { class: 'stack-evidence__summary' }, summary),
+    claims.length ? node('dl', { class: 'stack-evidence__claims' }, claims.map((claim) => {
+      const missing = !present(claim.value) && claim.value !== 0 && claim.value !== false;
+      return node('div', {
+        class: 'stack-evidence__claim',
+        ...(present(claim.verification) ? { 'data-verification': verification(claim.verification, claim.checks).state } : {}),
+        ...passthrough(claim.attrs),
+      }, [
+        node('dt', { class: 'stack-evidence__label' }, claim.label),
+        node('dd', {
+          class: cx('stack-evidence__value', claim.mono ? 'stack-evidence__value--mono' : null),
+          ...(missing ? { 'data-missing': 'true' } : {}),
+        }, missing ? '—' : (typeof claim.value === 'boolean' ? String(claim.value) : claim.value)),
+        present(claim.verification) ? node('dd', { class: 'stack-evidence__check' }, VerificationBadge({
+          state: claim.verification, checks: claim.checks, evidenceHref: claim.evidenceHref,
+        })) : null,
+      ]);
+    })) : null,
+    present(props.source) || present(props.recordedAt)
+      ? node('p', { class: 'stack-evidence__source' }, [
+        present(props.source) ? props.source : 'Recorded',
+        present(props.recordedAt) ? [' · ', timeNode(props.recordedAt, 'stack-evidence__at')] : null,
+      ])
+      : null,
+  ]);
+}
+
 export const COMPONENTS = Object.freeze({
   Breadcrumbs, Tabs, TabPanel, DataTable, FilterBar, Pagination, Shell,
   StatusIndicator, VerificationBadge, FreshnessLabel, Unavailable, Loading, EmptyState,
   ErrorPanel, MetadataList, ResourceIdentity, PageHeader, Button,
-  TextField, Select, Form, Dialog, ConfirmAction,
+  TextField, Select, Form, Dialog, ConfirmAction, EvidenceSummary,
 });

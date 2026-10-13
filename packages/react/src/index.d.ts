@@ -158,6 +158,8 @@ export interface FilterField {
   options?: Array<string | { value: string; label: string }>;
 }
 export interface FilterBarProps extends Passthrough {
+  /** Filters apply as they change: no Apply button (Enter still never navigates). */
+  live?: boolean;
   filters: FilterField[];
   onChange?: (id: string, value: string) => void;
   onSubmit?: () => void;
@@ -373,3 +375,29 @@ export declare function formDialog(
   },
   doc?: Document,
 ): Promise<Record<string, string> | null>;
+
+// ---- Evidence (PR5) ---------------------------------------------------------
+
+export interface EvidenceClaim {
+  label: ReactNode;
+  /** Missing (null, undefined or '') renders an em dash, never a default. */
+  value?: ReactNode;
+  /** Only for a claim the product checked. Without it the claim is a recorded fact. */
+  verification?: VerificationState;
+  checks?: Check[];
+  evidenceHref?: string;
+  mono?: boolean;
+  attrs?: Record<string, string>;
+}
+export interface EvidenceSummaryProps extends Passthrough {
+  id?: string;
+  title?: ReactNode;
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+  /** What the record concluded, e.g. a StatusIndicator of the decision. */
+  outcome?: ReactNode;
+  claims: EvidenceClaim[];
+  /** Who recorded it, e.g. "Recorded by AuthBoundry". */
+  source?: ReactNode;
+  recordedAt?: string | number | Date;
+}
+export declare function EvidenceSummary(props: EvidenceSummaryProps): ReactElement;

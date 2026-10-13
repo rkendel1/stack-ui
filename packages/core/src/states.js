@@ -96,6 +96,15 @@ const CONDITION = {
   'feltdb.authority.availability': { available: P, recovering: G, degraded: A, closed: N, unknown: U },
   // flow_db: /v1/control-plane/overview `authority.lease_clock_healthy` (boolean)
   'feltdb.authority.lease_clock_healthy': { true: [P, 'Healthy'], false: [A, 'Degraded'] },
+  // authboundry: crates/authz/src/policy.rs decision `allow|deny`. A live check's
+  // deny is critical; the same word on a historical record is neutral
+  // (contract §6.3), so the two are separate fields.
+  'authboundry.decision.live': { allow: [P, 'Allow'], deny: [C, 'Deny'] },
+  'authboundry.decision.recorded': { allow: [P, 'Allow'], deny: [N, 'Deny'] },
+  // authboundry: crates/server/src/control_routes.rs delegation status
+  'authboundry.delegation.status': { active: P, pending: G, revoked: C, expired: N },
+  // authboundry: apps/web/lib/applications.ts `ApplicationStatus`
+  'authboundry.application.status': { active: P, awaiting_contract: G, disabled: N },
   // appport-services: src/jobs/models.ts `JobStatus`
   'appport.job.status': { completed: P, scheduled: G, pending: G, running: G, retrying: G, failed: C },
   // appport-services: src/notifications/models.ts `NotificationStatus`

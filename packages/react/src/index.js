@@ -84,6 +84,7 @@ export const Shell = bind('Shell');
 export const TextField = bind('TextField');
 export const Select = bind('Select');
 export const Form = bind('Form');
+export const EvidenceSummary = bind('EvidenceSummary');
 
 /// Opens the rendered <dialog> as a modal while `open` is true. If the browser
 /// closes it by itself while it should be open (a repeated Esc), a busy

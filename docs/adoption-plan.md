@@ -365,13 +365,116 @@ AppPort services
 Both
 19. The diff touches only what §2.5.1 allows.
 
+### 2.6 Fourth slice: evidence and the AuthBoundry portal (PR5)
+
+PR5 adds `EvidenceSummary` and adopts the design system in the AuthBoundry
+portal (`authboundry:apps/web`), the first React + Tailwind product: a Next.js
+App Router app whose colours were hard-coded Tailwind utilities. Version
+0.4.0 of all three packages.
+
+#### 2.6.1 PR5 scope (exact)
+
+**PR5a — this repository**
+- `view.js`: `EvidenceSummary` (24 components in all). Each claim has its own
+  label and value; a claim the product checked carries its verification and
+  shows a `VerificationBadge`; a claim without one is a recorded fact. The
+  summary line says which: "Recorded facts · not independently verified",
+  "All N claims verified", or "M of N checked claims verified · K failed · R
+  recorded, not checked" (decisions D17). "Not evaluated", including
+  "verified" with no check listed, counts as recorded. A missing value
+  renders `—`.
+- `FilterBar` gains `live`: filters that apply as they change have no Apply
+  button.
+- `states.js`: `authboundry.decision.live` (a check just made: deny is
+  critical), `authboundry.decision.recorded` (history: deny is neutral),
+  `authboundry.delegation.status` and `authboundry.application.status`
+  (contract §6.3).
+
+**PR5b — the AuthBoundry portal adopts (React + Tailwind)**
+- `@stack-ui/*` 0.4.0 vendored as unpacked packages with `file:` dependencies
+  and `SHA256SUMS` (`authboundry:apps/web/vendor/stack-ui`); tokens and
+  component CSS imported by the root layout.
+- Tailwind's `theme.extend.colors.stack` maps to the `--stack-*` variables
+  (`authboundry:apps/web/tailwind.config.ts`). The layout's theme script and
+  the theme toggle set `data-stack-theme` with the `dark` class, so a stored
+  light choice also wins for the shared components on a dark system.
+- Statuses: decisions (the decisions, evidence and activity pages, the
+  overview, the application console and the decision detail), delegations
+  (the global list and the application console) and application status (the
+  console header and the shell's context) render `StatusIndicator` on the
+  fields above. Pending and expired delegations are no longer red like
+  revoked ones.
+- Errors render `ErrorPanel`; loading and empty lists `Loading` and
+  `EmptyState`; the decisions and evidence lists are `DataTable`s (each
+  decision's action is a real link to its evidence), with a live `FilterBar`
+  or labelled filters. Muted text and destructive links on the touched
+  surfaces use the tokens, so they keep their contrast in dark mode.
+- The decision detail shows two `EvidenceSummary` sections (what AuthBoundry
+  decided, and the claim snapshot it evaluated), both recorded facts.
+- Corrections where a page showed something the authority never said:
+  - `/authorization` called `/api/authorization/explain`, whose server route
+    returns `{latest_decision, message}` and ignores its inputs
+    (`authboundry:crates/server/src/control_routes.rs:4360-4412`), and read
+    `decision === "ALLOW"` from it, so it always showed "DENY" with empty
+    fields. It now calls `/api/authorization/check`, the check the application
+    console already used, and shows its compact decision; a `fail_closed`
+    answer is "Result unknown", not "Deny".
+  - `/audit` read `principal_id`, `capability`, `application` and an
+    upper-case `decision`; the authority sends `principal`, `action`,
+    `resource` and a lower-case `decision` that is absent for non-decision
+    events (`authboundry:crates/server/src/control_routes.rs:3831-3910`), so
+    every row had empty fields and allows were drawn with a cross.
+  - The overview counted a failed read as zero (and "Active sessions" as 0
+    when the session check failed); those counts are now unknown, and a
+    failed read of recent decisions is not "No authorization decisions yet".
+    A failed delegation read is an error, not "No delegations".
+  - The activity filters were sent to an endpoint that reads only `since` and
+    `limit`, so they changed nothing; they now filter what it returned, and an
+    application-scoped link says the log cannot be narrowed to an
+    application. Rows are keyed by position, because the audit store keeps
+    repeated event ids and keying by id left stale rows on screen.
+- The portal shell keeps its own layout (decisions D18), drawn with the
+  tokens, with `aria-current` on the current link.
+- CI for the portal (`authboundry:.github/workflows/portal.yml`): lint, build,
+  type-check, the unit tests that pass today, and browser tests that sign in
+  through the portal's local login against a real `authboundry` authority
+  with data created through its API.
+
+**Changes PR5 is allowed to make in AuthBoundry, and nothing else:** portal
+pages, components, styles, Tailwind config, the vendored packages, portal
+tests and CI. The two corrected pages call routes the portal already has. No
+server, route, schema or API-client change.
+
+#### 2.6.2 Acceptance criteria (all testable)
+
+Design-system repository
+1. For each of the 24 components, the React and `dom.js` renders of the same fixtures are identical DOM.
+2. `EvidenceSummary` never claims a check that was not made: claims without verification summarise as recorded facts; a mix counts verified and failed; "verified" without a listed check is not counted as verified; a missing value is `—`.
+3. A live `FilterBar` has no submit button, still shows Clear when filters are applied, and its form never navigates on submit.
+4. The AuthBoundry mappings: a live deny is critical, a recorded deny neutral; pending is progress, expired neutral, revoked critical; an upper-case value is not silently mapped.
+5. Unit, browser, contrast (85 pairs), boundary and type checks pass.
+
+AuthBoundry portal
+6. `npm run lint`, `npm run build`, `npm run type-check` and `npm run test:unit` pass, including the vendored-file checksums.
+7. Against a real authority, signed in through `/login`: decision results carry `data-field="authboundry.decision.recorded"` with Allow positive and Deny neutral; the decisions filters are labelled, live and report "N of M decisions match".
+8. Delegations: active is positive, revoked critical.
+9. Decision detail: one `h1`; the evidence section is "recorded" with no verification; every field is shown, a missing policy as `—`; the evaluated claims are listed; a decision that does not exist shows an `ErrorPanel`.
+10. Authorization test: an allowed check shows Allow (positive), a refused one Deny (critical) with its reason, and links to its decision evidence.
+11. Activity: every allow is positive; every authorization decision row names its principal; the Decision filter narrows the rows to exactly the matching ones and its count says so; every filter has a label.
+12. Evidence: one cell per header; every filter has a label.
+13. The portal's `dark` class and `data-stack-theme` always agree, including a stored light choice on a dark system.
+14. axe reports zero serious or critical violations on the decisions, delegations (global and in the application console), decision detail, evidence, activity and overview pages in light and dark, and on the authorization test with a result; no script or React error reaches the console.
+
+Both
+15. The diff touches only what §2.6.1 allows.
+
 ## 3. Migration sequence for the remaining products
 
 | Order | Product and scope | Preconditions | Why this order |
 |---|---|---|---|
 | PR3 | **Shell** in `stack-ui` + adopt in Compute and FeltDB Studio; add `DataTable`, `FilterBar`, `Pagination`, `Tabs`, `Breadcrumbs` (built; §2.4) | PR2 merged | Shell needs two real hosts to validate |
 | PR4 | **AppPort services** management pages: inline `tokens.css`/`core.css` in the server-rendered page template; labels on every field; table header/cell parity; current-nav highlight; nav derived from `SURFACES`; `ConfirmAction` replacing `confirm()` (built; §2.5) | Add CI to `appport-services` (none exists; added in PR4) | Smallest UI (10 pages, one template); owns `AppPort/ui/1`; shows the framework-free path for server-rendered HTML |
-| PR5 | **AuthBoundry** portal: map Tailwind theme to `--stack-*` variables (`theme.extend.colors` → `var()`), adopt `StatusIndicator` for decisions and delegations, `ErrorPanel`, `EvidenceSummary` on decision detail; fix the `/authorization` result shape | Add `apps/web` lint, typecheck, test and build to CI; add Playwright + axe | React + Tailwind path; authorization and delegation presentation |
+| PR5 | **AuthBoundry** portal: map Tailwind theme to `--stack-*` variables (`theme.extend.colors` → `var()`), adopt `StatusIndicator` for decisions and delegations, `ErrorPanel`, `EvidenceSummary` on decision detail; fix the `/authorization` result shape (built; §2.6) | Add `apps/web` lint, typecheck, test and build to CI; add Playwright + axe (added in PR5) | React + Tailwind path; authorization and delegation presentation |
 | PR6 | **AppBoundry** cloud portal: add light theme via tokens; replace `badge()` with `stack-status` (adds a critical tone); `VerificationBadge` for implementation and conformance; then screen-by-screen replacement of `public/app.js` views using `dom.js` | Add `apps/cloud-platform` build and a browser test to CI; decide whether `public/app.js` has an untracked source | Largest and most fragile UI; benefits from every earlier component |
 | Later | Remaining Compute and Studio screens; AuthBoundry Rust auth pages and CLI Studio; AppBoundry local studio; FeltDB website Studio (after D7) | — | Lower traffic surfaces |
 

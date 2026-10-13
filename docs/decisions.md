@@ -131,6 +131,36 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   renderer owns underneath it is the bug PR3 fixed in Tabs. Keeping the view
   stateless keeps React and `dom.js` renders identical (criterion 1).
 
+### D17 — Evidence without a check is a record — Decided (PR5)
+- **Decision:** `EvidenceSummary` shows a claim's verification only when the
+  product checked it. A summary with no checked claim says "Recorded facts ·
+  not independently verified".
+- **Why:** an AuthBoundry decision record is what the evaluator saw and
+  concluded; nothing on it is re-checked when the page shows it (contract
+  §6.3). Drawing it with verification badges would claim checks nobody made;
+  leaving the distinction unstated would let a reader assume them.
+
+### D18 — The AuthBoundry portal keeps its own shell for now — Deferred (to the portal's next adoption)
+- **Decision:** PR5 draws the portal's sidebar with the tokens and adds
+  `aria-current`, but does not replace it with the shared `Shell`.
+- **Why:** the portal's navigation projects capabilities, scopes links to one
+  application, and has an application-context switcher with its own stored
+  selection; moving those into `Shell` slots is a change to how people move
+  through the portal, which PR5's scope (statuses, errors, evidence) does not
+  include. The sidebar is fixed-width and not yet responsive.
+
+### D19 — Stale portal tests are reported, not rewritten — Decided (PR5)
+- **Decision:** the portal CI runs the five unit-test files that pass on
+  `main` and the new browser tests. The source-text tests that already fail
+  (`application-console`, `application-discovery`, `portal-navigation`) and
+  the four that need a running portal on a fixed port are left out, and
+  reported to the owner.
+- **Why:** they fail without this PR. One of them
+  (`portal-navigation`) expects members not to see `/authority`,
+  `/credentials` and `/developer`, which they now do; whether that is a
+  regression or a stale test is a security question for the AuthBoundry
+  owner, not something a UI PR should settle by editing the assertion.
+
 ## Verified facts versus unresolved questions
 
 | Verified (see audit citations) | Unresolved |

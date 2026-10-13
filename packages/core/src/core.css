@@ -387,6 +387,27 @@ textarea.stack-field__control { min-height: calc(var(--stack-size-control-md) * 
 }
 @keyframes stack-dialog-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
+/* ---- Evidence (PR5) ---------------------------------------------------- */
+.stack-evidence {
+  margin: 0 0 var(--stack-space-4); padding: var(--stack-space-4);
+  border: var(--stack-border-width-thin) solid var(--stack-color-border-default); border-radius: var(--stack-radius-lg);
+  background: var(--stack-color-bg-surface); color: var(--stack-color-text-default);
+}
+.stack-evidence__header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--stack-space-2) var(--stack-space-3); }
+.stack-evidence__title { margin: 0; font-size: var(--stack-text-lg-size); line-height: var(--stack-text-lg-line); font-weight: var(--stack-font-weight-semibold); }
+.stack-evidence__summary { margin: var(--stack-space-1) 0 var(--stack-space-3); color: var(--stack-color-text-muted); font-size: var(--stack-text-sm-size); }
+.stack-evidence__claims { display: grid; grid-template-columns: minmax(8rem, max-content) minmax(0, 1fr); gap: var(--stack-space-2) var(--stack-space-4); margin: 0; }
+.stack-evidence__claim { display: contents; }
+.stack-evidence__label { color: var(--stack-color-text-muted); font-size: var(--stack-text-sm-size); }
+.stack-evidence__value { margin: 0; min-width: 0; overflow-wrap: anywhere; font-size: var(--stack-text-sm-size); }
+.stack-evidence__value--mono { font-family: var(--stack-font-family-mono); font-size: var(--stack-text-sm-size); }
+.stack-evidence__check { grid-column: 2; margin: 0; }
+.stack-evidence__source { margin: var(--stack-space-3) 0 0; color: var(--stack-color-text-muted); font-size: var(--stack-text-xs-size); }
+@media (max-width: 479px) {
+  .stack-evidence__claims { grid-template-columns: minmax(0, 1fr); }
+  .stack-evidence__check { grid-column: 1; }
+}
+
 /* `hidden` hides a component even where its own rule sets `display`. Scoped to
    stack-* classes: core.css styles no element it does not own. */
 [class^="stack-"][hidden], [class*=" stack-"][hidden] { display: none !important; }
