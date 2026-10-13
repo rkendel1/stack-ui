@@ -79,9 +79,7 @@ scrolls on its own; the page itself never scrolls sideways (tested at 640 and
   access wrapped in try/catch; `theme.js`) and reduced motion (follows OS).
   Preferences never travel between products. A product drawn in one theme
   only (FeltDB Studio) omits `theme`, and the shell shows no theme control
-  rather than one that does nothing. A product that keeps nothing in browser
-  storage (AppPort services) omits it too, uses the stateless classic build
-  (decisions D15) and follows the operating system's colour scheme.
+  rather than one that does nothing.
 - **Routing and focus:** a product with client-side routing passes
   `onNavigate(href)`; ordinary left clicks on the product link and navigation
   items call it instead of loading a page, while clicks with a modifier key

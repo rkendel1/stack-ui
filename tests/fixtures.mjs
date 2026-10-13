@@ -1,8 +1,7 @@
 // Component fixtures shared by the DOM-parity and accessibility tests. Props
 // named in FUNCTION_PROPS are `true` here, at any depth, and are replaced by a
 // handler on each side, since functions cannot cross into the browser.
-export const FUNCTION_PROPS = ['onClick', 'onRetry', 'onSelect', 'onSort', 'onChange', 'onSubmit', 'onClear', 'onPrevious', 'onNext',
-  'onClose', 'onConfirm', 'onCancel', 'onTypedChange'];
+export const FUNCTION_PROPS = ['onClick', 'onRetry', 'onSelect', 'onSort', 'onChange', 'onSubmit', 'onClear', 'onPrevious', 'onNext'];
 
 export const FIXTURES = [
   ['StatusIndicator', { field: 'compute.health', value: 'healthy' }],
@@ -77,25 +76,12 @@ export const FIXTURES = [
     activityHref: '#/events', otherProducts: [{ id: 'feltdb', name: 'FeltDB Studio', href: 'https://studio.example' }],
     theme: { preference: 'dark', onChange: true }, children: 'Page content' }],
   ['Shell', { product: { name: 'FeltDB Studio', homeHref: '/' }, navigation: [{ id: 'o', label: 'Overview', href: '/overview', group: 'Operate' }] }],
-  ['TextField', { name: 'name', label: 'Key name', required: true, placeholder: 'ci-deployer', hint: 'Shown in lists and audit records.' }],
-  ['TextField', { id: 'variable-name', name: 'name', label: 'Name', value: 'DATABASE_URL', pattern: '[A-Z][A-Z0-9_]*', error: 'Use capital letters, digits and underscores.', onChange: true }],
-  ['TextField', { name: 'payload', label: 'Payload JSON', multiline: true, rows: 3, value: '{}' }],
-  ['TextField', { name: 'size', label: 'Size in bytes', type: 'number', min: 0, readOnly: true, value: 12 }],
-  ['Select', { name: 'environment', label: 'Environment', value: 'staging', options: ['production', 'staging', { value: 'development', label: 'Development', disabled: true }] }],
-  ['Select', { id: 'priority', name: 'priority', label: 'Priority', hint: 'Urgent interrupts.', options: ['low', 'normal'], onChange: true, disabled: true }],
-  ['Form', { label: 'Create API key', submitLabel: 'Create API key', onSubmit: true, children: [{ t: 'p', a: {}, c: ['Fields'] }] }],
-  ['Form', { id: 'create', label: 'Queue job', submitLabel: 'Queue job', busy: true, layout: 'inline', onSubmit: true, children: 'Fields' }],
-  ['Dialog', { id: 'edit', title: 'Edit value', description: 'Replaces the stored value.', onClose: true, children: 'Body', actions: 'Actions' }],
-  ['ConfirmAction', { id: 'revoke', title: 'Revoke API key ci?', confirmLabel: 'Revoke API key', consequences: ['Callers using this key are refused.', 'This cannot be undone.'], onConfirm: true, onCancel: true }],
-  ['ConfirmAction', { id: 'delete', title: 'Delete DATABASE_URL?', confirmLabel: 'Delete variable', requireText: 'DATABASE_URL', onConfirm: true, onCancel: true }],
-  ['ConfirmAction', { title: 'Disable schedule?', confirmLabel: 'Disable schedule', busy: true, error: { message: 'Not allowed', code: 'FORBIDDEN' }, onConfirm: true, onCancel: true }],
 ];
 
 export const COMPONENT_NAMES = [
   'StatusIndicator', 'VerificationBadge', 'FreshnessLabel', 'Unavailable', 'Loading', 'EmptyState',
   'ErrorPanel', 'MetadataList', 'ResourceIdentity', 'PageHeader', 'Button',
   'Breadcrumbs', 'Tabs', 'TabPanel', 'DataTable', 'FilterBar', 'Pagination', 'Shell',
-  'TextField', 'Select', 'Form', 'Dialog', 'ConfirmAction',
 ];
 
 /// Replaces `true` placeholders with `handler`, at any depth. The same source

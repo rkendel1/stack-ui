@@ -98,39 +98,6 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   design a shared component from. Revisit when a second product exposes a
   supported search interface.
 
-### D14 — Server-delivered pages render in the browser — Decided (PR4)
-- **Decision:** AppPort services' pages are HTML documents its server sends
-  with the design system inlined and a JSON page description; the browser
-  renders the shell, forms and tables with `dom.js`. The design system has no
-  server-side HTML string renderer.
-- **Why:** every page's content is read from the product's API in the
-  browser, so only the frame could be rendered on the server; a second
-  renderer that writes markup strings would need its own escaping and its
-  own parity tests to save a frame that appears a moment earlier. The JSON
-  description is escaped so it cannot end its script element (tested).
-- **Revisit when:** a product needs pages that work without JavaScript.
-
-### D15 — A stateless classic build — Decided (PR4)
-- **Decision:** the static release ships `stack-ui-core-stateless.js` beside
-  the full build: the same API without `theme.js`. A product that keeps
-  nothing in browser storage vendors it, omits the shell's theme control and
-  follows the operating system's colour scheme, which `tokens.css` already
-  does.
-- **Why:** AppPort services tests that its pages, including the credential
-  page, contain no browser storage code at all. The theme preference is
-  optional (product-shell §2), so the build that includes it must be too.
-
-### D16 — Dialog state lives in the renderer, not the view — Decided (PR4)
-- **Decision:** `Dialog` and `ConfirmAction` are stateless view trees like
-  every component. Opening a modal and the typed confirmation text belong to
-  the renderer: the `dom.js` helpers own the DOM they create (and also run the
-  product's `action`, with its busy and error states), and the React binding
-  opens the modal from `open` and keeps the typed text in state, while `busy`
-  and `error` stay the product's props.
-- **Why:** a view tree cannot call `showModal()`, and changing attributes a
-  renderer owns underneath it is the bug PR3 fixed in Tabs. Keeping the view
-  stateless keeps React and `dom.js` renders identical (criterion 1).
-
 ## Verified facts versus unresolved questions
 
 | Verified (see audit citations) | Unresolved |

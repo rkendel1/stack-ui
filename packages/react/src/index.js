@@ -33,11 +33,6 @@ export function toReact(value, key) {
       props[control && (event === 'input' || event === 'change') ? 'onChange' : EVENTS[event]] = handler;
     }
     let childTrees = value.c;
-    if (value.t === 'textarea') {
-      // React sets a textarea's text through value, never children.
-      props.value = childTrees.filter((child) => typeof child === 'string' || typeof child === 'number').join('');
-      childTrees = [];
-    }
     if (value.t === 'select') {
       // React selects by the select's value, not an option's `selected`.
       const chosen = childTrees.find((child) => isTree(child) && child.t === 'option' && child.a.selected);
@@ -81,67 +76,10 @@ export const DataTable = bind('DataTable');
 export const FilterBar = bind('FilterBar');
 export const Pagination = bind('Pagination');
 export const Shell = bind('Shell');
-export const TextField = bind('TextField');
-export const Select = bind('Select');
-export const Form = bind('Form');
-
-/// Opens the rendered <dialog> as a modal while `open` is true. If the browser
-/// closes it by itself while it should be open (a repeated Esc), a busy
-/// dialog is shown again and any other calls `onDismiss`, so the product's
-/// `open` never disagrees with the screen. The browser returns focus to the
-/// element that had it when the dialog closes.
-function useModal(open, onDismiss, busy) {
-  const ref = useRef(null);
-  const latest = useRef({ open, onDismiss, busy });
-  latest.current = { open, onDismiss, busy };
-  useEffect(() => {
-    const dialog = ref.current;
-    if (!dialog) return undefined;
-    const closed = () => {
-      const now = latest.current;
-      if (!now.open) return;
-      if (now.busy) dialog.showModal();
-      else if (now.onDismiss) now.onDismiss();
-    };
-    dialog.addEventListener('close', closed);
-    return () => dialog.removeEventListener('close', closed);
-  }, []);
-  useEffect(() => {
-    const dialog = ref.current;
-    if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
-    else if (!open && dialog.open) dialog.close();
-  }, [open]);
-  return ref;
-}
-
-/// A modal dialog: the shared Dialog structure, shown while `open` is true.
-/// Esc calls `onClose`; the product decides whether to set `open` to false.
-export function Dialog(props) {
-  const ref = useModal(Boolean(props.open), props.onClose, !props.onClose);
-  return cloneElement(toReact(COMPONENTS.Dialog(props)), { ref });
-}
-Dialog.displayName = 'StackDialog';
-
-/// ConfirmAction as a modal shown while `open` is true. It keeps the typed
-/// confirmation text itself unless the product passes `typed`. While `busy`,
-/// Esc does nothing and the dialog stays open.
-export function ConfirmAction(props) {
-  const ref = useModal(Boolean(props.open), props.onCancel, Boolean(props.busy));
-  const [typed, setTyped] = useState('');
-  useEffect(() => { if (!props.open) setTyped(''); }, [props.open]);
-  const controlled = props.typed !== undefined;
-  return cloneElement(toReact(COMPONENTS.ConfirmAction({
-    ...props,
-    typed: controlled ? props.typed : typed,
-    onTypedChange: controlled ? props.onTypedChange : setTyped,
-  })), { ref });
-}
-ConfirmAction.displayName = 'StackConfirmAction';
 export {
   readThemePreference, storeThemePreference, applyThemePreference, initThemePreference, setThemePreference,
   THEME_PREFERENCES, THEME_STORAGE_KEY,
 } from '@stack-ui/core/theme';
 
 export { resolve, verification, verificationOf, freshnessOf, capability, humanize, TONES, GLYPHS } from '@stack-ui/core/states';
-export { focusMain, openDialog, confirmAction, formDialog } from '@stack-ui/core/dom';
+export { focusMain } from '@stack-ui/core/dom';

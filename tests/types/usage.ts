@@ -29,19 +29,3 @@ export const unnamed = DataTable({ columns: [], rows: [] });
 // @ts-expect-error: rows are keyed by column id, not positional arrays.
 export const positional = DataTable({ label: 'T', columns: [], rows: [['a']] });
 focusMain('studio-main');
-
-// ---- PR4 ----
-import { TextField, Select, Form, Dialog, ConfirmAction, confirmAction, formDialog } from '@stack-ui/react';
-
-export const field = TextField({ name: 'name', label: 'Key name', required: true, hint: 'Shown in lists', onChange: (value: string) => value });
-export const area = TextField({ name: 'payload', label: 'Payload JSON', multiline: true, rows: 6 });
-export const choice = Select({ name: 'priority', label: 'Priority', options: ['normal', { value: 'high', label: 'High' }], value: 'normal' });
-export const form = Form({ label: 'Create API key', submitLabel: 'Create API key', busy: false, onSubmit: (event) => event.preventDefault(), children: field });
-export const dialog = Dialog({ title: 'Edit', open: true, onClose: () => undefined });
-export const confirm = ConfirmAction({ title: 'Revoke key?', consequences: ['Callers are refused'], confirmLabel: 'Revoke API key', requireText: 'ci', open: false });
-export const asked: Promise<boolean> = confirmAction({ title: 'Delete?', confirmLabel: 'Delete file record', action: async () => undefined });
-export const values: Promise<Record<string, string> | null> = formDialog({ title: 'Rename', fields: [{ name: 'name', label: 'File name', required: true }] });
-// @ts-expect-error: a field needs a visible label.
-export const unlabelled = TextField({ name: 'x' });
-// @ts-expect-error: a confirmation must name its action.
-export const unnamedConfirm = ConfirmAction({ title: 'Sure?' });

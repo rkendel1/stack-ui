@@ -19,7 +19,7 @@ after(async () => browser && browser.close());
 test('every component has at least one fixture', () => {
   const covered = new Set(FIXTURES.map(([name]) => name));
   assert.deepEqual(COMPONENT_NAMES.filter((name) => !covered.has(name)), []);
-  assert.equal(COMPONENT_NAMES.length, 23);
+  assert.equal(COMPONENT_NAMES.length, 18);
 });
 
 for (const [index, [name, props]] of FIXTURES.entries()) {

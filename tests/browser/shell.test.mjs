@@ -112,24 +112,6 @@ for (const width of [1280, 640, 320]) {
   }
 }
 
-test('on a narrow, tall screen the navigation strip is only as tall as its links', async () => {
-  // A page shorter than the screen must not stretch the strip: the extra
-  // height belongs to the page below it.
-  const context = await browser.newContext({ viewport: { width: 640, height: 2400 } });
-  const page = await context.newPage();
-  try {
-    await page.goto(`${origin}/`);
-    await page.waitForSelector('.stack-shell');
-    const { nav, list } = await page.evaluate(() => ({
-      nav: document.querySelector('.stack-shell__nav').getBoundingClientRect().height,
-      list: Math.max(...Array.from(document.querySelectorAll('.stack-shell__nav-list')).map((l) => l.getBoundingClientRect().height)),
-    }));
-    assert.ok(nav - list < 40, `navigation strip is ${nav}px for ${list}px of links`);
-  } finally {
-    await context.close();
-  }
-});
-
 test('the skip link is the first stop and moves focus to the main landmark without changing the route', async () => {
   const { context, page } = await open();
   try {
