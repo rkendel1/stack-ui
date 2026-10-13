@@ -1,0 +1,23 @@
+{
+  "name": "stack-ui",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "pnpm -r run build",
+    "test:unit": "node --test tests/unit/*.test.mjs",
+    "test:browser": "node --test --test-concurrency=1 tests/browser/*.test.mjs",
+    "check:boundary": "node scripts/check-boundary.mjs",
+    "check:citations": "node scripts/check-citations.mjs",
+    "test": "pnpm build && pnpm check:boundary && pnpm test:unit && pnpm test:browser"
+  },
+  "devDependencies": {
+    "@stack-ui/core": "workspace:*",
+    "@stack-ui/react": "workspace:*",
+    "axe-core": "4.10.3",
+    "playwright-core": "1.56.1",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  }
+}
