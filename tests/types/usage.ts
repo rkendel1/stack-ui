@@ -45,3 +45,13 @@ export const values: Promise<Record<string, string> | null> = formDialog({ title
 export const unlabelled = TextField({ name: 'x' });
 // @ts-expect-error: a confirmation must name its action.
 export const unnamedConfirm = ConfirmAction({ title: 'Sure?' });
+
+// ---- PR5 ----
+import { EvidenceSummary } from '@stack-ui/react';
+export const evidence = EvidenceSummary({
+  title: 'Decision evidence', outcome: StatusIndicator({ field: 'authboundry.decision.recorded', value: 'deny' }),
+  claims: [{ label: 'Principal', value: 'agent:ci', mono: true }, { label: 'Contract', value: 'v3', verification: 'verified', checks: ['Snapshot hash'] }],
+  source: 'Recorded by AuthBoundry', recordedAt: 1760306400000,
+});
+// @ts-expect-error: a claim's verification is one of the four states.
+export const badClaim = EvidenceSummary({ claims: [{ label: 'X', verification: 'probably' }] });

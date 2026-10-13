@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {
   TONES, fields, valuesOf, resolve, verification, verificationOf, freshnessOf, capability, humanize,
 } from '../../packages/core/src/states.js';
-import { VerificationBadge, StatusIndicator } from '../../packages/core/src/view.js';
+import { VerificationBadge, StatusIndicator, EvidenceSummary } from '../../packages/core/src/view.js';
 
 const text = (tree) => (typeof tree === 'string' || typeof tree === 'number' ? String(tree)
   : Array.isArray(tree) ? tree.map(text).join('') : tree && tree.c ? tree.c.map(text).join('') : '');
@@ -55,6 +55,13 @@ const SOURCE = {
     'stopped', 'failed', 'destroyed', 'expired'],
   // flow_db: crates/feltdb-server/src/main.rs `/health/ready` state
   'feltdb.health.ready_state': ['healthy', 'recovering', 'degraded', 'unavailable'],
+  // authboundry: crates/authz/src/policy.rs decision
+  'authboundry.decision.live': ['allow', 'deny'],
+  'authboundry.decision.recorded': ['allow', 'deny'],
+  // authboundry: crates/server/src/control_routes.rs delegation status
+  'authboundry.delegation.status': ['active', 'pending', 'expired', 'revoked'],
+  // authboundry: apps/web/lib/applications.ts `ApplicationStatus`
+  'authboundry.application.status': ['awaiting_contract', 'active', 'disabled'],
   // appport-services: src/jobs/models.ts `JobStatus`
   'appport.job.status': ['scheduled', 'pending', 'running', 'retrying', 'completed', 'failed'],
   // appport-services: src/notifications/models.ts `NotificationStatus`
@@ -141,4 +148,41 @@ test('verification, freshness and capability fields map onto their own axes', ()
 
 test('mapping tables are immutable', () => {
   assert.throws(() => { 'use strict'; TONES.push('x'); });
+});
+
+test('a live deny is critical; the same word on a historical record is neutral', () => {
+  assert.equal(resolve('authboundry.decision.live', 'deny').tone, 'critical');
+  assert.equal(resolve('authboundry.decision.recorded', 'deny').tone, 'neutral');
+  assert.equal(resolve('authboundry.decision.recorded', 'allow').label, 'Allow');
+  // The portal once showed pending and expired delegations red, like revoked.
+  assert.equal(resolve('authboundry.delegation.status', 'pending').tone, 'progress');
+  assert.equal(resolve('authboundry.delegation.status', 'expired').tone, 'neutral');
+  assert.equal(resolve('authboundry.delegation.status', 'revoked').tone, 'critical');
+  // An upper-case value from another layer is not silently mapped.
+  assert.equal(resolve('authboundry.decision.recorded', 'ALLOW').tone, 'unknown');
+});
+
+const evidenceText = (props) => text(EvidenceSummary(props));
+test('evidence never claims a check that was not made', () => {
+  assert.match(evidenceText({ claims: [{ label: 'Principal', value: 'a' }] }), /Recorded facts · not independently verified/);
+  assert.equal(EvidenceSummary({ claims: [{ label: 'P', value: 'a' }] }).a['data-evidence'], 'recorded');
+  assert.match(evidenceText({ claims: [{ label: 'C', value: 'v', verification: 'verified', checks: ['Hash'] }] }), /^EvidenceVerified/);
+  const mixed = EvidenceSummary({ claims: [
+    { label: 'C', value: 'v', verification: 'verified', checks: ['Hash'] },
+    { label: 'A', value: 'x', verification: 'verification_failed', checks: ['Digest'] },
+    { label: 'O', value: 'ops' },
+  ] });
+  assert.equal(mixed.a['data-evidence'], 'partial');
+  assert.match(text(mixed), /1 of 2 checked claims verified · 1 failed · 1 recorded, not checked/);
+  // One verified claim beside recorded ones is not "Verified".
+  const one = EvidenceSummary({ claims: [{ label: 'C', value: 'v', verification: 'verified', checks: ['Hash'] }, { label: 'O', value: 'ops' }] });
+  assert.equal(one.a['data-evidence'], 'partial');
+  assert.match(text(one), /1 of 1 checked claims verified · 1 recorded, not checked/);
+  // "verified" without a listed check is not evaluated: a record, not a check.
+  assert.equal(EvidenceSummary({ claims: [{ label: 'C', value: 'v', verification: 'verified' }] }).a['data-evidence'], 'recorded');
+  assert.equal(EvidenceSummary({ claims: [{ label: 'C', value: 'v', verification: 'not_evaluated' }] }).a['data-evidence'], 'recorded');
+  // Not verified is a check that did not pass.
+  assert.match(evidenceText({ claims: [{ label: 'C', value: 'v', verification: 'not_verified', checks: ['Hash'] }] }), /0 of 1 checked claims verified/);
+  assert.match(evidenceText({ claims: [{ label: 'A', value: 'a', verification: 'verified', checks: ['x'] }, { label: 'B', value: 'b', verification: 'verified', checks: ['y'] }] }), /All 2 claims verified/);
+  assert.match(evidenceText({ claims: [{ label: 'Policy', value: null }] }), /—/);
 });

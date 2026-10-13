@@ -185,7 +185,7 @@ The shell contract (`docs/product-shell.md`) builds on this rather than replacin
    AuthBoundry's `/evidence` and `/decisions` list the same records differently.
 7. **Defects visible from source** (runtime not exercised):
    - AuthBoundry `/authorization` compares `result.decision === "ALLOW"`
-     (`authboundry:apps/web/app/(portal)/authorization/page.tsx:126`) against a
+     (`authboundry:apps/web/app/(portal)/authorization/page.tsx`, line 126 at the audited commit; corrected in PR5) against a
      pass-through of `{latest_decision, message}` (`authboundry:crates/server/src/control_routes.rs:4403-4411`,
      `authboundry:apps/web/app/api/authorization/explain/route.ts`). The check cannot match.
    - FeltDB `KeyManagementPanel` calls `${apiUrl}/api/keys` with raw `fetch`

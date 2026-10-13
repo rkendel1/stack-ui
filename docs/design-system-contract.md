@@ -147,7 +147,7 @@ component guarantees by construction.
 | `TextField`, `Select`, `Checkbox`, `FieldGroup` | Form controls | `label` (required), `hint`, `error`, `required`, `readOnly` | empty, filled, invalid, read-only, disabled | Visible `<label>`; `aria-describedby` for hint and error; never placeholder-as-label | Field `adornment` slot (units, copy button) |
 | `List` | Non-tabular resource lists (cards, compact rows) | `items`, `renderItem`, `rowHref` | loading, empty, no-match, error, unavailable, populated | `<ul>`/`<ol>` semantics; item is one link target | Item content slot |
 | `DataTable` | Tabular resource lists | `columns[{id,header,sortable,align}]`, `rows`, `sort`, `onSort`, `selection`, `rowHref` | loading, empty, error, unavailable, populated, partial page | `<table>` semantics; `aria-sort`; header count = cell count (enforced in tests) | Cell renderers; row actions column |
-| `FilterBar` | Filter and search lists | `filters[]`, `query`, `onChange` | idle, applied (count shown), no-match | Labelled controls; result count in `aria-live=polite` | Product filter controls |
+| `FilterBar` | Filter and search lists | `filters[]`, `query`, `onChange`, `live` (apply as they change, no Apply button) | idle, applied (count shown), no-match | Labelled controls; result count in `aria-live=polite` | Product filter controls |
 | `Pagination` | Cursor or page navigation | `hasPrev`, `hasNext`, `label` | first, middle, last, unknown total | `nav` with label; does not fabricate totals | — |
 | `PageHeader` | Page identity and actions | `eyebrow`, `title`, `description`, `status`, `actions` | default, with status, loading title | One `<h1>` per page | `meta` slot |
 | `Breadcrumbs` | Resource context path | `items[{label,href}]` | default, truncated | `nav aria-label="Breadcrumb"`, `aria-current="page"` | — |
@@ -166,7 +166,7 @@ component guarantees by construction.
 | `ResourceIdentity` | Name, kind, id, digest | `kind`, `name`, `id`, `digest?`, `href?` | full, truncated | Full value available (copy action and accessible name); mono font for ids | Kind icon slot |
 | `MetadataList` | Key-value facts | `items[{label,value}]` | value, missing (renders `—`, never `0`) | `<dl>` | Value renderers |
 | `ActivityTimeline` | Events, audit, history | `items[{at,actor?,summary,status?,href?}]`, `hasMore` | loading, empty, populated, partial (more exist) | `<ol>` with `<time>` | Item detail slot |
-| `EvidenceSummary` | What is proven and by what | `claims[{label,verification,checks[],evidenceHref}]` | all verified, mixed, none | Each claim has its own label | Product claim content |
+| `EvidenceSummary` | What is proven and by what | `claims[{label,value,verification?,checks[],evidenceHref}]`, `outcome`, `source`, `recordedAt` | all verified, mixed, none (recorded facts only: a claim without `verification` is a record, never shown as checked) | Each claim has its own label; a missing value is `—` | Product claim content |
 | `StepList` | Multi-step operation progress | `steps[{id,label,status,evidence?}]` | pending, running, succeeded, failed, skipped | `<ol>`; `aria-current="step"` on the running step | Step evidence slot |
 
 Not in the initial inventory: charts, code editors, diff viewers, graph views.

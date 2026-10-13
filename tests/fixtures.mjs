@@ -66,6 +66,7 @@ export const FIXTURES = [
       { id: 'value', label: 'Equals', value: 'alice', placeholder: 'Value' },
     ] }],
   ['FilterBar', { filters: [{ id: 'actor', label: 'Actor' }], onSubmit: true }],
+  ['FilterBar', { live: true, label: 'Filter decisions', applied: 1, onClear: true, onChange: true, result: '1 of 2 decisions match', filters: [{ id: 'principal', label: 'Principal', value: 'alice' }] }],
   ['Pagination', { summary: '8 shown · state version 12', hasPrevious: false, hasNext: true, onPrevious: true, onNext: true }],
   ['Pagination', { hasPrevious: true, hasNext: false, onPrevious: true, label: 'Record pages' }],
   ['Shell', { product: { name: 'Compute', homeHref: '#/', mark: 'C' }, mainId: 'view',
@@ -89,13 +90,21 @@ export const FIXTURES = [
   ['ConfirmAction', { id: 'revoke', title: 'Revoke API key ci?', confirmLabel: 'Revoke API key', consequences: ['Callers using this key are refused.', 'This cannot be undone.'], onConfirm: true, onCancel: true }],
   ['ConfirmAction', { id: 'delete', title: 'Delete DATABASE_URL?', confirmLabel: 'Delete variable', requireText: 'DATABASE_URL', onConfirm: true, onCancel: true }],
   ['ConfirmAction', { title: 'Disable schedule?', confirmLabel: 'Disable schedule', busy: true, error: { message: 'Not allowed', code: 'FORBIDDEN' }, onConfirm: true, onCancel: true }],
+  ['EvidenceSummary', { id: 'decision', title: 'Decision evidence', source: 'Recorded by AuthBoundry', recordedAt: '2026-10-12T22:00:00Z',
+    claims: [{ label: 'Principal', value: 'agent:ci', mono: true }, { label: 'Policy', value: null }, { label: 'Claim role', value: 'owner' }] }],
+  ['EvidenceSummary', { claims: [
+    { label: 'Contract', value: 'v3', verification: 'verified', checks: ['Snapshot hash'] },
+    { label: 'Artifact', value: 'sha256:ab12', verification: 'verification_failed', checks: [{ label: 'Digest', status: 'failed' }], evidenceHref: '#e' },
+    { label: 'Owner', value: 'ops' },
+  ] }],
+  ['EvidenceSummary', { title: 'Checks', headingLevel: 3, claims: [{ label: 'Hash', value: 'ok', verification: 'verified', checks: ['Hash'] }, { label: 'Size', value: 0, verification: 'verified', checks: ['Size'] }] }],
 ];
 
 export const COMPONENT_NAMES = [
   'StatusIndicator', 'VerificationBadge', 'FreshnessLabel', 'Unavailable', 'Loading', 'EmptyState',
   'ErrorPanel', 'MetadataList', 'ResourceIdentity', 'PageHeader', 'Button',
   'Breadcrumbs', 'Tabs', 'TabPanel', 'DataTable', 'FilterBar', 'Pagination', 'Shell',
-  'TextField', 'Select', 'Form', 'Dialog', 'ConfirmAction',
+  'TextField', 'Select', 'Form', 'Dialog', 'ConfirmAction', 'EvidenceSummary',
 ];
 
 /// Replaces `true` placeholders with `handler`, at any depth. The same source
