@@ -6,23 +6,27 @@
 import { Button, COMPONENTS, ConfirmAction, Dialog, ErrorPanel, Form, Select, TextField, isTree } from './view.js';
 
 /// Render a view tree (or string, number, array, Node) to a DOM Node.
-export function toDom(value, doc) {
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+export function toDom(value, doc, ns) {
   const d = doc || document;
   if (value === null || value === undefined || value === false || value === true) return d.createDocumentFragment();
   if (typeof value === 'string' || typeof value === 'number') return d.createTextNode(String(value));
   if (Array.isArray(value)) {
     const fragment = d.createDocumentFragment();
-    for (const item of value) fragment.appendChild(toDom(item, d));
+    for (const item of value) fragment.appendChild(toDom(item, d, ns));
     return fragment;
   }
   if (isTree(value)) {
-    const element = d.createElement(value.t);
+    // SVG (the brand mark) needs its namespace, inherited by its children.
+    const space = value.t === 'svg' ? SVG_NS : ns;
+    const element = space ? d.createElementNS(space, value.t) : d.createElement(value.t);
     for (const [key, attr] of Object.entries(value.a)) {
       if (attr === null || attr === undefined || attr === false) continue;
       element.setAttribute(key, attr === true ? '' : String(attr));
     }
     for (const [event, handler] of Object.entries(value.on || {})) element.addEventListener(event, handler);
-    for (const child of value.c) element.appendChild(toDom(child, d));
+    for (const child of value.c) element.appendChild(toDom(child, d, space));
     return element;
   }
   if (value && typeof value.nodeType === 'number') return value;

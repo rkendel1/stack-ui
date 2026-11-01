@@ -1,6 +1,6 @@
-# Stack design-system contract
+# Stack design-system contract (the Boundry design foundation)
 
-Status: **proposed** (PR1). Normative words: **must**, **must not**, **should**, **may**.
+Status: **0.6.0**. Brand and identity rules: `docs/brand.md`. Normative words: **must**, **must not**, **should**, **may**.
 Evidence for every constraint below is in `docs/audit.md`.
 
 ## 1. Principles
@@ -30,6 +30,10 @@ Evidence for every constraint below is in `docs/audit.md`.
 | `tokens` | `tokens.css` (custom properties, light + dark), `tokens-light.css` (light only), `tokens.json` | none | all |
 | `core` | `core.css` (component classes), `states.js` (pure tone/label/glyph resolution), `view.js` (each component's DOM structure as a plain tree), `dom.js` (renders those trees with `createElement`/`textContent`, never markup parsing), and `stack-ui-core.js`, a strict-mode classic-script build of all three exposing one global `StackUI` | none | all; vendored by Compute |
 | `react` | Thin React 18/19 components rendering the same `view.js` trees | peers `react`, `@stack-ui/core` | FeltDB Studio, AuthBoundry portal |
+
+Added in 0.6.0: `tokens/src/brand.json` and `tokens/brand/*.svg` (identity,
+`docs/brand.md`), `core/src/brand.js` (`PORTFOLIO`), and `core/src/html.js`
+(build-time HTML for static sites, D23; not in the classic build).
 
 Final package names, scope and repository are in `docs/adoption-plan.md` §1
 and `docs/decisions.md` (D1, D9).
@@ -67,6 +71,8 @@ and `docs/decisions.md` (D1, D9).
 | Elevation | `shadow-{raised,overlay}`, `z-{sticky,dropdown,overlay,toast}` |
 | Breakpoints | `bp-{sm,md,lg,xl}` = 640/768/1024/1280px (JSON + documented media queries; custom properties cannot be used in media queries) |
 | Motion | `motion-duration-{fast,base}`, `motion-ease-standard`; all zeroed under `prefers-reduced-motion: reduce` |
+| Marketing type (0.6.0) | `text-{3xl,4xl,display}-{size,line}`, `font-weight-bold`, `letter-spacing-tight`, `space-{16,20,24}`, `size-content-max`, `size-prose-max` |
+| Identity (0.6.0) | `brand-ink`, `brand-accent`, `brand-mark-{start,end}`, `product-accent`, `product-accent-fg` (scoped by `[data-stack-product]`). Identity only, never state (`docs/brand.md` §3) |
 
 ### 3.3 Themes
 
@@ -168,6 +174,22 @@ component guarantees by construction.
 | `ActivityTimeline` | Events, audit, history | `items[{at,actor?,summary,status?,href?}]`, `hasMore` | loading, empty, populated, partial (more exist) | `<ol>` with `<time>` | Item detail slot |
 | `EvidenceSummary` | What is proven and by what | `claims[{label,value,verification?,checks[],evidenceHref}]`, `outcome`, `source`, `recordedAt` | all verified, mixed, none (recorded facts only: a claim without `verification` is a record, never shown as checked) | Each claim has its own label; a missing value is `—` | Product claim content |
 | `StepList` | Multi-step operation progress | `steps[{id,label,status,evidence?}]` | pending, running, succeeded, failed, skipped | `<ol>`; `aria-current="step"` on the running step | Step evidence slot |
+
+**Implementation status (0.6.0).** Implemented: every row above except
+`ActionMenu`, `Drawer`, `Notification`, `Skeleton`, `List` and `StepList`
+(D26: promoted when two consuming products need them). `Checkbox`,
+`FieldGroup`, `Alert` and `ActivityTimeline` arrived in 0.6.0.
+
+**Marketing foundation (0.6.0, `docs/brand.md` §7).** These are patterns,
+not templates:
+
+| Component / class | Purpose | Key API | A11y |
+|---|---|---|---|
+| `SiteHeader` | Company or product site header | `product?: {id}`, `navigation[]`, `theme?`, `actions`, `logo?` | Skip link; `nav` with label; `aria-current="page"`; works without JS; wraps and scrolls at 320px |
+| `SiteFooter` | Product columns + Boundry family + legal | `product?`, `columns[]`, `tagline`, `year`, `legal` | Each column and the family list is a labelled `nav` |
+| `ThemeSwitch` | System / Light / Dark | `preference`, `onChange` | Labelled `<select>` |
+| `BrandMark` | The Boundry mark | `idPrefix`, `title?` | Decorative unless titled (`role=img`) |
+| `.stack-site-container`, `.stack-section`, `.stack-hero`, `.stack-eyebrow`, `.stack-display`, `.stack-heading`, `.stack-lede`, `.stack-feature-grid`, `.stack-feature` | Layout and type primitives for pages | CSS classes | Headings stay real headings; product supplies them |
 
 Not in the initial inventory: charts, code editors, diff viewers, graph views.
 They stay product-owned until two products need the same one.

@@ -64,3 +64,10 @@ export function setThemePreference(preference, scope, root) {
   applyThemePreference(value, root);
   return value;
 }
+
+/// The same start-up step as initThemePreference, as script text for the
+/// <head> of a page rendered ahead of time (a static or server-rendered
+/// site), so the stored theme applies before the first paint. It reads only
+/// THEME_STORAGE_KEY, sets only data-stack-theme, and fails closed to the
+/// system theme.
+export const THEME_INIT_SCRIPT = `(function(){try{var v=window.localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)});if(v==="light"||v==="dark")document.documentElement.setAttribute("data-stack-theme",v);}catch(e){}})();`;

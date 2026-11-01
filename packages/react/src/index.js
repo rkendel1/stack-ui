@@ -45,6 +45,11 @@ export function toReact(value, key) {
         ? { ...child, a: { ...child.a, selected: false } } : child));
       if (chosen) props.value = chosen.a.value;
     }
+    if (control && 'checked' in props && !props.onChange) {
+      // An uncontrolled checkbox: React must not freeze it either.
+      props.defaultChecked = props.checked;
+      delete props.checked;
+    }
     if (control && 'value' in props && !props.onChange) {
       // Without a handler the control is uncontrolled; React must not freeze it.
       props.defaultValue = props.value;
@@ -85,6 +90,14 @@ export const TextField = bind('TextField');
 export const Select = bind('Select');
 export const Form = bind('Form');
 export const EvidenceSummary = bind('EvidenceSummary');
+export const Alert = bind('Alert');
+export const Checkbox = bind('Checkbox');
+export const FieldGroup = bind('FieldGroup');
+export const ActivityTimeline = bind('ActivityTimeline');
+export const BrandMark = bind('BrandMark');
+export const ThemeSwitch = bind('ThemeSwitch');
+export const SiteHeader = bind('SiteHeader');
+export const SiteFooter = bind('SiteFooter');
 
 /// Opens the rendered <dialog> as a modal while `open` is true. If the browser
 /// closes it by itself while it should be open (a repeated Esc), a busy
@@ -141,8 +154,9 @@ export function ConfirmAction(props) {
 ConfirmAction.displayName = 'StackConfirmAction';
 export {
   readThemePreference, storeThemePreference, applyThemePreference, initThemePreference, setThemePreference,
-  THEME_PREFERENCES, THEME_STORAGE_KEY,
+  THEME_PREFERENCES, THEME_STORAGE_KEY, THEME_INIT_SCRIPT,
 } from '@stack-ui/core/theme';
+export { PORTFOLIO, portfolioProduct } from '@stack-ui/core/brand';
 
 export { resolve, verification, verificationOf, freshnessOf, capability, humanize, TONES, GLYPHS } from '@stack-ui/core/states';
 export { focusMain, openDialog, confirmAction, formDialog } from '@stack-ui/core/dom';

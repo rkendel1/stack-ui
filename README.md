@@ -1,18 +1,23 @@
-# stack-ui
+# stack-ui — the Boundry design foundation
 
-Shared design system for the Stack products: Compute, FeltDB, AppPort,
-AuthBoundry and AppBoundry. It owns presentation and interaction behaviour; it
-owns no product state, authorization or execution.
+The shared design foundation for Boundry and its products: FeltDB, FeltKit,
+AppBoundry, AuthBoundry, AgentBoundry and AppPort, as well as Compute and AppWorks.
+It owns presentation, interaction behaviour, the Boundry brand layer and the
+product identities ([docs/brand.md](docs/brand.md)). It owns no product state,
+authorization or execution. Package and class names keep the `stack` prefix
+until the npm scope is decided (D9).
 
 ## Packages
 
 | Package | What it ships |
 |---|---|
-| `@stack-ui/tokens` | `tokens.css` (custom properties, light + dark), `tokens-light.css` (light only, for products drawn light-only) and `tokens.json` |
-| `@stack-ui/core` | Component structure, field-keyed state semantics, a framework-free DOM renderer, `core.css`, and `stack-ui-core.js` (a strict classic-script build exposing `window.StackUI`) |
+| `@stack-ui/tokens` | `tokens.css` (custom properties, light + dark, company and product identity), `tokens-light.css` (light only), `tokens.json`, `brand.json`, and the Boundry mark (`brand/*.svg`) |
+| `@stack-ui/core` | Component structure, field-keyed state semantics, the Boundry portfolio (`brand.js`), a framework-free DOM renderer, a build-time HTML renderer for static sites (`html.js`), `core.css`, and `stack-ui-core.js` (a strict classic-script build exposing `window.StackUI`) |
 | `@stack-ui/react` | React 18/19 components that render the same DOM as the core renderer (peers: `react`, `@stack-ui/core`) |
 
-Twenty-four components: `StatusIndicator`, `VerificationBadge`, `FreshnessLabel`,
+Thirty-two components. Marketing: `SiteHeader`, `SiteFooter`, `ThemeSwitch` and
+`BrandMark`, plus layout classes (`stack-hero`, `stack-section`, `stack-feature-grid`, …).
+Application: `Alert`, `Checkbox`, `FieldGroup`, `ActivityTimeline`, `StatusIndicator`, `VerificationBadge`, `FreshnessLabel`,
 `Unavailable`, `Loading`, `EmptyState`, `ErrorPanel`, `MetadataList`,
 `ResourceIdentity`, `PageHeader`, `Button`, `Breadcrumbs`, `Tabs`, `TabPanel`,
 `DataTable`, `FilterBar`, `Pagination`, the product `Shell`
@@ -22,7 +27,7 @@ replace `confirm()` and `prompt()` on framework-free pages. The theme preference
 (`theme.js`) is the only value any package stores; `stack-ui-core-stateless.js`
 is the classic build without it. State mappings cover the Compute
 and FeltDB fields the first adopting screens render
-(`packages/core/src/states.js`). Not published to npm yet (scope: D9).
+(`packages/core/src/states.js`). Not published to npm yet (scope: D9). Version 0.6.0.
 
 ### Using it
 
@@ -57,6 +62,11 @@ Browser tests use `playwright-core`; install Chromium with
 
 | Document | Contents |
 |---|---|
+| [docs/brand.md](docs/brand.md) | Boundry brand specification: mark, colour, type, themes, product accents, the Boundry family on every surface |
+| [docs/product-identities.md](docs/product-identities.md) | Per-product identity and UX direction |
+| [docs/portfolio-assessment.md](docs/portfolio-assessment.md) | Every Boundry surface, framework, deploy, domain and Stack UI version; duplication found |
+| [docs/adoption-report.md](docs/adoption-report.md) | What changed in each repository, what was verified, what remains |
+| [docs/release.md](docs/release.md) | Versioning, release steps, consumption, conformance checklist |
 | [docs/audit.md](docs/audit.md) | What exists today in each product, with repository evidence |
 | [docs/design-system-contract.md](docs/design-system-contract.md) | Tokens, components, interaction patterns, accessibility, state and evidence semantics, versioning |
 | [docs/product-shell.md](docs/product-shell.md) | Shared shell as a UI composition contract |

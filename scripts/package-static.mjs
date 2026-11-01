@@ -26,7 +26,22 @@ const files = {
   'stack-ui-core.js': 'packages/core/classic/stack-ui-core.js',
   // The same without the theme preference, for products that store nothing.
   'stack-ui-core-stateless.js': 'packages/core/classic/stack-ui-core-stateless.js',
+  // Light-only tokens, for products drawn in one theme while they migrate.
+  'tokens-light.css': 'packages/tokens/css/tokens-light.css',
+  // Identity (docs/brand.md): the token source and the Boundry mark files.
+  'brand/brand.json': 'packages/tokens/src/brand.json',
+  'brand/boundry-mark.svg': 'packages/tokens/brand/boundry-mark.svg',
+  'brand/boundry-mark-reversed.svg': 'packages/tokens/brand/boundry-mark-reversed.svg',
+  'brand/boundry-favicon.svg': 'packages/tokens/brand/boundry-favicon.svg',
+  // ES modules for sites built ahead of time in Node (html.js renders the
+  // shared header and footer to HTML; docs/decisions.md D23).
+  'esm/states.js': 'packages/core/src/states.js',
+  'esm/brand.js': 'packages/core/src/brand.js',
+  'esm/view.js': 'packages/core/src/view.js',
+  'esm/html.js': 'packages/core/src/html.js',
+  'esm/theme.js': 'packages/core/src/theme.js',
 };
+for (const target of Object.keys(files)) mkdirSync(dirname(join(out, target)), { recursive: true });
 for (const [target, source] of Object.entries(files)) copyFileSync(join(root, source), join(out, target));
 writeFileSync(join(out, 'VERSION'), `${version}\n`);
 const sums = Object.keys(files).sort()
