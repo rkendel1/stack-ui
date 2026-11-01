@@ -17,16 +17,21 @@
     "./classic-stateless": "./classic/stack-ui-core-stateless.js",
     "./theme": "./src/theme.js",
     "./brand": "./src/brand.js",
-    "./html": "./src/html.js"
+    "./html": "./src/html.js",
+    "./conformance": "./bin/conformance.mjs"
   },
   "files": [
     "src",
-    "classic"
+    "classic",
+    "bin"
   ],
   "scripts": {
     "build": "node scripts/build.mjs"
   },
   "engines": {
     "node": ">=20"
+  },
+  "bin": {
+    "stack-ui-conformance": "bin/conformance.mjs"
   }
 }

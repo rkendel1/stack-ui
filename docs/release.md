@@ -38,6 +38,11 @@ No product depends on another product at runtime. Portfolio links are plain hype
 
 ## Conformance every adopting product keeps
 
+Every adopting build runs `conformance.mjs`, which ships in the static release and in `@stack-ui/core` as
+`bin/conformance.mjs` (`docs/building-with-the-foundation.md`). It checks the built pages and the product's
+own CSS for the items below and fails the build on any of them. These are tested in
+`tests/unit/conformance.test.mjs`.
+
 - The vendored files match the release checksums.
 - `data-stack-product` is set to the product's portfolio id on the site or app root.
 - Light and dark themes follow the OS by default, a theme control is present, and `THEME_INIT_SCRIPT`

@@ -40,6 +40,8 @@ const files = {
   'esm/view.js': 'packages/core/src/view.js',
   'esm/html.js': 'packages/core/src/html.js',
   'esm/theme.js': 'packages/core/src/theme.js',
+  // Run by every adopting build (docs/release.md, Conformance).
+  'conformance.mjs': 'packages/core/bin/conformance.mjs',
 };
 for (const target of Object.keys(files)) mkdirSync(dirname(join(out, target)), { recursive: true });
 for (const [target, source] of Object.entries(files)) copyFileSync(join(root, source), join(out, target));

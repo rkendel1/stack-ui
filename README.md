@@ -67,6 +67,7 @@ Browser tests use `playwright-core`; install Chromium with
 | [docs/portfolio-assessment.md](docs/portfolio-assessment.md) | Every Boundry surface, framework, deploy, domain and Stack UI version; duplication found |
 | [docs/adoption-report.md](docs/adoption-report.md) | What changed in each repository, what was verified, what remains |
 | [docs/release.md](docs/release.md) | Versioning, release steps, consumption, conformance checklist |
+| [docs/building-with-the-foundation.md](docs/building-with-the-foundation.md) | The rule for every new Boundry site or product UI, and the conformance check builds run |
 | [docs/audit.md](docs/audit.md) | What exists today in each product, with repository evidence |
 | [docs/design-system-contract.md](docs/design-system-contract.md) | Tokens, components, interaction patterns, accessibility, state and evidence semantics, versioning |
 | [docs/product-shell.md](docs/product-shell.md) | Shared shell as a UI composition contract |
