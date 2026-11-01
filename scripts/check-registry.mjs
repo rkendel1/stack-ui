@@ -40,16 +40,27 @@ const sha = (file) => createHash('sha256').update(readFileSync(file)).digest('he
 /// identical, except files the registry explicitly records as known differences.
 function identify(dir, integration, known = []) {
   const kind = integration === 'static' ? 'static' : 'packages';
+  const candidates = [];
   for (const manifest of manifests) {
     const differs = [];
+    let present = 0;
     for (const [path, digest] of manifest[kind]) {
       const file = join(dir, path);
-      if (!existsSync(file) || sha(file) !== digest) differs.push(path);
+      // A static release may be vendored in part (a product copies only the files it serves);
+      // every file it does carry must be the release's. Vendored packages must be complete.
+      if (!existsSync(file)) { if (kind === 'packages') differs.push(path); continue; }
+      present += 1;
+      if (sha(file) !== digest) differs.push(path);
     }
-    const unexplained = differs.filter((path) => !known.includes(path));
-    if (!unexplained.length) return { version: manifest.version, differs };
-    if (unexplained.length < manifest[kind].size / 2) return { version: manifest.version, differs, unexplained };
+    if (!present) continue;
+    candidates.push({ version: manifest.version, differs, unexplained: differs.filter((path) => !known.includes(path)), size: manifest[kind].size });
   }
+  // An exact match (every difference explained) wins over any near match; otherwise report
+  // the closest release, with the files that differ.
+  const exact = candidates.find((c) => !c.unexplained.length);
+  if (exact) return { version: exact.version, differs: exact.differs };
+  const near = candidates.filter((c) => c.unexplained.length < c.size / 2).sort((a, b) => a.unexplained.length - b.unexplained.length)[0];
+  if (near) return { version: near.version, differs: near.differs, unexplained: near.unexplained };
   const versionFile = integration === 'static' ? join(dir, 'VERSION') : join(dir, 'core/package.json');
   const claimed = existsSync(versionFile)
     ? (integration === 'static' ? readFileSync(versionFile, 'utf8').trim() : JSON.parse(readFileSync(versionFile, 'utf8')).version)
