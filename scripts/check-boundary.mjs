@@ -26,7 +26,7 @@ const FORBIDDEN = [
 
 // Exact paths only: a new file named theme.js elsewhere is still checked.
 const STORAGE_ALLOWED = new Set(['packages/core/src/theme.js', 'packages/core/classic/stack-ui-core.js']);
-const STORAGE_TYPES = new Set(['packages/react/src/index.d.ts']);
+const STORAGE_TYPES = new Set(['packages/react/src/index.d.ts', 'packages/core/src/theme.d.ts']);
 
 const walk = (dir) => readdirSync(dir).flatMap((name) => {
   const path = join(dir, name);
