@@ -72,3 +72,7 @@ export const shellFamily = Shell({ product: { id: 'feltdb', name: 'FeltDB', home
 export const unlabelled = Checkbox({ checked: true });
 // @ts-expect-error: success is a state, not an alert tone.
 export const successAlert = Alert({ tone: 'positive' });
+// Server components import the theme script from core (no React), typed.
+import { THEME_INIT_SCRIPT as coreScript, type ThemePreference as CorePreference } from '@stack-ui/core/theme';
+export const serverScript: string = coreScript;
+export const corePreference: CorePreference = 'system';
