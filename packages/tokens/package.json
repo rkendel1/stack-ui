@@ -1,7 +1,7 @@
 {
   "name": "@stack-ui/tokens",
-  "version": "0.5.0",
-  "description": "Stack design tokens as CSS custom properties (light and dark, or light only) and JSON.",
+  "version": "0.6.0",
+  "description": "Boundry design-foundation tokens (Stack UI) as CSS custom properties (light and dark, or light only), JSON, company and product identity, and the Boundry mark.",
   "type": "module",
   "license": "UNLICENSED",
   "sideEffects": [
@@ -10,11 +10,14 @@
   "exports": {
     "./tokens.css": "./css/tokens.css",
     "./tokens-light.css": "./css/tokens-light.css",
-    "./tokens.json": "./src/tokens.json"
+    "./tokens.json": "./src/tokens.json",
+    "./brand.json": "./src/brand.json",
+    "./brand/*": "./brand/*"
   },
   "files": [
     "css",
-    "src"
+    "src",
+    "brand"
   ],
   "scripts": {
     "build": "node scripts/build.mjs"

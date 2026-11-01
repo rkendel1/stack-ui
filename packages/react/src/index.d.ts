@@ -196,7 +196,8 @@ export interface ShellNavItem {
   attrs?: Record<string, string>;
 }
 export interface ShellProps extends Passthrough {
-  product: { name: string; homeHref: string; mark?: string };
+  /** `id` is the product's Boundry portfolio id (e.g. "feltdb"): it sets the product accent, links to boundry.company and lists sibling products by default. */
+  product: { id?: string; name: string; homeHref: string; mark?: string };
   navigation: ShellNavItem[];
   /** Product-owned context control, e.g. Compute's Work/Manage mode. */
   context?: ReactNode;
@@ -209,7 +210,11 @@ export interface ShellProps extends Passthrough {
   activityHref?: string;
   activityLabel?: string;
   activityCurrent?: boolean;
-  otherProducts?: Array<{ id: string; name: string; href: string }>;
+  /** Defaults to the other Boundry portfolio products when `product.id` is in the portfolio; [] shows none. */
+  otherProducts?: Array<{ id?: string; name: string; href: string }>;
+  otherProductsLabel?: string;
+  /** false hides the "A Boundry product" link and the About Boundry entry. */
+  family?: boolean;
   /**
    * For client-side routing: called with the href of an ordinary left click on
    * the product link or a navigation item, instead of a page load. Clicks with
@@ -232,6 +237,8 @@ export declare function Pagination(props: PaginationProps): ReactElement;
 export declare function Shell(props: ShellProps): ReactElement;
 
 export declare const THEME_STORAGE_KEY: string;
+/** Script text for a pre-rendered page's <head>: applies the stored theme before first paint. */
+export declare const THEME_INIT_SCRIPT: string;
 export declare const THEME_PREFERENCES: readonly ThemePreference[];
 type StorageScope = { localStorage?: Storage } | typeof globalThis;
 export declare function readThemePreference(scope?: StorageScope): ThemePreference;
@@ -401,3 +408,114 @@ export interface EvidenceSummaryProps extends Passthrough {
   recordedAt?: string | number | Date;
 }
 export declare function EvidenceSummary(props: EvidenceSummaryProps): ReactElement;
+
+// ---- Notices, choices and history (0.6.0) ------------------------------------
+
+export interface AlertProps extends Passthrough {
+  /** Information is not a state: info, attention or critical only. */
+  tone?: 'info' | 'attention' | 'critical';
+  title?: ReactNode;
+  children?: ReactNode;
+  actions?: ReactNode;
+}
+export interface CheckboxProps extends Passthrough {
+  id?: string;
+  name?: string;
+  value?: string;
+  label: ReactNode;
+  hint?: ReactNode;
+  error?: ReactNode;
+  checked?: boolean;
+  required?: boolean;
+  disabled?: boolean;
+  onChange?: (checked: boolean) => void;
+}
+export interface FieldGroupProps extends Passthrough {
+  id?: string;
+  legend: ReactNode;
+  hint?: ReactNode;
+  error?: ReactNode;
+  required?: boolean;
+  disabled?: boolean;
+  children?: ReactNode;
+}
+export interface ActivityItem {
+  id?: string;
+  /** When it happened; missing renders "Time not recorded", never a guess. */
+  at?: string | number | Date;
+  actor?: ReactNode;
+  summary: ReactNode;
+  /** e.g. a StatusIndicator for the event's outcome. */
+  status?: ReactNode;
+  detail?: ReactNode;
+  href?: string;
+  attrs?: Record<string, string>;
+}
+export interface ActivityTimelineProps extends Passthrough {
+  label?: string;
+  items: ActivityItem[];
+  loading?: boolean;
+  error?: string | ErrorPanelProps;
+  emptyTitle?: string;
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+  /** Older activity exists: say so rather than implying the list is complete. */
+  hasMore?: boolean;
+  moreHref?: string;
+  moreLabel?: string;
+  onMore?: () => void;
+  what?: string;
+}
+export declare function Alert(props: AlertProps): ReactElement;
+export declare function Checkbox(props: CheckboxProps): ReactElement;
+export declare function FieldGroup(props: FieldGroupProps): ReactElement;
+export declare function ActivityTimeline(props: ActivityTimelineProps): ReactElement;
+
+// ---- Brand and marketing foundation (0.6.0) -----------------------------------
+
+export type PortfolioId = 'feltdb' | 'feltkit' | 'appboundry' | 'authboundry' | 'agentboundry' | 'appport';
+export interface PortfolioProduct { id: PortfolioId; name: string; mark: string; category: string; href: string }
+export declare const PORTFOLIO: {
+  readonly company: { name: string; href: string; tagline: string; family: string };
+  readonly products: readonly PortfolioProduct[];
+};
+export declare function portfolioProduct(id: string): PortfolioProduct | null;
+
+export interface BrandMarkProps extends Passthrough {
+  /** Unique per page: the gradient is referenced by id. */
+  idPrefix?: string;
+  /** Accessible name; without it the mark is decorative. */
+  title?: string;
+}
+export interface ThemeSwitchProps extends Passthrough {
+  id?: string;
+  label?: string;
+  preference?: ThemePreference;
+  onChange?: (preference: ThemePreference) => void;
+}
+export interface SiteLink { label: ReactNode; href: string; current?: boolean; attrs?: Record<string, string> }
+export interface SiteHeaderProps extends Passthrough {
+  /** A product site: its portfolio id, optionally overriding name or mark. Omit for the Boundry company site. */
+  product?: { id: PortfolioId | string; name?: string; mark?: string };
+  homeHref?: string;
+  /** The product's own logo; defaults to its accent mark (or the Boundry mark on the company site). */
+  logo?: ReactNode;
+  navigation?: SiteLink[];
+  navigationLabel?: string;
+  theme?: { preference: ThemePreference; onChange?: (preference: ThemePreference) => void } | null;
+  actions?: ReactNode;
+  mainId?: string;
+  skipLabel?: string;
+}
+export interface SiteFooterProps extends Passthrough {
+  id?: string;
+  product?: { id: PortfolioId | string; name?: string };
+  tagline?: ReactNode;
+  columns?: Array<{ title: string; links: SiteLink[] }>;
+  year?: number | string;
+  owner?: string;
+  legal?: ReactNode;
+}
+export declare function BrandMark(props: BrandMarkProps): ReactElement;
+export declare function ThemeSwitch(props: ThemeSwitchProps): ReactElement;
+export declare function SiteHeader(props: SiteHeaderProps): ReactElement;
+export declare function SiteFooter(props: SiteFooterProps): ReactElement;

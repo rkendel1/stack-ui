@@ -70,5 +70,5 @@ test('the stateless build names no browser storage and has no theme preference',
   const full = load();
   for (const name of Object.keys(StackUI)) assert.ok(name in full, `${name} is in the full build`);
   assert.deepEqual(Object.keys(full).filter((name) => !(name in StackUI)).sort(),
-    ['THEME_PREFERENCES', 'THEME_STORAGE_KEY', 'applyThemePreference', 'initThemePreference', 'readThemePreference', 'setThemePreference', 'storeThemePreference']);
+    ['THEME_INIT_SCRIPT', 'THEME_PREFERENCES', 'THEME_STORAGE_KEY', 'applyThemePreference', 'initThemePreference', 'readThemePreference', 'setThemePreference', 'storeThemePreference']);
 });

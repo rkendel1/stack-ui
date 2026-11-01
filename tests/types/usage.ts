@@ -55,3 +55,20 @@ export const evidence = EvidenceSummary({
 });
 // @ts-expect-error: a claim's verification is one of the four states.
 export const badClaim = EvidenceSummary({ claims: [{ label: 'X', verification: 'probably' }] });
+
+// 0.6.0: brand, marketing and new components.
+import { Alert, Checkbox, FieldGroup, ActivityTimeline, SiteHeader, SiteFooter, ThemeSwitch, BrandMark, PORTFOLIO, THEME_INIT_SCRIPT } from '@stack-ui/react';
+export const alert = Alert({ tone: 'attention', title: 'Read only', children: 'Writes are paused.' });
+export const box = Checkbox({ label: 'Include archived', checked: true, onChange: (checked: boolean) => checked });
+export const group = FieldGroup({ legend: 'Scopes', children: box });
+export const timeline = ActivityTimeline({ items: [{ at: '2026-10-01T00:00:00Z', summary: 'Grant created', actor: 'ops' }], hasMore: true });
+export const header = SiteHeader({ product: { id: 'feltdb' }, navigation: [{ label: 'Docs', href: '/docs' }], theme: { preference: 'system' } });
+export const footer = SiteFooter({ product: { id: 'feltkit' }, columns: [{ title: 'Product', links: [{ label: 'Docs', href: '/docs' }] }], year: 2026 });
+export const themeSwitch = ThemeSwitch({ preference: 'dark' });
+export const mark = BrandMark({ title: 'Boundry' });
+export const company: string = PORTFOLIO.company.href + THEME_INIT_SCRIPT;
+export const shellFamily = Shell({ product: { id: 'feltdb', name: 'FeltDB', homeHref: '/' }, navigation: [], family: true });
+// @ts-expect-error: a checkbox needs its visible label.
+export const unlabelled = Checkbox({ checked: true });
+// @ts-expect-error: success is a state, not an alert tone.
+export const successAlert = Alert({ tone: 'positive' });

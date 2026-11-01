@@ -2,7 +2,7 @@
 // named in FUNCTION_PROPS are `true` here, at any depth, and are replaced by a
 // handler on each side, since functions cannot cross into the browser.
 export const FUNCTION_PROPS = ['onClick', 'onRetry', 'onSelect', 'onSort', 'onChange', 'onSubmit', 'onClear', 'onPrevious', 'onNext',
-  'onClose', 'onConfirm', 'onCancel', 'onTypedChange'];
+  'onClose', 'onConfirm', 'onCancel', 'onTypedChange', 'onMore'];
 
 export const FIXTURES = [
   ['StatusIndicator', { field: 'compute.health', value: 'healthy' }],
@@ -98,6 +98,31 @@ export const FIXTURES = [
     { label: 'Owner', value: 'ops' },
   ] }],
   ['EvidenceSummary', { title: 'Checks', headingLevel: 3, claims: [{ label: 'Hash', value: 'ok', verification: 'verified', checks: ['Hash'] }, { label: 'Size', value: 0, verification: 'verified', checks: ['Size'] }] }],
+  ['Shell', { product: { id: 'feltdb', name: 'FeltDB', homeHref: '/', mark: 'FD' }, mainId: 'family', navigation: [{ id: 'o', label: 'Overview', href: '/' }] }],
+  ['Alert', { tone: 'info', title: 'Maintenance window', children: 'Writes pause at 02:00 UTC.' }],
+  ['Alert', { tone: 'attention', title: 'Read only', children: 'The authority lease is held elsewhere.', attrs: { 'data-x': '1' } }],
+  ['Alert', { tone: 'critical', title: 'Authority unavailable', children: 'Changes cannot be made.' }],
+  ['Alert', { tone: 'positive', children: 'Not a tone: falls back to info.' }],
+  ['Checkbox', { id: 'archived', name: 'archived', label: 'Include archived', hint: 'Archived records are read-only.' }],
+  ['Checkbox', { id: 'terms', name: 'terms', label: 'I understand', required: true, checked: true, error: 'Required to continue', onChange: true }],
+  ['Checkbox', { id: 'locked', label: 'Locked', disabled: true, checked: true }],
+  ['FieldGroup', { id: 'scopes', legend: 'Scopes', hint: 'Choose at least one.', error: 'Select a scope', required: true }],
+  ['ActivityTimeline', { items: [
+    { id: 'a', at: '2026-10-12T22:00:00Z', summary: 'Grant created', actor: 'ops@example.com', href: '#grant' },
+    { id: 'b', at: 'not-a-time', summary: 'Policy evaluated' },
+    { id: 'c', summary: 'Imported record' },
+  ], hasMore: true, moreHref: '#older' }],
+  ['ActivityTimeline', { items: [], loading: true }],
+  ['ActivityTimeline', { items: [], error: 'The audit log did not answer.' }],
+  ['ActivityTimeline', { items: [] }],
+  ['ActivityTimeline', { items: [{ at: '2026-10-12T22:00:00Z', summary: 'Run started' }], hasMore: true, onMore: true }],
+  ['BrandMark', { idPrefix: 'gallery-mark' }],
+  ['BrandMark', { idPrefix: 'gallery-mark-titled', title: 'Boundry' }],
+  ['ThemeSwitch', { id: 'gallery-theme', preference: 'dark', onChange: true }],
+  ['SiteHeader', { mainId: 'company', navigation: [{ label: 'Ecosystem', href: '/ecosystem/', current: true }, { label: 'About', href: '/about/' }], theme: { preference: 'system', onChange: true } }],
+  ['SiteHeader', { mainId: 'product', product: { id: 'feltdb' }, navigation: [{ label: 'Docs', href: '/docs' }], actions: 'Sign in' }],
+  ['SiteFooter', { id: 'f-company', tagline: 'Infrastructure for applications and agents.', year: 2026, columns: [{ title: 'Company', links: [{ label: 'About', href: '/about/' }] }] }],
+  ['SiteFooter', { id: 'f-product', product: { id: 'feltkit' }, year: 2026, legal: 'MIT licensed', columns: [{ title: 'Product', links: [{ label: 'Docs', href: '/docs' }] }] }],
 ];
 
 export const COMPONENT_NAMES = [
@@ -105,6 +130,7 @@ export const COMPONENT_NAMES = [
   'ErrorPanel', 'MetadataList', 'ResourceIdentity', 'PageHeader', 'Button',
   'Breadcrumbs', 'Tabs', 'TabPanel', 'DataTable', 'FilterBar', 'Pagination', 'Shell',
   'TextField', 'Select', 'Form', 'Dialog', 'ConfirmAction', 'EvidenceSummary',
+  'Alert', 'Checkbox', 'FieldGroup', 'ActivityTimeline', 'BrandMark', 'ThemeSwitch', 'SiteHeader', 'SiteFooter',
 ];
 
 /// Replaces `true` placeholders with `handler`, at any depth. The same source
