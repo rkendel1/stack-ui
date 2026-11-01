@@ -242,7 +242,7 @@ test("a product's bare-element styles cannot reshape the shared header and foote
   const { browser, page } = await openPage({ width: 320 });
   try {
     // Rules of the kind real product stylesheets contain (AppBoundry's styles.css).
-    await page.addStyleTag({ content: 'nav{display:grid;gap:6px} nav a{text-transform:capitalize;padding:11px 13px;border-left:2px solid transparent} footer{text-align:center} footer p{text-align:right}' });
+    await page.addStyleTag({ content: 'nav{display:grid;gap:6px} nav a{display:flex;align-items:center;text-transform:capitalize;padding:11px 13px;border-left:2px solid transparent} footer{text-align:center;padding:30px 0;font:9px monospace} footer p{text-align:right} header{height:72px;display:flex}' });
     const out = await page.evaluate(() => {
       document.body.style.padding = '0';
       const root = document.getElementById('root');
@@ -256,6 +256,9 @@ test("a product's bare-element styles cannot reshape the shared header and foote
         padding: getComputedStyle(link).paddingLeft,
         align: getComputedStyle(footer.querySelector('.stack-site-footer__tagline') || footer.querySelector('.stack-site-footer__legal')).textAlign,
         family: getComputedStyle(footer.querySelector('.stack-site-footer__family')).display,
+        productAlign: getComputedStyle(footer.querySelector('.stack-site-footer__product')).alignItems,
+        footerPadding: getComputedStyle(footer).paddingTop,
+        headerHeight: getComputedStyle(document.querySelector('.stack-site-header')).height,
       };
     });
     assert.ok(out.overflow <= 0, `page scrolls horizontally by ${out.overflow}px`);
@@ -263,6 +266,9 @@ test("a product's bare-element styles cannot reshape the shared header and foote
     assert.equal(out.padding, '0px');
     assert.equal(out.align, 'left');
     assert.equal(out.family, 'block');
+    assert.equal(out.productAlign, 'flex-start');
+    assert.equal(out.footerPadding, '0px');
+    assert.notEqual(out.headerHeight, '72px');
   } finally {
     await browser.close();
   }
