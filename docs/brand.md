@@ -58,11 +58,10 @@ product accents never take over actions.
 | FeltKit | `feltkit` | `#0b7f6e` | `#3fd8c4` |
 | AppBoundry | `appboundry` | `#6a3fd0` | `#b49cf5` |
 | AuthBoundry | `authboundry` | `#8a4b36` | `#e09a80` |
-| AgentBoundry | `agentboundry` | `#4f4c87` | `#a9a6e3` |
 | AppPort | `appport` | `#2f6584` | `#7fb3d1` |
 
 FeltDB (green), FeltKit (teal) and AppBoundry (violet) take their accent from their own logo and website
-(D30). AuthBoundry, AgentBoundry and AppPort have no accent of their own yet, so they keep the values first
+(D30). AuthBoundry and AppPort have no accent of their own yet, so they keep the values first
 published on boundry.company. All values live here. boundry.company reads them from the vendored release.
 
 - Set `data-stack-product="<id>"` on `<html>` (a whole site or app) or on any element. Inside it,
@@ -123,9 +122,8 @@ supplies the frame and the vocabulary of states. Per-product UX direction is in
 | Authenticated product UI (shell) | "A Boundry product" link in the bar; "Other Boundry products" with every sibling and "About Boundry" in the navigation | `Shell({ product: { id } })` (opt out with `family: false`) |
 
 **Links are only to verified destinations.** On 2026-11-01, boundry.company, feltdb.com, getfeltkit.com,
-appboundry.com and authboundry.com resolved and served HTTPS. agentboundry.com did not resolve, and AppPort
-has no public site. Those two link to their entries on boundry.company/ecosystem until their own sites
-exist. Changing a link is a one-line edit in `packages/core/src/brand.js`.
+appboundry.com and authboundry.com resolved and served HTTPS. AppPort has no public site, so it links to
+its entry on boundry.company/ecosystem until it has one. Changing a link is a one-line edit in `packages/core/src/brand.js`.
 
 ## 8. Iconography
 

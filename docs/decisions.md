@@ -218,10 +218,10 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
 ### D25 — The portfolio links only to verified destinations — Decided (0.6.0)
 - **Decision:** a product's `href` is its own domain only where that domain
   was checked to serve HTTPS (2026-11-01: feltdb.com, getfeltkit.com,
-  appboundry.com, authboundry.com, boundry.company). AgentBoundry
-  (agentboundry.com did not resolve) and AppPort (no site) link to their
-  boundry.company ecosystem entries.
-- **Revisit when:** either product publishes a site. The change is one line
+  appboundry.com, authboundry.com, boundry.company). AppPort (no site)
+  links to its boundry.company ecosystem entry. (AgentBoundry, first listed
+  here, is not a Boundry product and was removed, owner 2026-11-01.)
+- **Revisit when:** AppPort publishes a site. The change is one line
   in `brand.js`.
 
 ### D26 — ActionMenu, Drawer, Skeleton and Notification stay deferred — Decided (0.6.0)
@@ -267,8 +267,8 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
 - **Decision:** FeltDB's accent is green (`#18754a` / `#42e58d`, its site's
   `--green` and text green), FeltKit's is teal (`#0b7f6e` / `#3fd8c4`, the
   teal of its logo and site), and AppBoundry's is violet (`#6a3fd0` /
-  `#b49cf5`, from its logo). AuthBoundry, AgentBoundry and AppPort keep
-  boundry.company's values, because they have no accent of their own.
+  `#b49cf5`, from its logo). AuthBoundry and AppPort keep boundry.company's
+  values, because they have no accent of their own.
 - **Why:** the brief says each product keeps its own accent. The muted
   umber, ochre and forest values on boundry.company matched none of the
   real logos (blue-teal, blue-teal-green, and navy-blue-violet). FeltKit's

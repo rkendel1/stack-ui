@@ -230,9 +230,45 @@ test('the shell of a portfolio product links to Boundry and its siblings, never 
     assert.equal(out.accent, 'appboundry');
     assert.equal(out.family, 'https://boundry.company/');
     assert.ok(!out.others.includes('AppBoundry'));
-    assert.deepEqual(out.others, ['FeltDB', 'FeltKit', 'AuthBoundry', 'AgentBoundry', 'AppPort', 'About Boundry']);
+    assert.deepEqual(out.others, ['FeltDB', 'FeltKit', 'AuthBoundry', 'AppPort', 'About Boundry']);
     assert.equal(out.none, null);
     assert.equal(out.compute, null, 'a product outside the portfolio is unchanged');
+  } finally {
+    await browser.close();
+  }
+});
+
+test("a product's bare-element styles cannot reshape the shared header and footer", async () => {
+  const { browser, page } = await openPage({ width: 320 });
+  try {
+    // Rules of the kind real product stylesheets contain (AppBoundry's styles.css).
+    await page.addStyleTag({ content: 'nav{display:grid;gap:6px} nav a{display:flex;align-items:center;text-transform:capitalize;padding:11px 13px;border-left:2px solid transparent} footer{text-align:center;padding:30px 0;font:9px monospace} footer p{text-align:right} header{height:72px;display:flex}' });
+    const out = await page.evaluate(() => {
+      document.body.style.padding = '0';
+      const root = document.getElementById('root');
+      root.before(window.StackUI.dom.SiteHeader({ mainId: 'root', product: { id: 'appboundry' }, navigation: [{ label: 'Why AppBoundry', href: '#why' }], theme: { preference: 'system' } }));
+      root.after(window.StackUI.dom.SiteFooter({ product: { id: 'appboundry' }, year: 2026, columns: [{ title: 'Account', links: [{ label: 'Sign up with email', href: '/a' }] }] }));
+      const footer = document.querySelector('.stack-site-footer');
+      const link = footer.querySelector('.stack-site-footer__link');
+      return {
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        transform: getComputedStyle(link).textTransform,
+        padding: getComputedStyle(link).paddingLeft,
+        align: getComputedStyle(footer.querySelector('.stack-site-footer__tagline') || footer.querySelector('.stack-site-footer__legal')).textAlign,
+        family: getComputedStyle(footer.querySelector('.stack-site-footer__family')).display,
+        productAlign: getComputedStyle(footer.querySelector('.stack-site-footer__product')).alignItems,
+        footerPadding: getComputedStyle(footer).paddingTop,
+        headerHeight: getComputedStyle(document.querySelector('.stack-site-header')).height,
+      };
+    });
+    assert.ok(out.overflow <= 0, `page scrolls horizontally by ${out.overflow}px`);
+    assert.equal(out.transform, 'none');
+    assert.equal(out.padding, '0px');
+    assert.equal(out.align, 'left');
+    assert.equal(out.family, 'block');
+    assert.equal(out.productAlign, 'flex-start');
+    assert.equal(out.footerPadding, '0px');
+    assert.notEqual(out.headerHeight, '72px');
   } finally {
     await browser.close();
   }

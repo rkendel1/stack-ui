@@ -1,6 +1,9 @@
+'use client';
 // React 18/19 binding for @stack-ui/core. Renders the same view trees as
 // @stack-ui/core/dom, so a component's DOM is identical in React and
 // framework-free pages. No build step: plain ES modules over React.createElement.
+// 'use client' lets React Server Components frameworks (Next.js) import it
+// from server components: the components still render on the server.
 import { cloneElement, createElement, Fragment, isValidElement, useEffect, useRef, useState } from 'react';
 import { COMPONENTS, isTree } from '@stack-ui/core/view';
 

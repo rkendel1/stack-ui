@@ -19,10 +19,10 @@ in depth.
 | AppPort | Protocol, no site | `appport` | — | npm | none (`appport.dev` is used only as a schema namespace) | — |
 | Compute | Environment control plane | `compute:crates/compute-environment/ui` | vanilla, embedded in the binary | binary | — | 0.2.0 |
 | AppWorks | Workspace pages | `appworks:packages/workspace/ui` | vanilla | package | — | 0.5.0 |
-| AgentBoundry | — | none found | — | — | agentboundry.com did **not** resolve | — |
 
-**Not changed by this programme:** `stack-agent` is a Rust command-line tool with no web UI, and nothing in it
-names AgentBoundry. `appport` has no UI. `compute` and the back-end-only Fly services have no marketing
+**Not a product:** AgentBoundry was listed on boundry.company but is not a Boundry product (owner,
+2026-11-01); it has been removed from the portfolio. **Not changed by this programme:** `stack-agent` is a
+Rust command-line tool with no web UI. `appport` has no UI. `compute` and the back-end-only Fly services have no marketing
 surface. Back-end-only repositories were not modified.
 
 ## 2. Findings

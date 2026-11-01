@@ -53,16 +53,6 @@ Accents and ids are in `docs/brand.md` §3.2. Surfaces and their current adoptio
 - **Rule:** trust comes from explicitness. Every allow or deny names who, what, which policy and when. An
   authority timeout is an unknown outcome, never a denial.
 
-## AgentBoundry — agent execution (`agentboundry`, indigo)
-
-- **Status:** no repository implements it and no site exists (assessment §2). The identity and accent are
-  reserved.
-- **Direction when it has a UI:** agents, sessions and runs, decisions, tool invocations, capabilities,
-  recovery, observability, execution evidence.
-- **Rule:** a model's proposed action and an executed action are different records. Proposals render as
-  *proposed* (progress or neutral). Only the execution environment's own report renders as *completed*, and
-  only its checks render as *verified*.
-
 ## AppPort — capability discovery (`appport`, steel blue)
 
 - **Status:** a protocol and libraries, with no public site (assessment §2). AppPort services ships packaged
