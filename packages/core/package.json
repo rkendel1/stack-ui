@@ -15,7 +15,10 @@
     "./core.css": "./src/core.css",
     "./classic": "./classic/stack-ui-core.js",
     "./classic-stateless": "./classic/stack-ui-core-stateless.js",
-    "./theme": "./src/theme.js",
+    "./theme": {
+      "types": "./src/theme.d.ts",
+      "default": "./src/theme.js"
+    },
     "./brand": "./src/brand.js",
     "./html": "./src/html.js",
     "./conformance": "./bin/conformance.mjs"
