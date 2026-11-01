@@ -263,6 +263,22 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   commit the master artwork (SVG preferred) and the wordmark, and confirm
   the dark-background (reversed) gradient, which was derived, not supplied.
 
+### D30 — Product accents follow each product's existing identity — Decided, owner to confirm (0.6.0)
+- **Decision:** FeltDB's accent is green (`#18754a` / `#42e58d`, its site's
+  `--green` and text green), FeltKit's is teal (`#0b7f6e` / `#3fd8c4`, the
+  teal of its logo and site), and AppBoundry's is violet (`#6a3fd0` /
+  `#b49cf5`, from its logo). AuthBoundry, AgentBoundry and AppPort keep
+  boundry.company's values, because they have no accent of their own.
+- **Why:** the brief says each product keeps its own accent. The muted
+  umber, ochre and forest values on boundry.company matched none of the
+  real logos (blue-teal, blue-teal-green, and navy-blue-violet). FeltKit's
+  blue primary was not chosen because it equals the company blue, so the
+  product would be indistinguishable from Boundry. AppBoundry's site cyan
+  was not chosen because it is nearly identical to FeltKit's teal; violet,
+  also from its logo, keeps the two apart.
+- **Owner to confirm:** these are identity choices. Changing one is a patch
+  release, gated by the contrast tests.
+
 ## Verified facts versus unresolved questions
 
 | Verified (see audit citations) | Unresolved |

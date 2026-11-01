@@ -54,15 +54,16 @@ product accents never take over actions.
 
 | Product | id | Light | Dark |
 |---|---|---|---|
-| FeltDB | `feltdb` | `#7a5c3e` | `#c9a47e` |
-| FeltKit | `feltkit` | `#7a6a24` | `#d6c27a` |
-| AppBoundry | `appboundry` | `#3d6b4f` | `#8cc4a1` |
+| FeltDB | `feltdb` | `#18754a` | `#42e58d` |
+| FeltKit | `feltkit` | `#0b7f6e` | `#3fd8c4` |
+| AppBoundry | `appboundry` | `#6a3fd0` | `#b49cf5` |
 | AuthBoundry | `authboundry` | `#8a4b36` | `#e09a80` |
 | AgentBoundry | `agentboundry` | `#4f4c87` | `#a9a6e3` |
 | AppPort | `appport` | `#2f6584` | `#7fb3d1` |
 
-These are the values the owner first published in `rkendel1/boundry` `content/products.json`. They now live
-here, and that file is checked against them.
+FeltDB (green), FeltKit (teal) and AppBoundry (violet) take their accent from their own logo and website
+(D30). AuthBoundry, AgentBoundry and AppPort have no accent of their own yet, so they keep the values first
+published on boundry.company. All values live here. boundry.company reads them from the vendored release.
 
 - Set `data-stack-product="<id>"` on `<html>` (a whole site or app) or on any element. Inside it,
   `--stack-product-accent` and `--stack-product-accent-fg` take the product's values for the current theme.

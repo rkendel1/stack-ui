@@ -8,7 +8,7 @@ same one (contract §9).
 Accents and ids are in `docs/brand.md` §3.2. Surfaces and their current adoption are in
 `docs/portfolio-assessment.md`.
 
-## FeltDB — durable state (`feltdb`, umber)
+## FeltDB — durable state (`feltdb`, green)
 
 - **Optimize for:** inspecting data, collections and schema; operations and history; integrity and evidence;
   administrative workflows.
@@ -19,7 +19,7 @@ Accents and ids are in `docs/brand.md` §3.2. Surfaces and their current adoptio
   data-specific visualizations.
 - **Voice:** exact and evidential. Say *committed* or *verified*, never "saved!".
 
-## FeltKit — integrated developer platform (`feltkit`, ochre)
+## FeltKit — integrated developer platform (`feltkit`, teal)
 
 - **Optimize for:** projects, creating applications, configuration, services, development loops, builds,
   deployment, managed infrastructure.
@@ -31,7 +31,7 @@ Accents and ids are in `docs/brand.md` §3.2. Surfaces and their current adoptio
   dashboard.
 - **Voice:** direct and imperative ("Deploy", "Connect FeltDB").
 
-## AppBoundry — application boundaries (`appboundry`, green)
+## AppBoundry — application boundaries (`appboundry`, violet)
 
 - **Optimize for:** application boundaries, portability, compatibility, conformance, artifact inspection,
   verification evidence.
