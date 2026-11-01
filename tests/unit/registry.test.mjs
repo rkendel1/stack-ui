@@ -36,3 +36,22 @@ test('a vendored copy that differs from its claimed release fails the check', { 
   appendFileSync(join(repo, 'vendor/stack-ui/core.css'), '\n/* local edit */\n');
   assert.throws(() => run(root), /appport-services-pages: the vendored copy (is not release 0\.6\.0: [^\n]*core\.css|claims 0\.6\.0 but matches no release)/);
 });
+
+test('a static release vendored in part is identified by the files it carries', { skip: !existsSync(join(here, 'release')) && 'needs node scripts/package-static.mjs' }, () => {
+  const version = JSON.parse(readFileSync(join(here, 'packages/core/package.json'), 'utf8')).version;
+  const releaseDir = join(here, 'release', `stack-ui-static-${version}`);
+  if (!existsSync(releaseDir)) return;
+  const root = mkdtempSync(join(tmpdir(), 'registry-subset-'));
+  const dir = join(root, 'appport-services/vendor/stack-ui');
+  mkdirSync(dir, { recursive: true });
+  for (const file of ['tokens.css', 'core.css', 'stack-ui-core-stateless.js']) cpSync(join(releaseDir, file), join(dir, file));
+  mkdirSync(join(root, 'appport-services/tests/browser'), { recursive: true });
+  mkdirSync(join(root, 'appport-services/ui'), { recursive: true });
+  writeFileSync(join(root, 'appport-services/tests/browser/management-pages.browser.ts'), '// Boundry product surface');
+  writeFileSync(join(root, 'appport-services/ui/management.js'), "product: { id: 'appport' }");
+  execFileSync('git', ['init', '-q', join(root, 'appport-services')]);
+  // The registry claims 0.6.0 for appport-services; a subset of another release must be reported as that release.
+  const result = (() => { try { return run(root); } catch (error) { return String(error.stdout) + String(error.stderr); } })();
+  if (version === '0.6.0') assert.match(result, /every claim matches/);
+  else assert.match(result, new RegExp(`registry says 0\\.6\\.0, the repository has ${version.replace(/\./g, '\\.')}`));
+});

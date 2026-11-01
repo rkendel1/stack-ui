@@ -32,46 +32,62 @@ node scripts/check-registry.mjs --root <directory with the product checkouts> --
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | boundry.company (static site) | `boundry` | **adopted** | 0.6.0 | static | b0cffd3 | wired | system, light, dark (stored) | axe clean in light, dark, forced dark at 1280 and 320px | no page-level horizontal scroll at 320px | contact email placeholder; product statuses unset; no founder portrait | none |
 | getfeltkit.com (Next.js) | `feltkit-website-request` | **adopted** | 0.6.0 (differs: core/package.json, core/src/theme.d.ts) | vendored-packages | 64f4c54 | wired | system, light, dark (stored) | axe: 2 pre-existing contrast findings, none introduced | verified at 390px | contrast: .agent-step titles, documents hero links | re-vendor the released foundation (copy predates the theme type declarations; runtime files identical) |
-| FeltKit dashboard /_feltkit/ (packages/sdk/dashboard) | `feltkit` | **partial** | 0.6.0 | vendored-packages | a1db976 | wired | system, light, dark (stored) | axe clean on 5 screens, light and dark | not verified | test: create-feltkit starter missing (fails on main) | screen-level tables, forms and badges; Drawer (D26) |
+| FeltKit dashboard /_feltkit/ (packages/sdk/dashboard) | `feltkit` | **partial** | 0.6.0 | vendored-packages | a1db976 | wired | system, light, dark (stored) | axe clean on 5 screens, light and dark | not verified | test: create-feltkit starter missing (fails on main) | screen-level tables, forms and badges; Drawer (D26); responsive verification |
 | authboundry.com marketing (apps/web) | `authboundry` | **adopted** | 0.6.0 (differs: core/package.json, core/src/theme.d.ts) | vendored-packages | f0578e8 | wired | system, light, dark (stored) | axe: 4 pre-existing content contrast findings, none introduced | no overflow at 320px | contrast: text-green-600, text-slate-500 on home and product pages | re-vendor the released foundation (copy predates the theme type declarations; runtime files identical) |
 | AuthBoundry portal (apps/web) | `authboundry` | **partial** | 0.6.0 (differs: core/package.json, core/src/theme.d.ts) | vendored-packages | f0578e8 | wired | system, light, dark (stored) | portal browser suite 12/12 incl. axe light and dark | sidebar fixed-width (D18) | none known | portal sidebar is its own, not Shell (D18); re-vendor the released foundation (copy predates the theme type declarations; runtime files identical) |
-| appboundry.com marketing (apps/cloud-platform) | `appboundry` | **adopted** | 0.6.0 | static | fe5834f | wired | system, light, dark (stored) | axe clean light, dark, forced dark, 320px | no overflow at 320px | workspace install fails on main (pnpm-lock out of date for @feltdb/core) | merge PR |
-| AppBoundry cloud portal (public/app.js) | `appboundry` | **partial** | 0.6.0 | static | fe5834f | wired | system, light, dark (Settings → Appearance) | portal browser suite not run (workspace install blocked) | not verified | portal browser suite blocked by out-of-date lockfile | Boundry family link in the portal sidebar; run the portal browser suite |
+| appboundry.com marketing (apps/cloud-platform) | `appboundry` | **adopted** | 0.6.0 | static | fe5834f | wired | system, light, dark (stored) | axe clean light, dark, forced dark, 320px | no overflow at 320px | workspace install fails on main (pnpm-lock out of date for @feltdb/core) | merge rkendel1/appboundry#50 |
+| AppBoundry cloud portal (public/app.js) | `appboundry` | **partial** | 0.6.0 | static | fe5834f | wired | system, light, dark (Settings → Appearance) | portal browser suite not run (workspace install blocked) | not verified | portal browser suite blocked by out-of-date lockfile | merge rkendel1/appboundry#50; Boundry family link in the portal sidebar; run the portal browser suite once the lockfile is fixed |
 | AppPort services management pages | `appport-services` | **adopted** | 0.6.0 | static | 6461eba | wired | system, light, dark (per page, never stored by design) | axe clean light and dark at 1280 and 640px | no overflow at 640px | none known | none |
-| feltdb.com homepage (website/) | `flow_db` | **adopted** | 0.6.0 | vendored-packages | 0facbd9 | wired | system, light, dark (stored) | axe clean at 1280px light, dark, forced dark | 64px overflow at 320px (pre-existing code samples) | 320px overflow and unfocusable code scroll regions | none for the homepage |
-| feltdb.com blog, docs, playground (website/) | `flow_db` | **not-adopted** | — | none | 0facbd9 | none | light only | not verified | not verified | — | family footer, themes |
-| FeltDB Studio (packages/studio) | `flow_db` | **partial** | 0.2.0 (no manifest: unverified) | vendored-packages | 0facbd9 | none | light only (tokens-light.css) | not verified here | not verified | — | upgrade to 0.6, both themes, Boundry family |
-| Hosted Studio, app, admin (website/app/studio, app, admin) | `flow_db` | **not-adopted** | — | none | 0facbd9 | none | light only | not verified | not verified | — | see FeltDB Studio decision (D7) |
-| Compute environment UI (crates/compute-environment/ui) | `compute` | **partial** | 0.2.0 (no manifest: unverified) | static | 0d5e5f4 | none | system (OS) | Compute's own e2e suite | not verified | — | upgrade to 0.6 |
-| AppWorks workspace pages (packages/workspace/ui) | `appworks` | **partial** | 0.5.0 (no manifest: unverified) | static | 1300c33 | none | system | not verified here | not verified | — | upgrade to 0.6 |
-| AppWorks recipe studio (packages/recipe-studio/ui) | `appworks` | **not-adopted** | — | none | 1300c33 | none | system (own tokens) | not verified | not verified | — | adopt |
+| feltdb.com homepage (website/) | `flow_db` | **adopted** | 0.6.0 | vendored-packages | a0e15e3 | wired | system, light, dark (stored) | axe clean at 1280px light, dark, forced dark | 64px overflow at 320px (pre-existing code samples) | 320px overflow and unfocusable code scroll regions | none for the homepage |
+| feltdb.com blog, docs, playground (website/) | `flow_db` | **not-adopted** | — | none | a0e15e3 | none | light only | not verified | not verified | — | family footer, themes |
+| FeltDB Studio (packages/studio) | `flow_db` | **adopted** | 0.6.1 | vendored-packages | a0e15e3 | wired | standalone: system, light, dark (stored); embedded StudioApp: light only by design | browser suite 3/3 incl. axe on Overview and State, light and dark system | not verified | — | merge rkendel1/flow_db#436 (after rkendel1/stack-ui#12) |
+| Hosted Studio, app, admin (website/app/studio, app, admin) | `flow_db` | **blocked** | — | none | a0e15e3 | none | light only | not verified | not verified | — | owner decision D7: move the hosted Studio onto @feltdb/studio, or adopt it in place (a separate 5,000-line implementation) |
+| Compute environment UI (crates/compute-environment/ui) | `compute` | **adopted** | 0.6.1 | static | 29b2bec | wired | system, light, dark (stored) | compute-ui-e2e 13/16; failures pre-existing or environmental | not verified | e2e: 'each mode shows only its own navigation' (stale expected list, fails on 0.2.0 too); 'an application is a computer' (compute deploy health check in this container) | merge rkendel1/compute#116 (after rkendel1/stack-ui#12); not a portfolio product, so no family link |
+| AppWorks workspace pages (packages/workspace/ui) | `appworks` | **adopted** | 0.6.1 | static | cb9815a | wired | system, light, dark (per page, never stored) | axe clean light, dark, forced dark at 1280 and 360px | no overflow at 360px | — | merge rkendel1/appworks#17 (after rkendel1/stack-ui#12); not a portfolio product |
+| AppWorks recipe studio (packages/recipe-studio/ui) | `appworks` | **not-adopted** | — | none | cb9815a | none | system (own tokens) | not verified | not verified | — | adopt |
 | AppPort protocol and libraries | `appport` | **not-applicable** | — | none | ff170c9 | none | — | — | — | — | no user-facing UI |
 | stack-agent (Rust CLI) | `stack-agent` | **not-applicable** | — | none | — | none | — | — | — | — | no web UI |
 <!-- registry:end -->
 
 ## Per-repository notes (2026-11-01)
 
-Merged earlier: stack-ui #10 and #11, boundry #2, feltkit-website-request #3 and #4, authboundry #133 and
-#134, appport-services #38, flow_db #435.
+**Merged:**
 
-- **stack-ui 0.6.1** (this branch): the release-readiness fixes (`docs/release-readiness.md`), version
-  manifests, the registry and the execution-ownership recommendation. Not tagged or published.
-- **boundry:** merged. 7 pages pass the site check and conformance. axe is clean in light, dark and forced
-  dark at 1280 and 320px.
-- **feltkit-website-request:** merged. Conformance passes in `pnpm build`. axe shows 2 contrast findings
-  that also exist without this work.
-- **feltkit (dashboard):** open PR.
-  - Verified: build and typecheck. `npm test`: 198 pass, 1 fail; the failure (`create-feltkit` starter
-    missing) also fails on main. axe is clean on 5 screens, light and dark, against the running tasks
-    example.
-- **authboundry:** merged.
-  - Verified: unit 12/12. Portal browser suite 12/12 against a real authority, including axe in light and
-    dark. Conformance on 22 marketing pages. 4 content contrast findings exist on main too.
-- **appboundry:** open PR.
-  - Verified: build, conformance and axe on the marketing page; `test/stack-ui.test.ts` 5/5.
-  - Not run: the portal browser suite, because the workspace install fails on main (`pnpm-lock.yaml` out
-    of date for `@feltdb/core`).
-- **appport-services:** merged. 357/357 tests; 14/14 browser tests, including axe in light and dark at
-  1280 and 640px.
-- **flow_db (homepage):** merged. Conformance in `site:build`. axe is clean at 1280px. The 320px overflow
-  from code samples exists on main too.
+| Repo | PR(s) |
+|---|---|
+| stack-ui (0.6.0) | #10, #11 |
+| boundry | #2 |
+| feltkit-website-request | #3, #4 |
+| feltkit (dashboard) | #15 |
+| authboundry | #133, #134 |
+| appport-services | #38 |
+| flow_db (homepage) | #435 |
+
+**Open, in dependency order:**
+
+1. **rkendel1/stack-ui#12 (0.6.1).** Release readiness, manifests, this registry.
+   - Then the owner tags `v0.6.1`, which is publishing and needs authorization.
+2. Independent of each other; each merges after #12:
+   - **rkendel1/flow_db#436:** FeltDB Studio package.
+     - Verified: npm test 49/49 (46/46 on main); browser 3/3 against a real feltdb-server, with axe in light
+       and dark.
+   - **rkendel1/compute#116:** environment UI 0.2.0 → 0.6.1.
+     - Verified: cargo UI tests 13/13; e2e 13/16. One failure is identical on 0.2.0; one is a
+       `compute deploy` health check in this container.
+   - **rkendel1/appworks#17:** workspace 0.5.0 → 0.6.1.
+     - Verified: vitest 126 passed, 4 skipped (live-provider tests); axe clean in light, dark, forced dark
+       and at 360px.
+   - **rkendel1/appboundry#50:** marketing page and portal on 0.6.0.
+     - Verified: build, conformance and axe on the marketing page; vendor tests 5/5.
+     - Not run: the portal browser suite, because the lockfile on main is out of date.
+
+**Not yet adopted, or blocked:**
+
+- **Hosted Studio, app and admin:** blocked on owner decision D7. It's a separate 5,000-line
+  implementation; moving it onto `@feltdb/studio` versus restyling it in place is a product decision.
+- **feltdb.com blog, docs and playground:** not yet adopted.
+- **AppWorks recipe studio:** not yet adopted.
+
+**Re-vendor when 0.6.1 is released:** feltkit-website-request and authboundry carry a 0.6.0 copy made before
+the theme type declarations. Their runtime files are identical, and the difference is recorded in
+`knownDifferences`.

@@ -62,7 +62,7 @@
       "accessibility": "axe clean on 5 screens, light and dark",
       "responsive": "not verified",
       "baseline": "test: create-feltkit starter missing (fails on main)",
-      "remaining": "screen-level tables, forms and badges; Drawer (D26)"
+      "remaining": "screen-level tables, forms and badges; Drawer (D26); responsive verification"
     },
     {
       "id": "authboundry-site",
@@ -130,7 +130,7 @@
       "accessibility": "axe clean light, dark, forced dark, 320px",
       "responsive": "no overflow at 320px",
       "baseline": "workspace install fails on main (pnpm-lock out of date for @feltdb/core)",
-      "remaining": "merge PR"
+      "remaining": "merge rkendel1/appboundry#50"
     },
     {
       "id": "appboundry-portal",
@@ -150,7 +150,7 @@
       "accessibility": "portal browser suite not run (workspace install blocked)",
       "responsive": "not verified",
       "baseline": "portal browser suite blocked by out-of-date lockfile",
-      "remaining": "Boundry family link in the portal sidebar; run the portal browser suite"
+      "remaining": "merge rkendel1/appboundry#50; Boundry family link in the portal sidebar; run the portal browser suite once the lockfile is fixed"
     },
     {
       "id": "appport-services-pages",
@@ -212,23 +212,27 @@
       "id": "feltdb-studio-package",
       "repo": "flow_db",
       "surface": "FeltDB Studio (packages/studio)",
-      "status": "partial",
+      "status": "adopted",
       "product": "feltdb",
       "integration": "vendored-packages",
       "vendor": "packages/studio/vendor/stack-ui",
-      "version": "0.2.0",
-      "conformance": null,
-      "themes": "light only (tokens-light.css)",
-      "accessibility": "not verified here",
+      "version": "0.6.1",
+      "conformance": {
+        "file": "packages/studio/test/design-foundation.test.mjs",
+        "contains": "redefines no foundation token"
+      },
+      "themes": "standalone: system, light, dark (stored); embedded StudioApp: light only by design",
+      "accessibility": "browser suite 3/3 incl. axe on Overview and State, light and dark system",
       "responsive": "not verified",
       "baseline": "",
-      "remaining": "upgrade to 0.6, both themes, Boundry family"
+      "remaining": "merge rkendel1/flow_db#436 (after rkendel1/stack-ui#12)",
+      "productIn": "packages/studio/src/app.tsx"
     },
     {
       "id": "feltdb-hosted",
       "repo": "flow_db",
       "surface": "Hosted Studio, app, admin (website/app/studio, app, admin)",
-      "status": "not-adopted",
+      "status": "blocked",
       "product": "feltdb",
       "integration": "none",
       "vendor": null,
@@ -238,39 +242,45 @@
       "accessibility": "not verified",
       "responsive": "not verified",
       "baseline": "",
-      "remaining": "see FeltDB Studio decision (D7)"
+      "remaining": "owner decision D7: move the hosted Studio onto @feltdb/studio, or adopt it in place (a separate 5,000-line implementation)"
     },
     {
       "id": "compute-ui",
       "repo": "compute",
       "surface": "Compute environment UI (crates/compute-environment/ui)",
-      "status": "partial",
+      "status": "adopted",
       "product": null,
       "integration": "static",
       "vendor": "crates/compute-environment/ui/vendor/stack-ui",
-      "version": "0.2.0",
-      "conformance": null,
-      "themes": "system (OS)",
-      "accessibility": "Compute's own e2e suite",
+      "version": "0.6.1",
+      "conformance": {
+        "file": "crates/compute-environment/tests/stack_ui.rs",
+        "contains": "SHA256SUMS"
+      },
+      "themes": "system, light, dark (stored)",
+      "accessibility": "compute-ui-e2e 13/16; failures pre-existing or environmental",
       "responsive": "not verified",
-      "baseline": "",
-      "remaining": "upgrade to 0.6"
+      "baseline": "e2e: 'each mode shows only its own navigation' (stale expected list, fails on 0.2.0 too); 'an application is a computer' (compute deploy health check in this container)",
+      "remaining": "merge rkendel1/compute#116 (after rkendel1/stack-ui#12); not a portfolio product, so no family link"
     },
     {
       "id": "appworks-workspace",
       "repo": "appworks",
       "surface": "AppWorks workspace pages (packages/workspace/ui)",
-      "status": "partial",
+      "status": "adopted",
       "product": null,
       "integration": "static",
       "vendor": "packages/workspace/vendor/stack-ui",
-      "version": "0.5.0",
-      "conformance": null,
-      "themes": "system",
-      "accessibility": "not verified here",
-      "responsive": "not verified",
+      "version": "0.6.1",
+      "conformance": {
+        "file": "packages/workspace/test/server.test.ts",
+        "contains": "0.6.1"
+      },
+      "themes": "system, light, dark (per page, never stored)",
+      "accessibility": "axe clean light, dark, forced dark at 1280 and 360px",
+      "responsive": "no overflow at 360px",
       "baseline": "",
-      "remaining": "upgrade to 0.6"
+      "remaining": "merge rkendel1/appworks#17 (after rkendel1/stack-ui#12); not a portfolio product"
     },
     {
       "id": "appworks-recipe-studio",
