@@ -27,7 +27,7 @@ replace `confirm()` and `prompt()` on framework-free pages. The theme preference
 (`theme.js`) is the only value any package stores; `stack-ui-core-stateless.js`
 is the classic build without it. State mappings cover the Compute
 and FeltDB fields the first adopting screens render
-(`packages/core/src/states.js`). Not published to npm yet (scope: D9). Version 0.6.0.
+(`packages/core/src/states.js`). Not published to npm yet (scope: D9). Version 0.6.1.
 
 ### Using it
 
@@ -65,7 +65,9 @@ Browser tests use `playwright-core`; install Chromium with
 | [docs/brand.md](docs/brand.md) | Boundry brand specification: mark, colour, type, themes, product accents, the Boundry family on every surface |
 | [docs/product-identities.md](docs/product-identities.md) | Per-product identity and UX direction |
 | [docs/portfolio-assessment.md](docs/portfolio-assessment.md) | Every Boundry surface, framework, deploy, domain and Stack UI version; duplication found |
-| [docs/adoption-report.md](docs/adoption-report.md) | What changed in each repository, what was verified, what remains |
+| [docs/adoption-report.md](docs/adoption-report.md) | The portfolio adoption registry (generated from `docs/registry.json`, checked by `scripts/check-registry.mjs`) |
+| [docs/release-readiness.md](docs/release-readiness.md) | Release checks, defects fixed, and the decisions publishing needs |
+| [docs/execution-ownership.md](docs/execution-ownership.md) | Which product owns which part of "execution", grounded in code |
 | [docs/release.md](docs/release.md) | Versioning, release steps, consumption, conformance checklist |
 | [docs/building-with-the-foundation.md](docs/building-with-the-foundation.md) | The rule for every new Boundry site or product UI, and the conformance check builds run |
 | [docs/audit.md](docs/audit.md) | What exists today in each product, with repository evidence |

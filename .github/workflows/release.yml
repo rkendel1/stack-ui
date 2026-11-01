@@ -1,0 +1,61 @@
+name: release
+
+# Runs only when the owner pushes a version tag (v0.6.1). It verifies the build against
+# the version's recorded manifest and attaches the static release and the three package
+# tarballs to a GitHub release. Publishing to npm is a separate, opt-in job: it runs only
+# when the repository variable NPM_PUBLISH is "true" and an NPM_TOKEN secret exists,
+# after the scope and license are decided (docs/decisions.md D9, docs/release-readiness.md).
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: The tag names the packages' version
+        run: test "v$(node -p "require('./packages/core/package.json').version")" = "$GITHUB_REF_NAME"
+      - run: pnpm build
+      - run: pnpm check:boundary
+      - run: pnpm check:types
+      - run: pnpm test:unit
+      - run: pnpm exec playwright-core install --with-deps chromium
+      - run: pnpm test:browser
+      - run: node scripts/package-static.mjs
+      - run: node scripts/check-release-manifest.mjs
+      - name: Pack the packages
+        run: for p in tokens core react; do (cd packages/$p && pnpm pack --pack-destination ../../release); done
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" release/*.tar.gz release/*.tgz release/stack-ui-static-*/SHA256SUMS --title "$GITHUB_REF_NAME" --notes "Boundry design foundation $GITHUB_REF_NAME. Contents: releases/${GITHUB_REF_NAME#v}/."
+
+  npm:
+    needs: release
+    if: vars.NPM_PUBLISH == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm -r publish --access public --provenance --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

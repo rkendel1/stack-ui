@@ -1,175 +1,77 @@
-# Adoption report — Boundry design foundation (0.6.0)
+# Portfolio adoption registry — Boundry design foundation
 
-Status as of 2026-11-01. Every repository has its own branch `claude/ecstatic-pasteur-p27hvs` and can be
-reviewed and merged independently. **Merge order:** stack-ui first, because every other branch vendors its
-0.6.0 release. The other branches have no dependency on each other.
+This is the maintained record of which Boundry surfaces are on the foundation. The table is generated
+from `docs/registry.json` by `scripts/check-registry.mjs`, which **checks** each claim against checkouts
+of the product repositories:
 
-"Verified" means the command was run and its result is quoted. "Not run" says why.
+- the foundation release each product actually vendors, identified by checksum against
+  `releases/<version>/`;
+- whether the build-time conformance check is wired in;
+- whether the product declares its portfolio id.
 
-## rkendel1/stack-ui — the foundation (0.6.0)
+A claim that disagrees with a repository fails the check. Themes, accessibility, responsiveness and
+baseline issues are recorded from the last manual verification; the per-repository notes below give the
+evidence.
 
-- **Changed:**
-  - The brand layer: `tokens/src/brand.json`, `--stack-brand-*`, and the product accent scoped by
-    `[data-stack-product]`.
-  - The Boundry mark: `tokens/brand/*.svg` and `BrandMark`.
-  - The portfolio in `core/src/brand.js`: FeltDB, FeltKit, AppBoundry, AuthBoundry and AppPort.
-    AgentBoundry is removed; it is not a product.
-  - Marketing tokens. The platform blue now matches the Boundry blue (D28).
-  - `Shell` carries the Boundry family (D27).
-  - `html.js` renders components to HTML at build time (D23).
-  - SVG support in `dom.js`.
-  - `THEME_INIT_SCRIPT`, plus types for `@stack-ui/core/theme`.
-  - The React binding is a `'use client'` module.
-  - The shared header and footer are hardened against product stylesheets that style bare elements.
-  - The static release now carries `esm/`, `brand/`, `tokens-light.css` and `conformance.mjs`.
-- **New:**
-  - Components: `SiteHeader`, `SiteFooter`, `ThemeSwitch`, `BrandMark`, `Alert`, `Checkbox`, `FieldGroup`
-    and `ActivityTimeline`.
-  - Marketing layout classes.
-  - The conformance checker `bin/conformance.mjs`, run by every adopting build.
-  - Docs: `brand.md`, `product-identities.md`, `portfolio-assessment.md`, `release.md`,
-    `building-with-the-foundation.md` and `AGENTS.md`.
-- **Tests:** `pnpm test`: 72 unit and 141 browser tests pass. The browser tests cover React/DOM parity,
-  HTML/DOM parity, axe in four theme combinations, keyboard use, layout at 320, 768 and 1280px, identity
-  colour tests, and resistance to hostile product element styles.
-- **Deferred:**
-  - ActionMenu, Drawer, Skeleton and Notification (D26).
-  - The npm scope and rename (D9).
-  - The master logo file (D29).
-  - Owner confirmation of the product accents (D30).
+```sh
+node scripts/check-registry.mjs --root <directory with the product checkouts> --write
+```
 
-## rkendel1/boundry — boundry.company
+**Statuses:**
 
-- **Changed:**
-  - Foundation: vendored static release, with the build verifying checksums.
-  - Header and footer: the shared `SiteHeader` and `SiteFooter`, rendered to HTML at build time.
-  - The Boundry mark replaces the placeholder logo and favicon.
-  - Themes: System, Light or Dark.
-  - Product accents come from the foundation.
-  - Each product shows its real logo, cropped from its own repository.
-  - AgentBoundry is removed; the "Execution" foundation is now attributed to AppBoundry.
-  - The founder section uses the approved text.
-- **Enforced by:** Vercel `buildCommand` and `.github/workflows/ci.yml` run the build, `src/check.mjs` and
-  `conformance.mjs --company`.
-- **Verified:**
-  - All 7 pages pass the site check and conformance.
-  - axe has no serious or critical violations in light, dark and forced dark at 1280px, nor at 320px.
-  - No horizontal scroll at 320px.
-  - The theme choice persists across a reload.
-- **Outstanding:**
-  - Contact email (placeholder).
-  - Product development statuses (all null).
-  - Founder portrait.
+- **adopted:** on the foundation, with conformance enforced in the build or tests.
+- **partial:** on the foundation, with named work remaining.
+- **not-adopted:** not on the foundation.
+- **blocked:** waiting on an upstream dependency.
+- **not-applicable:** no user-facing UI.
 
-## rkendel1/feltkit-website-request — getfeltkit.com
+**Portfolio-wide conformance is not claimed** while any surface is partial or not adopted.
 
-- **Changed:**
-  - Vendored `@stack-ui` packages.
-  - The shared `SiteFooter`.
-  - "A Boundry product" in the header.
-  - The theme now defaults to the system (it was forced dark) and uses the shared preference and
-    `ThemeSwitch`.
-  - The old footer CSS is removed.
-- **Product-specific:** logo, navigation, hero, and every section and colour (`--felt-*`).
-- **Enforced by:** `pnpm build`, which runs `next build`, then checksums and conformance.
-- **Verified:** build and conformance pass. axe shows the same 2 contrast findings per page as the
-  unmodified site (`.agent-step` titles and documents hero links, both product-owned); nothing new.
-- **Outstanding:** those two pre-existing contrast findings.
+<!-- registry:start (generated by scripts/check-registry.mjs from docs/registry.json; do not edit) -->
+| Surface | Repository | Status | Foundation (verified by checksum) | Integration | Checked commit | Build conformance | Themes | Accessibility | Responsive | Baseline issues | Remaining |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| boundry.company (static site) | `boundry` | **adopted** | 0.6.0 | static | b0cffd3 | wired | system, light, dark (stored) | axe clean in light, dark, forced dark at 1280 and 320px | no page-level horizontal scroll at 320px | contact email placeholder; product statuses unset; no founder portrait | none |
+| getfeltkit.com (Next.js) | `feltkit-website-request` | **adopted** | 0.6.0 (differs: core/package.json, core/src/theme.d.ts) | vendored-packages | 64f4c54 | wired | system, light, dark (stored) | axe: 2 pre-existing contrast findings, none introduced | verified at 390px | contrast: .agent-step titles, documents hero links | re-vendor the released foundation (copy predates the theme type declarations; runtime files identical) |
+| FeltKit dashboard /_feltkit/ (packages/sdk/dashboard) | `feltkit` | **partial** | 0.6.0 | vendored-packages | a1db976 | wired | system, light, dark (stored) | axe clean on 5 screens, light and dark | not verified | test: create-feltkit starter missing (fails on main) | screen-level tables, forms and badges; Drawer (D26) |
+| authboundry.com marketing (apps/web) | `authboundry` | **adopted** | 0.6.0 (differs: core/package.json, core/src/theme.d.ts) | vendored-packages | f0578e8 | wired | system, light, dark (stored) | axe: 4 pre-existing content contrast findings, none introduced | no overflow at 320px | contrast: text-green-600, text-slate-500 on home and product pages | re-vendor the released foundation (copy predates the theme type declarations; runtime files identical) |
+| AuthBoundry portal (apps/web) | `authboundry` | **partial** | 0.6.0 (differs: core/package.json, core/src/theme.d.ts) | vendored-packages | f0578e8 | wired | system, light, dark (stored) | portal browser suite 12/12 incl. axe light and dark | sidebar fixed-width (D18) | none known | portal sidebar is its own, not Shell (D18); re-vendor the released foundation (copy predates the theme type declarations; runtime files identical) |
+| appboundry.com marketing (apps/cloud-platform) | `appboundry` | **adopted** | 0.6.0 | static | fe5834f | wired | system, light, dark (stored) | axe clean light, dark, forced dark, 320px | no overflow at 320px | workspace install fails on main (pnpm-lock out of date for @feltdb/core) | merge PR |
+| AppBoundry cloud portal (public/app.js) | `appboundry` | **partial** | 0.6.0 | static | fe5834f | wired | system, light, dark (Settings → Appearance) | portal browser suite not run (workspace install blocked) | not verified | portal browser suite blocked by out-of-date lockfile | Boundry family link in the portal sidebar; run the portal browser suite |
+| AppPort services management pages | `appport-services` | **adopted** | 0.6.0 | static | 6461eba | wired | system, light, dark (per page, never stored by design) | axe clean light and dark at 1280 and 640px | no overflow at 640px | none known | none |
+| feltdb.com homepage (website/) | `flow_db` | **adopted** | 0.6.0 | vendored-packages | 0facbd9 | wired | system, light, dark (stored) | axe clean at 1280px light, dark, forced dark | 64px overflow at 320px (pre-existing code samples) | 320px overflow and unfocusable code scroll regions | none for the homepage |
+| feltdb.com blog, docs, playground (website/) | `flow_db` | **not-adopted** | — | none | 0facbd9 | none | light only | not verified | not verified | — | family footer, themes |
+| FeltDB Studio (packages/studio) | `flow_db` | **partial** | 0.2.0 (no manifest: unverified) | vendored-packages | 0facbd9 | none | light only (tokens-light.css) | not verified here | not verified | — | upgrade to 0.6, both themes, Boundry family |
+| Hosted Studio, app, admin (website/app/studio, app, admin) | `flow_db` | **not-adopted** | — | none | 0facbd9 | none | light only | not verified | not verified | — | see FeltDB Studio decision (D7) |
+| Compute environment UI (crates/compute-environment/ui) | `compute` | **partial** | 0.2.0 (no manifest: unverified) | static | 0d5e5f4 | none | system (OS) | Compute's own e2e suite | not verified | — | upgrade to 0.6 |
+| AppWorks workspace pages (packages/workspace/ui) | `appworks` | **partial** | 0.5.0 (no manifest: unverified) | static | 1300c33 | none | system | not verified here | not verified | — | upgrade to 0.6 |
+| AppWorks recipe studio (packages/recipe-studio/ui) | `appworks` | **not-adopted** | — | none | 1300c33 | none | system (own tokens) | not verified | not verified | — | adopt |
+| AppPort protocol and libraries | `appport` | **not-applicable** | — | none | ff170c9 | none | — | — | — | — | no user-facing UI |
+| stack-agent (Rust CLI) | `stack-agent` | **not-applicable** | — | none | — | none | — | — | — | — | no web UI |
+<!-- registry:end -->
 
-## rkendel1/feltkit — FeltKit dashboard (`/_feltkit/`)
+## Per-repository notes (2026-11-01)
 
-- **Changed:**
-  - Vendored packages, bundled as devDependencies.
-  - The dashboard palette maps onto foundation tokens, with FeltKit's teal accent.
-  - Shared `Loading`, `EmptyState`, `ErrorPanel` and `StatusIndicator`.
-  - The shared theme preference, applied before first paint by a CSP-safe file.
-  - The Boundry family link in the sidebar.
-- **Verified:**
-  - Build and typecheck pass.
-  - `npm test`: 198 pass, 1 fail. The failure is the `create-feltkit` starter test, which also fails on
-    main.
-  - axe is clean on Overview, Activity, Data, Services and Settings in light and dark against the running
-    tasks example.
-- **Outstanding:**
-  - Screen-level adoption: tables, forms, and the dashboard's local `Badge` and `.error-box` uses inside
-    screens.
-  - Drawer, once promoted (D26).
+Merged earlier: stack-ui #10 and #11, boundry #2, feltkit-website-request #3 and #4, authboundry #133 and
+#134, appport-services #38, flow_db #435.
 
-## rkendel1/authboundry — site and portal (apps/web)
-
-- **Changed:**
-  - Upgraded 0.4.0 → 0.6.0.
-  - The shared `SiteFooter`.
-  - "A Boundry product" in the header and the portal sidebar.
-  - The shared theme preference and `ThemeSwitch` on the site, sign-in page and portal; Tailwind's `dark`
-    class follows it.
-  - The mobile header fits at 320px.
-- **Enforced by:** `npm run build`, which runs conformance on 22 marketing pages. This build runs in
-  `portal.yml` CI.
-- **Verified:**
-  - Unit tests: 12/12.
-  - Portal browser suite against a real authority: 12/12, including axe in light and dark, the shared
-    theme and the family link.
-  - Marketing axe findings are the same 4 product-content contrast issues as the unmodified site.
-- **Outstanding:**
-  - Those 4 contrast issues (`text-green-600`, `text-slate-500` on the home and product pages).
-  - The portal's own sidebar is still not the shared `Shell` (D18).
-
-## rkendel1/appboundry — marketing page and cloud portal (apps/cloud-platform)
-
-- **Changed:**
-  - Static release 0.5.0 → 0.6.0.
-  - The marketing page was dark-only; it now follows the system with System, Light or Dark.
-  - Black and white logos switch with the theme.
-  - The shared `SiteFooter` and `ThemeSwitch` via `esm/html.js`.
-  - "A Boundry product" in the bar.
-- **Enforced by:** `npm run build`, which runs conformance (Vercel); `test/stack-ui.test.ts` runs in the
-  root `pnpm test`.
-- **Verified:**
-  - Build and conformance pass.
-  - axe is clean in light, dark and forced dark at 1280px and at 320px, with no overflow.
-  - `test/stack-ui.test.ts`: 5/5, including every portal field still mapped.
-- **Not run:** the portal browser suite. It needs a workspace install, which fails on main because
-  `pnpm-lock.yaml` is out of date (`@feltdb/core` 0.15.0 vs 0.16.1).
-
-## rkendel1/appport-services — packaged management pages
-
-- **Changed:**
-  - Static release 0.3.0 → 0.6.0.
-  - The shell declares `appport`: the accent, "A Boundry product" and the sibling products.
-  - Theme choice (System, Light, Dark) for the open page, never stored: the pages still keep nothing in
-    the browser.
-- **Verified:**
-  - `npm test`: 357/357.
-  - `npm run test:browser`: 14/14, including axe in light and dark at 1280 and 640px, navigation still
-    exactly the mounted routes, the theme choice stores nothing, and the family link.
-
-## rkendel1/flow_db — FeltDB website homepage
-
-- **Changed:**
-  - Vendored packages.
-  - Homepage only:
-    - "A Boundry product" in the header, which is now a `<header>`.
-    - The shared `SiteFooter`.
-    - Light and dark via the shared preference; it was light-only.
-  - `AGENTS.md` UI guidance.
-- **Enforced by:** `npm run site:build`, which runs checksums and conformance (Vercel).
-- **Verified:**
-  - Build and conformance pass.
-  - axe is clean at 1280px in light, dark and forced dark. The old footer's contrast failure is fixed.
-- **Outstanding:**
-  - At 320px the homepage still overflows by 64px, with unfocusable code scroll regions. This was the case
-    before this change.
-  - Blog, docs, playground, hosted Studio, app and admin pages are not yet on the foundation and are still
-    light-only.
-  - `packages/studio` is still on 0.2.0.
-
-## Not yet adopted
-
-| Surface | State | Next step |
-|---|---|---|
-| FeltDB `packages/studio` | stack-ui 0.2.0, light-only | Upgrade to 0.6.0, `Shell({ product: { id: 'feltdb' } })`, both themes |
-| FeltDB hosted Studio, app, admin (`website/app/studio` and others) | No foundation; 40 global stylesheets | Decide D7 (which Studio users reach) first, then adopt the shell |
-| Compute environment UI | stack-ui 0.2.0 | Upgrade (no product id: Compute is not in the public portfolio) |
-| AppWorks workspace pages | 0.5.0 | Upgrade |
-| AppWorks recipe studio | No foundation | Adopt |
+- **stack-ui 0.6.1** (this branch): the release-readiness fixes (`docs/release-readiness.md`), version
+  manifests, the registry and the execution-ownership recommendation. Not tagged or published.
+- **boundry:** merged. 7 pages pass the site check and conformance. axe is clean in light, dark and forced
+  dark at 1280 and 320px.
+- **feltkit-website-request:** merged. Conformance passes in `pnpm build`. axe shows 2 contrast findings
+  that also exist without this work.
+- **feltkit (dashboard):** open PR.
+  - Verified: build and typecheck. `npm test`: 198 pass, 1 fail; the failure (`create-feltkit` starter
+    missing) also fails on main. axe is clean on 5 screens, light and dark, against the running tasks
+    example.
+- **authboundry:** merged.
+  - Verified: unit 12/12. Portal browser suite 12/12 against a real authority, including axe in light and
+    dark. Conformance on 22 marketing pages. 4 content contrast findings exist on main too.
+- **appboundry:** open PR.
+  - Verified: build, conformance and axe on the marketing page; `test/stack-ui.test.ts` 5/5.
+  - Not run: the portal browser suite, because the workspace install fails on main (`pnpm-lock.yaml` out
+    of date for `@feltdb/core`).
+- **appport-services:** merged. 357/357 tests; 14/14 browser tests, including axe in light and dark at
+  1280 and 640px.
+- **flow_db (homepage):** merged. Conformance in `site:build`. axe is clean at 1280px. The 320px overflow
+  from code samples exists on main too.

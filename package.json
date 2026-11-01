@@ -13,7 +13,9 @@
     "check:boundary": "node scripts/check-boundary.mjs",
     "check:citations": "node scripts/check-citations.mjs",
     "test": "pnpm build && pnpm check:boundary && pnpm check:types && pnpm test:unit && pnpm test:browser",
-    "check:types": "tsc -p tests/types/tsconfig.json"
+    "check:types": "tsc -p tests/types/tsconfig.json",
+    "check:release": "node scripts/package-static.mjs >/dev/null && node scripts/check-release-manifest.mjs",
+    "check:registry": "node scripts/check-registry.mjs"
   },
   "devDependencies": {
     "@stack-ui/core": "workspace:*",

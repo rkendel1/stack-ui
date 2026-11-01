@@ -16,7 +16,9 @@
 1. `pnpm test` is green: build, boundary check, types, unit, and browser (parity, axe in four theme
    combinations, keyboard, responsive, brand).
 2. Bump all three `package.json` versions and the React peer range. Record the change in `docs/decisions.md`.
-3. Run `node scripts/package-static.mjs`. It writes `release/stack-ui-static-<version>/` and its `.tar.gz`,
+3. Run `node scripts/package-static.mjs`, then `node scripts/release-manifest.mjs` to record the
+   version's contents in `releases/<version>/` (D31). CI rejects any later change to those files under
+   the same version. It writes `release/stack-ui-static-<version>/` and its `.tar.gz`,
    containing:
    - `tokens.css` and `tokens-light.css`;
    - `core.css`;
@@ -24,7 +26,9 @@
    - `esm/` (`states`, `brand`, `view`, `html`, `theme`) for Node-built static sites;
    - `brand/` (`brand.json` and the mark SVGs);
    - `VERSION` and `SHA256SUMS`.
-4. Tag `v<version>` and attach the tarball to a GitHub release. npm publishing waits for D9 (scope).
+4. The owner tags `v<version>`. `.github/workflows/release.yml` re-verifies everything and attaches the
+   static release and the package tarballs to a GitHub release. npm publishing is opt-in
+   (`docs/release-readiness.md`).
 
 ## How products consume it
 
@@ -32,7 +36,7 @@
 |---|---|---|
 | No build (Compute, AppBoundry portal, AppPort services, AppWorks) | Vendor the static release with its `SHA256SUMS`. A test in the product checks the checksums | An ordinary product PR |
 | Node-built static site (boundry.company) | Vendor the static release (`esm/`, CSS, `brand/`). The build imports `esm/html.js` | An ordinary product PR |
-| React / Next (FeltDB, FeltKit and AuthBoundry websites, FeltDB Studio) | Vendor the package directories as `file:` dependencies (`vendor/stack-ui/{tokens,core,react}`) with `SHA256SUMS`, as AuthBoundry already does | An ordinary product PR |
+| React / Next (FeltDB, FeltKit and AuthBoundry websites, FeltDB Studio) | `node scripts/vendor-packages.mjs <product>/vendor/stack-ui` vendors `{tokens,core,react}` unmodified, with `SHA256SUMS`. The product uses `file:` dependencies until npm publishing | An ordinary product PR |
 
 No product depends on another product at runtime. Portfolio links are plain hyperlinks.
 

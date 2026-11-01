@@ -64,3 +64,17 @@ test('the command line exits non-zero on failure and names an unknown product', 
   const ok = site({ 'index.html': page() });
   assert.match(execFileSync('node', [cli, '--product', 'feltdb', '--html', join(ok, 'out'), '--tokens', tokens]).toString(), /passed/);
 });
+
+test('a missing footer is reported once, not once per product link', async () => {
+  const dir = site({ 'index.html': page({ footer: false }) });
+  const failures = await checkConformance({ product: 'feltdb', html: [join(dir, 'out')], css: [], tokens });
+  assert.equal(failures.filter((f) => /SiteFooter|family|Boundry product|boundry\.company/.test(f)).length, 1, failures.join('\n'));
+});
+
+test('run through a symlinked bin (as npm installs it), failures still exit non-zero', async () => {
+  const { symlinkSync } = await import('node:fs');
+  const dir = site({ 'index.html': page({ footer: false }) });
+  const link = join(dir, 'stack-ui-conformance');
+  symlinkSync(new URL('../../packages/core/bin/conformance.mjs', import.meta.url).pathname, link);
+  assert.throws(() => execFileSync('node', [link, '--product', 'feltdb', '--html', join(dir, 'out'), '--tokens', tokens], { stdio: 'pipe' }), /SiteFooter/);
+});
