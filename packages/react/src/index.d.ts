@@ -472,7 +472,7 @@ export declare function ActivityTimeline(props: ActivityTimelineProps): ReactEle
 
 // ---- Brand and marketing foundation (0.6.0) -----------------------------------
 
-export type PortfolioId = 'feltdb' | 'feltkit' | 'appboundry' | 'authboundry' | 'agentboundry' | 'appport';
+export type PortfolioId = 'feltdb' | 'feltkit' | 'appboundry' | 'authboundry' | 'appport';
 export interface PortfolioProduct { id: PortfolioId; name: string; mark: string; category: string; href: string }
 export declare const PORTFOLIO: {
   readonly company: { name: string; href: string; tagline: string; family: string };

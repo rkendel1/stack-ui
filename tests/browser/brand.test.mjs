@@ -230,7 +230,7 @@ test('the shell of a portfolio product links to Boundry and its siblings, never 
     assert.equal(out.accent, 'appboundry');
     assert.equal(out.family, 'https://boundry.company/');
     assert.ok(!out.others.includes('AppBoundry'));
-    assert.deepEqual(out.others, ['FeltDB', 'FeltKit', 'AuthBoundry', 'AgentBoundry', 'AppPort', 'About Boundry']);
+    assert.deepEqual(out.others, ['FeltDB', 'FeltKit', 'AuthBoundry', 'AppPort', 'About Boundry']);
     assert.equal(out.none, null);
     assert.equal(out.compute, null, 'a product outside the portfolio is unchanged');
   } finally {

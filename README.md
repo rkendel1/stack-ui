@@ -1,7 +1,7 @@
 # stack-ui — the Boundry design foundation
 
 The shared design foundation for Boundry and its products: FeltDB, FeltKit,
-AppBoundry, AuthBoundry, AgentBoundry and AppPort, as well as Compute and AppWorks.
+AppBoundry, AuthBoundry and AppPort, as well as Compute and AppWorks.
 It owns presentation, interaction behaviour, the Boundry brand layer and the
 product identities ([docs/brand.md](docs/brand.md)). It owns no product state,
 authorization or execution. Package and class names keep the `stack` prefix
