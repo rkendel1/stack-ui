@@ -156,7 +156,7 @@ for (const width of [320, 768, 1280]) {
         }));
         root.after(window.StackUI.dom.SiteFooter({
           product: { id: 'authboundry' }, year: 2026, tagline: 'Authority for applications and agents.',
-          columns: [{ title: 'Product', links: [{ label: 'Pricing', href: '/pricing' }] }, { title: 'Developers', links: [{ label: 'Docs', href: '/docs' }] }],
+          columns: [{ title: 'Product', links: [{ label: 'Pricing', href: '/pricing' }] }, { title: 'Contact', links: [{ label: 'partnerships@authboundry.example', href: 'mailto:partnerships@authboundry.example' }] }],
         }));
         const footer = document.querySelector('.stack-site-footer');
         return {

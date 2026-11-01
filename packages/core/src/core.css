@@ -559,10 +559,11 @@ textarea.stack-field__control { min-height: calc(var(--stack-size-control-md) * 
 .stack-site-footer__name { margin: 0; color: var(--stack-color-text-default); font-size: var(--stack-text-lg-size); font-weight: var(--stack-font-weight-bold); }
 .stack-site-footer__tagline { margin: var(--stack-space-2) 0 0; max-width: 36ch; }
 .stack-site-footer__heading { margin: 0 0 var(--stack-space-3); color: var(--stack-color-text-default); font-size: var(--stack-text-sm-size); font-weight: var(--stack-font-weight-semibold); }
-.stack-site-footer__list, .stack-site-footer__products { margin: 0; padding: 0; list-style: none; }
+.stack-site-footer__list, .stack-site-footer__products { margin: 0; padding: 0; list-style: none; min-width: 0; }
+.stack-site-footer__column { min-width: 0; }
 .stack-site-footer__list li + li { margin-top: var(--stack-space-2); }
 .stack-site-footer a { color: inherit; text-underline-offset: 3px; }
-.stack-site-footer__link { text-decoration: none; }
+.stack-site-footer__link { text-decoration: none; overflow-wrap: anywhere; }
 .stack-site-footer__link:hover { color: var(--stack-color-text-default); text-decoration: underline; }
 .stack-site-footer__family { margin-top: var(--stack-space-10); padding-top: var(--stack-space-6); border-top: var(--stack-border-width-thin) solid var(--stack-color-border-default); }
 .stack-site-footer__company { display: inline-flex; align-items: center; gap: var(--stack-space-2); color: var(--stack-color-text-default) !important; font-weight: var(--stack-font-weight-semibold); text-decoration: none; }
