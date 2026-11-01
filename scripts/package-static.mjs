@@ -45,6 +45,9 @@ const files = {
 };
 for (const target of Object.keys(files)) mkdirSync(dirname(join(out, target)), { recursive: true });
 for (const [target, source] of Object.entries(files)) copyFileSync(join(root, source), join(out, target));
+// esm/ holds ES modules: say so, so Node loads them without guessing.
+writeFileSync(join(out, 'esm/package.json'), '{ "type": "module" }\n');
+files['esm/package.json'] = null;
 writeFileSync(join(out, 'VERSION'), `${version}\n`);
 const sums = Object.keys(files).sort()
   .map((file) => `${createHash('sha256').update(readFileSync(join(out, file))).digest('hex')}  ${file}`)
