@@ -279,6 +279,23 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
 - **Owner to confirm:** these are identity choices. Changing one is a patch
   release, gated by the contrast tests.
 
+### D31 — A version's contents are recorded and never change — Decided (0.6.1)
+- **Decision:** `releases/<version>/{static,packages}.SHA256SUMS` record exactly what a version
+  contains. CI fails when a build differs from its version's manifest
+  (`scripts/check-release-manifest.mjs`). `scripts/check-registry.mjs` identifies the release each
+  product vendors by checksum.
+- **Why:** "0.6.0" named more than one set of files: two products vendored it before its type
+  declarations were added. Until packages are published, a version string alone cannot tell a reviewer
+  what a product runs.
+
+### D32 — "Execution" on boundry.company is capability execution — Recommended, owner to decide
+- **Finding:** AppBoundry executes one authorized capability per request and records it. It does not run
+  agents. The agent loop is in stack-agent, and Compute is the agent-neutral machine; neither is a
+  Boundry product. See `docs/execution-ownership.md`.
+- **Recommendation:** rename the site's "Execution" foundation "Capability execution" (AppBoundry with
+  AppPort). Describe no Boundry product as an agent runtime unless the owner brings one into the
+  portfolio.
+
 ## Verified facts versus unresolved questions
 
 | Verified (see audit citations) | Unresolved |
