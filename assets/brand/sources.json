@@ -1,5 +1,5 @@
 {
-  "$description": "Product logos held by the design foundation. Originals are copied unmodified from the product repository named in `source` (repo:path); derived files are produced from an original as described. `background` says what they are drawn for: light, dark, or any. sha256 identifies each file; scripts/check-brand-assets.mjs verifies them and, given checkouts of the product repositories, reports any original that has changed at its source.",
+  "$description": "Product logos held by the design foundation. Originals are copied unmodified from the product repository named in `source` (repo:path); derived files are produced from an original by scripts/derive-product-logos.mjs, as described. `background` says what they are drawn for: light, dark, or any. sha256 identifies each file; scripts/check-brand-assets.mjs verifies them and, given checkouts of the product repositories, reports any original that has changed at its source.",
   "boundry": {
     "source": "scripts/render-brand-png.mjs (from packages/tokens/brand/*.svg)",
     "files": [
@@ -23,30 +23,29 @@
     },
     {
       "product": "feltdb",
+      "file": "products/feltdb/feltdb-logo.png",
+      "kind": "logo",
+      "background": "light",
+      "origin": "derived",
+      "derived": {
+        "from": "feltdb-logo-dark.png",
+        "by": "scripts/derive-product-logos.mjs",
+        "how": "the white wordmark recoloured to FeltDB ink #111713; the mark is unchanged"
+      },
+      "sha256": "0f8c6dba6ccb883400fedd36cfa345182fca69e32878143c888565ebf16d0470"
+    },
+    {
+      "product": "feltdb",
       "file": "products/feltdb/feltdb-mark.png",
       "kind": "mark",
       "background": "any",
       "origin": "derived",
-      "sha256": "201e6b836ab90040bfe88ac2f387eb4010a9614d54bf08c4c3f8889a59dc4f07",
       "derived": {
         "from": "feltdb-logo-dark.png",
-        "crop": [
-          0,
-          0,
-          1606,
-          1570
-        ],
-        "note": "the mark above the wordmark, trimmed, centred on a square, 512px"
-      }
-    },
-    {
-      "product": "feltkit",
-      "file": "products/feltkit/feltkit-logo.png",
-      "kind": "logo",
-      "background": "light",
-      "origin": "original",
-      "sha256": "0da2e067081e22757fe3d0ef3e1ce00286bfcc429b8c41f5d1812c1eebf96179",
-      "source": "feltkit:docs/assets/feltkit-logo.png"
+        "by": "scripts/derive-product-logos.mjs",
+        "how": "the mark above the wordmark (crop 0,0,1606,1570), trimmed, centred on a 512px square"
+      },
+      "sha256": "a4c97bf0b8dfa1d65f328a3c4e6c24bf3b7ab70625c7e48033532d4dea280488"
     },
     {
       "product": "feltkit",
@@ -59,21 +58,21 @@
     },
     {
       "product": "feltkit",
+      "file": "products/feltkit/feltkit-logo.png",
+      "kind": "logo",
+      "background": "light",
+      "origin": "original",
+      "sha256": "0da2e067081e22757fe3d0ef3e1ce00286bfcc429b8c41f5d1812c1eebf96179",
+      "source": "feltkit:docs/assets/feltkit-logo.png"
+    },
+    {
+      "product": "feltkit",
       "file": "products/feltkit/feltkit-mark.png",
       "kind": "mark",
       "background": "any",
       "origin": "original",
       "sha256": "d71da31a023e894c6cec5c16c1fa9e7891e4661cfd2368c5a95619a2120149dd",
       "source": "feltkit:docs/assets/feltkit-mark.png"
-    },
-    {
-      "product": "appboundry",
-      "file": "products/appboundry/appboundry-logo.png",
-      "kind": "logo",
-      "background": "light",
-      "origin": "original",
-      "sha256": "8f007513f77be799c72169937f9163579b012aa65b81de38b0ed83b688125eab",
-      "source": "appboundry:apps/cloud-platform/public/appboundry-black.png"
     },
     {
       "product": "appboundry",
@@ -86,21 +85,77 @@
     },
     {
       "product": "appboundry",
+      "file": "products/appboundry/appboundry-logo.png",
+      "kind": "logo",
+      "background": "light",
+      "origin": "original",
+      "sha256": "8f007513f77be799c72169937f9163579b012aa65b81de38b0ed83b688125eab",
+      "source": "appboundry:apps/cloud-platform/public/appboundry-black.png"
+    },
+    {
+      "product": "appboundry",
+      "file": "products/appboundry/appboundry-mark-dark.png",
+      "kind": "mark",
+      "background": "dark",
+      "origin": "derived",
+      "derived": {
+        "from": "appboundry-logo-dark.png",
+        "by": "scripts/derive-product-logos.mjs",
+        "how": "the same crop of the white logo"
+      },
+      "sha256": "295cb5e70607c20808b8167f8944ae51edcfc794829670ab7384917f0e5cafe3"
+    },
+    {
+      "product": "appboundry",
       "file": "products/appboundry/appboundry-mark.png",
       "kind": "mark",
       "background": "light",
       "origin": "derived",
-      "sha256": "2f53e82f12171dd81ede704a49b2e422e11541a30a081c1d7e9ceefa5e13f977",
       "derived": {
         "from": "appboundry-logo.png",
-        "crop": [
-          160,
-          0,
-          565,
-          470
-        ],
-        "note": "the hexagon mark above the wordmark, trimmed, centred on a square, 512px; its outline is navy, so it needs a light background"
-      }
+        "by": "scripts/derive-product-logos.mjs",
+        "how": "the hexagon above the wordmark (crop 160,0,565,470), trimmed, centred on a 512px square"
+      },
+      "sha256": "49a5e9e535587891f65341fd139f684f71186fb387c7fb2491de6dde974f526c"
+    },
+    {
+      "product": "authboundry",
+      "file": "products/authboundry/authboundry-logo-dark.png",
+      "kind": "logo",
+      "background": "dark",
+      "origin": "derived",
+      "derived": {
+        "from": "authboundry-mark-dark.png",
+        "by": "scripts/derive-product-logos.mjs",
+        "how": "the dark-background mark beside \"AuthBoundry\" in Inter Display Bold, ink #e6ebf7 (stand-in)"
+      },
+      "sha256": "cbc2dc09d8d19e803fd2a09dc3722ef16fa4f132411442207a0b087c0a65fe8f"
+    },
+    {
+      "product": "authboundry",
+      "file": "products/authboundry/authboundry-logo.png",
+      "kind": "logo",
+      "background": "light",
+      "origin": "derived",
+      "derived": {
+        "from": "authboundry-mark.png",
+        "by": "scripts/derive-product-logos.mjs",
+        "how": "the mark beside \"AuthBoundry\" typeset in Inter Display Bold, ink #0b1538 (stand-in: no wordmark artwork exists)"
+      },
+      "sha256": "cb45e999f158103075dd20a6294c478d40222ac7a3409d81b0a3ddd2b7269d05"
+    },
+    {
+      "product": "authboundry",
+      "file": "products/authboundry/authboundry-mark-dark.png",
+      "kind": "mark",
+      "background": "dark",
+      "origin": "derived",
+      "derived": {
+        "from": "authboundry-mark.png",
+        "by": "scripts/derive-product-logos.mjs",
+        "how": "the navy parts recoloured #e6ebf7; the blue is unchanged"
+      },
+      "sha256": "6e3dd47420180518da0e320660eb57447327367b50931d02e4efb37275dbf91f"
     },
     {
       "product": "authboundry",
@@ -113,6 +168,32 @@
     },
     {
       "product": "appport",
+      "file": "products/appport/appport-logo-dark.png",
+      "kind": "logo",
+      "background": "dark",
+      "origin": "derived",
+      "derived": {
+        "from": "appport-mark.png",
+        "by": "scripts/derive-product-logos.mjs",
+        "how": "the mark beside \"AppPort\" in Inter Display Bold, ink #e6ebf7 (stand-in)"
+      },
+      "sha256": "b5eae3e293f6c7961d1fd4149093423929692f866f4ff150700fe755541d900a"
+    },
+    {
+      "product": "appport",
+      "file": "products/appport/appport-logo.png",
+      "kind": "logo",
+      "background": "light",
+      "origin": "derived",
+      "derived": {
+        "from": "appport-mark.png",
+        "by": "scripts/derive-product-logos.mjs",
+        "how": "the mark beside \"AppPort\" typeset in Inter Display Bold, ink #0b1538 (stand-in: no wordmark artwork exists)"
+      },
+      "sha256": "055f867e4b2840847fa685a2b708565499ff15fab05776d8b3ba5999a2e49aab"
+    },
+    {
+      "product": "appport",
       "file": "products/appport/appport-mark.png",
       "kind": "mark",
       "background": "any",
@@ -122,8 +203,7 @@
     }
   ],
   "gaps": [
-    "FeltDB has no light-background full logo (its only full logo has a white wordmark).",
-    "AuthBoundry and AppPort have no full logo with a wordmark in any repository; only their marks exist.",
-    "AuthBoundry's mark is navy and blue on transparent: it needs a light background."
+    "AuthBoundry and AppPort have no wordmark artwork: their full logos set the name in Inter Display Bold beside the real mark, as a stand-in until the owner supplies or approves a wordmark.",
+    "Derived files are regenerated by scripts/derive-product-logos.mjs from the originals."
   ]
 }

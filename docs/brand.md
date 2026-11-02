@@ -96,22 +96,22 @@ file's origin and checksum.
 - **Derived marks** are square, transparent, 512px crops of the mark from a logo that also carries a
   wordmark. They exist for FeltDB and AppBoundry; the crop box is recorded.
 
-| Product | Full logo | Mark |
-|---|---|---|
-| FeltDB | `feltdb-logo-dark.png` (white wordmark; dark backgrounds only) | `feltdb-mark.png` (derived) |
-| FeltKit | `feltkit-logo.png` (light), `feltkit-logo-dark.png` (dark) | `feltkit-mark.png` |
-| AppBoundry | `appboundry-logo.png` (light), `appboundry-logo-dark.png` (dark) | `appboundry-mark.png` (derived; light backgrounds) |
-| AuthBoundry | none in any repository | `authboundry-mark.png` (light backgrounds) |
-| AppPort | none in any repository | `appport-mark.png` |
+| Product | Full logo, light backgrounds | Full logo, dark backgrounds | Mark |
+|---|---|---|---|
+| FeltDB | `feltdb-logo.png` (derived: wordmark recoloured) | `feltdb-logo-dark.png` | `feltdb-mark.png` (derived; any background) |
+| FeltKit | `feltkit-logo.png` | `feltkit-logo-dark.png` | `feltkit-mark.png` (any) |
+| AppBoundry | `appboundry-logo.png` | `appboundry-logo-dark.png` | `appboundry-mark.png`, `appboundry-mark-dark.png` (derived) |
+| AuthBoundry | `authboundry-logo.png` (derived, typeset name) | `authboundry-logo-dark.png` (derived, typeset name) | `authboundry-mark.png`, `authboundry-mark-dark.png` (derived: navy recoloured) |
+| AppPort | `appport-logo.png` (derived, typeset name) | `appport-logo-dark.png` (derived, typeset name) | `appport-mark.png` (any) |
+
+`node scripts/derive-product-logos.mjs` produces every derived file from the originals, and re-running it
+reproduces them exactly. AuthBoundry and AppPort have no wordmark artwork, so their full logos set the name
+in Inter Display Bold beside the real mark. That is a **stand-in** until a wordmark is supplied or
+approved.
 
 `node scripts/check-brand-assets.mjs --root <product checkouts>` verifies the files. It also reports any
 original that has changed in its product repository, so the copy here can be refreshed. The unit tests run
 the same check without `--root`.
-
-**Gaps**, recorded in `sources.json`:
-
-- FeltDB has no light-background full logo.
-- AuthBoundry and AppPort have no logo with a wordmark.
 
 ## 4. Typography, spacing, surfaces
 
