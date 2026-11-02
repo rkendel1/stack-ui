@@ -65,7 +65,9 @@ export async function checkConformance(options) {
   const linksCompany = (html) => new RegExp(`href="${company.replace(/\./g, '\\.')}/?"`).test(html);
 
   for (const page of pages) {
-    const html = readFileSync(page, 'utf8');
+    // React's server renderer separates adjacent text nodes with <!-- --> markers
+    // ("A <!-- -->Boundry<!-- --> product"); comments never carry content, so drop them.
+    const html = readFileSync(page, 'utf8').replace(/<!--[\s\S]*?-->/g, '');
     const where = page;
     // React escapes nothing in a script's __html, so the shared script text appears verbatim.
     if (!html.includes(THEME_INIT_SCRIPT)) fail(where, 'missing the shared pre-paint theme script (THEME_INIT_SCRIPT)');

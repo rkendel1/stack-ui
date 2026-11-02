@@ -26,6 +26,14 @@ explicit authorization.
 
 Component APIs, tokens and DOM structure are unchanged from 0.6.0.
 
+## 0.6.2 (patch)
+
+- **Defect found while adopting the feltdb.com blog and docs.** The conformance checker failed every page whose
+  shared header React rendered on the server. The renderer separates adjacent text nodes with `<!-- -->`
+  markers, so "A Boundry product" was never found as one string. The checker now ignores HTML comments. A
+  test renders `SiteHeader` and `SiteFooter` with `react-dom/server` and checks the result. Earlier sites
+  passed only because their family link was hand-written JSX.
+
 ## Decisions needed before npm publishing
 
 1. **Scope (D9).** Neither `@stack-ui` nor `@boundry` exists on the npm registry

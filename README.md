@@ -27,7 +27,7 @@ replace `confirm()` and `prompt()` on framework-free pages. The theme preference
 (`theme.js`) is the only value any package stores; `stack-ui-core-stateless.js`
 is the classic build without it. State mappings cover the Compute
 and FeltDB fields the first adopting screens render
-(`packages/core/src/states.js`). Not published to npm yet (scope: D9). Version 0.6.1.
+(`packages/core/src/states.js`). Not published to npm yet (scope: D9). Version 0.6.2.
 
 ### Using it
 

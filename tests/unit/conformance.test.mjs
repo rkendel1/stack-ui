@@ -78,3 +78,15 @@ test('run through a symlinked bin (as npm installs it), failures still exit non-
   symlinkSync(new URL('../../packages/core/bin/conformance.mjs', import.meta.url).pathname, link);
   assert.throws(() => execFileSync('node', [link, '--product', 'feltdb', '--html', join(dir, 'out'), '--tokens', tokens], { stdio: 'pipe' }), /SiteFooter/);
 });
+
+test('pages rendered by React on the server pass (text nodes separated by comment markers)', async () => {
+  const { createElement } = await import('react');
+  const { renderToString } = await import('react-dom/server');
+  const { SiteHeader, SiteFooter } = await import('@stack-ui/react');
+  const body = renderToString(createElement('div', null,
+    createElement(SiteHeader, { product: { id: 'feltdb' }, theme: { preference: 'system' } }),
+    createElement(SiteFooter, { product: { id: 'feltdb' }, year: 2026 })));
+  assert.match(body, /<!-- -->/, 'the renderer emits comment markers this test is about');
+  const dir = site({ 'index.html': `<!doctype html><html data-stack-product="feltdb"><head><script>${THEME_INIT_SCRIPT}</script></head><body>${body}</body></html>` });
+  assert.deepEqual(await checkConformance({ product: 'feltdb', html: [join(dir, 'out')], css: [], headerFamily: true, tokens }), []);
+});
