@@ -62,6 +62,7 @@ Browser tests use `playwright-core`; install Chromium with
 
 | Document | Contents |
 |---|---|
+| [assets/brand/](assets/brand/sources.json) | The Boundry logo and mark as PNG, and every product's logo, with provenance (`sources.json`, checked by `scripts/check-brand-assets.mjs`) |
 | [docs/brand.md](docs/brand.md) | Boundry brand specification: mark, colour, type, themes, product accents, the Boundry family on every surface |
 | [docs/product-identities.md](docs/product-identities.md) | Per-product identity and UX direction |
 | [docs/portfolio-assessment.md](docs/portfolio-assessment.md) | Every Boundry surface, framework, deploy, domain and Stack UI version; duplication found |
