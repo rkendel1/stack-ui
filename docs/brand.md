@@ -28,6 +28,12 @@ The foundation is shared, identity is declared, and experience belongs to each p
   checked by eye against that image (same geometry, same gradient direction), but it is not the master
   artwork. **When the owner commits the master SVG, it replaces these files unchanged.** No tests depend on the
   path data.
+- **PNG files:** `assets/brand/` holds the mark (512 and 1024px, square) and the full logo (mark,
+  wordmark and ™), each in a light-background and a dark-background version, all on transparent
+  backgrounds. They are for documents, decks and profiles; products use the SVGs and `BrandMark`. They are
+  rendered from the SVGs by `node scripts/render-brand-png.mjs`. Their wordmark is set in Inter Display
+  ExtraBold as a stand-in until the master wordmark is committed (D29). Re-render them when the artwork
+  changes.
 - **Wordmark:** "Boundry" set in a heavy geometric sans, ink `#0b1538`, followed by ™. Until a licensed
   wordmark file is supplied, interfaces set the name in the system sans at weight 700 next to the mark. They
   do not imitate the wordmark's letterforms with another font.
