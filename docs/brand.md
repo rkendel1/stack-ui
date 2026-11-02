@@ -86,6 +86,33 @@ These are unchanged. They are the contract's tones (positive, progress, attentio
 unknown), evidence (verified, unverified) and info notices. They mean the same thing in every product and
 every theme.
 
+## 3.3a Product logos
+
+Every product's logo is kept in `assets/brand/products/<id>/`. `assets/brand/sources.json` records each
+file's origin and checksum.
+
+- **Originals** are copied unmodified from the product's repository, and the source is recorded as
+  `repo:path`.
+- **Derived marks** are square, transparent, 512px crops of the mark from a logo that also carries a
+  wordmark. They exist for FeltDB and AppBoundry; the crop box is recorded.
+
+| Product | Full logo | Mark |
+|---|---|---|
+| FeltDB | `feltdb-logo-dark.png` (white wordmark; dark backgrounds only) | `feltdb-mark.png` (derived) |
+| FeltKit | `feltkit-logo.png` (light), `feltkit-logo-dark.png` (dark) | `feltkit-mark.png` |
+| AppBoundry | `appboundry-logo.png` (light), `appboundry-logo-dark.png` (dark) | `appboundry-mark.png` (derived; light backgrounds) |
+| AuthBoundry | none in any repository | `authboundry-mark.png` (light backgrounds) |
+| AppPort | none in any repository | `appport-mark.png` |
+
+`node scripts/check-brand-assets.mjs --root <product checkouts>` verifies the files. It also reports any
+original that has changed in its product repository, so the copy here can be refreshed. The unit tests run
+the same check without `--root`.
+
+**Gaps**, recorded in `sources.json`:
+
+- FeltDB has no light-background full logo.
+- AuthBoundry and AppPort have no logo with a wordmark.
+
 ## 4. Typography, spacing, surfaces
 
 - **Typeface:** the system sans stack, plus mono for identifiers. There is no web-font download, because

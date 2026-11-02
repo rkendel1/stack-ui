@@ -1,0 +1,129 @@
+{
+  "$description": "Product logos held by the design foundation. Originals are copied unmodified from the product repository named in `source` (repo:path); derived files are produced from an original as described. `background` says what they are drawn for: light, dark, or any. sha256 identifies each file; scripts/check-brand-assets.mjs verifies them and, given checkouts of the product repositories, reports any original that has changed at its source.",
+  "boundry": {
+    "source": "scripts/render-brand-png.mjs (from packages/tokens/brand/*.svg)",
+    "files": [
+      "boundry-logo.png",
+      "boundry-logo-reversed.png",
+      "boundry-mark-1024.png",
+      "boundry-mark-512.png",
+      "boundry-mark-reversed-1024.png",
+      "boundry-mark-reversed-512.png"
+    ]
+  },
+  "products": [
+    {
+      "product": "feltdb",
+      "file": "products/feltdb/feltdb-logo-dark.png",
+      "kind": "logo",
+      "background": "dark",
+      "origin": "original",
+      "sha256": "5c40e2568c2dd4b99f0991a931620a11dfc3a7d819bc1e74566a44fee1bcd01e",
+      "source": "flow_db:website/public/feltdb.png"
+    },
+    {
+      "product": "feltdb",
+      "file": "products/feltdb/feltdb-mark.png",
+      "kind": "mark",
+      "background": "any",
+      "origin": "derived",
+      "sha256": "201e6b836ab90040bfe88ac2f387eb4010a9614d54bf08c4c3f8889a59dc4f07",
+      "derived": {
+        "from": "feltdb-logo-dark.png",
+        "crop": [
+          0,
+          0,
+          1606,
+          1570
+        ],
+        "note": "the mark above the wordmark, trimmed, centred on a square, 512px"
+      }
+    },
+    {
+      "product": "feltkit",
+      "file": "products/feltkit/feltkit-logo.png",
+      "kind": "logo",
+      "background": "light",
+      "origin": "original",
+      "sha256": "0da2e067081e22757fe3d0ef3e1ce00286bfcc429b8c41f5d1812c1eebf96179",
+      "source": "feltkit:docs/assets/feltkit-logo.png"
+    },
+    {
+      "product": "feltkit",
+      "file": "products/feltkit/feltkit-logo-dark.png",
+      "kind": "logo",
+      "background": "dark",
+      "origin": "original",
+      "sha256": "f7cf576ff045c801577ecdf8cd3d769cba668bca291a7a6980744cac7035cacf",
+      "source": "feltkit:docs/assets/feltkit-logo-dark.png"
+    },
+    {
+      "product": "feltkit",
+      "file": "products/feltkit/feltkit-mark.png",
+      "kind": "mark",
+      "background": "any",
+      "origin": "original",
+      "sha256": "d71da31a023e894c6cec5c16c1fa9e7891e4661cfd2368c5a95619a2120149dd",
+      "source": "feltkit:docs/assets/feltkit-mark.png"
+    },
+    {
+      "product": "appboundry",
+      "file": "products/appboundry/appboundry-logo.png",
+      "kind": "logo",
+      "background": "light",
+      "origin": "original",
+      "sha256": "8f007513f77be799c72169937f9163579b012aa65b81de38b0ed83b688125eab",
+      "source": "appboundry:apps/cloud-platform/public/appboundry-black.png"
+    },
+    {
+      "product": "appboundry",
+      "file": "products/appboundry/appboundry-logo-dark.png",
+      "kind": "logo",
+      "background": "dark",
+      "origin": "original",
+      "sha256": "9106b340e2a9ea18e0dfcab82899a1ef7cb3e9c281e17d4815c8a14935c112db",
+      "source": "appboundry:apps/cloud-platform/public/appboundry-white.png"
+    },
+    {
+      "product": "appboundry",
+      "file": "products/appboundry/appboundry-mark.png",
+      "kind": "mark",
+      "background": "light",
+      "origin": "derived",
+      "sha256": "2f53e82f12171dd81ede704a49b2e422e11541a30a081c1d7e9ceefa5e13f977",
+      "derived": {
+        "from": "appboundry-logo.png",
+        "crop": [
+          160,
+          0,
+          565,
+          470
+        ],
+        "note": "the hexagon mark above the wordmark, trimmed, centred on a square, 512px; its outline is navy, so it needs a light background"
+      }
+    },
+    {
+      "product": "authboundry",
+      "file": "products/authboundry/authboundry-mark.png",
+      "kind": "mark",
+      "background": "light",
+      "origin": "original",
+      "sha256": "1e3ecdb037b35bd40a0f5a1e011b01b30385be1ef7ef318fe9b0d3e05bc8503c",
+      "source": "authboundry:apps/web/app/logo.png"
+    },
+    {
+      "product": "appport",
+      "file": "products/appport/appport-mark.png",
+      "kind": "mark",
+      "background": "any",
+      "origin": "original",
+      "sha256": "d9719da191c849de2804353ea9ac939c270d01ff0005915eedd1f6105c56d1d5",
+      "source": "appport:packages/sdk/appport_logo.png"
+    }
+  ],
+  "gaps": [
+    "FeltDB has no light-background full logo (its only full logo has a white wordmark).",
+    "AuthBoundry and AppPort have no full logo with a wordmark in any repository; only their marks exist.",
+    "AuthBoundry's mark is navy and blue on transparent: it needs a light background."
+  ]
+}
