@@ -50,8 +50,10 @@ test('a static release vendored in part is identified by the files it carries', 
   writeFileSync(join(root, 'appport-services/tests/browser/management-pages.browser.ts'), '// Boundry product surface');
   writeFileSync(join(root, 'appport-services/ui/management.js'), "product: { id: 'appport' }");
   execFileSync('git', ['init', '-q', join(root, 'appport-services')]);
-  // The registry claims 0.6.0 for appport-services; a subset of another release must be reported as that release.
+  // A subset of the current release must be reported as that release, whatever the registry claims.
+  const claimed = JSON.parse(readFileSync(join(here, 'docs/registry.json'), 'utf8')).surfaces.find((s) => s.id === 'appport-services-pages').version;
   const result = (() => { try { return run(root); } catch (error) { return String(error.stdout) + String(error.stderr); } })();
-  if (version === '0.6.0') assert.match(result, /every claim matches/);
-  else assert.match(result, new RegExp(`registry says 0\\.6\\.0, the repository has ${version.replace(/\./g, '\\.')}`));
+  const escape = (v) => v.replace(/\./g, '\\.');
+  if (version === claimed) assert.match(result, /every claim matches/);
+  else assert.match(result, new RegExp(`registry says ${escape(claimed)}, the repository has ${escape(version)}`));
 });

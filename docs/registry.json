@@ -9,7 +9,7 @@
       "product": null,
       "integration": "static",
       "vendor": "vendor/stack-ui",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "conformance": {
         "file": "vercel.json",
         "contains": "conformance.mjs --company"
@@ -18,7 +18,7 @@
       "accessibility": "axe clean in light, dark, forced dark at 1280 and 320px",
       "responsive": "no page-level horizontal scroll at 320px",
       "baseline": "contact email placeholder; product statuses unset; no founder portrait",
-      "remaining": "none"
+      "remaining": "merge rkendel1/boundry#3 (0.6.1)"
     },
     {
       "id": "feltkit-site",
@@ -28,7 +28,7 @@
       "product": "feltkit",
       "integration": "vendored-packages",
       "vendor": "vendor/stack-ui",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "conformance": {
         "file": "package.json",
         "contains": "check-design-foundation"
@@ -38,11 +38,7 @@
       "accessibility": "axe: 2 pre-existing contrast findings, none introduced",
       "responsive": "verified at 390px",
       "baseline": "contrast: .agent-step titles, documents hero links",
-      "remaining": "re-vendor the released foundation (copy predates the theme type declarations; runtime files identical)",
-      "knownDifferences": [
-        "core/package.json",
-        "core/src/theme.d.ts"
-      ]
+      "remaining": "merge rkendel1/feltkit-website-request#5 (0.6.1)"
     },
     {
       "id": "feltkit-dashboard",
@@ -52,7 +48,7 @@
       "product": "feltkit",
       "integration": "vendored-packages",
       "vendor": "packages/sdk/dashboard/vendor/stack-ui",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "conformance": {
         "file": "packages/sdk/test/design-foundation.test.ts",
         "contains": "SHA256SUMS"
@@ -62,7 +58,7 @@
       "accessibility": "axe clean on 5 screens, light and dark",
       "responsive": "not verified",
       "baseline": "test: create-feltkit starter missing (fails on main)",
-      "remaining": "screen-level tables, forms and badges; Drawer (D26); responsive verification"
+      "remaining": "merge rkendel1/feltkit#16 (0.6.1); screen-level tables, forms and badges; Drawer (D26); responsive verification"
     },
     {
       "id": "authboundry-site",
@@ -72,7 +68,7 @@
       "product": "authboundry",
       "integration": "vendored-packages",
       "vendor": "apps/web/vendor/stack-ui",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "conformance": {
         "file": "apps/web/package.json",
         "contains": "check-design-foundation"
@@ -82,11 +78,7 @@
       "accessibility": "axe: 4 pre-existing content contrast findings, none introduced",
       "responsive": "no overflow at 320px",
       "baseline": "contrast: text-green-600, text-slate-500 on home and product pages",
-      "remaining": "re-vendor the released foundation (copy predates the theme type declarations; runtime files identical)",
-      "knownDifferences": [
-        "core/package.json",
-        "core/src/theme.d.ts"
-      ]
+      "remaining": "merge rkendel1/authboundry#135 (0.6.1)"
     },
     {
       "id": "authboundry-portal",
@@ -96,7 +88,7 @@
       "product": "authboundry",
       "integration": "vendored-packages",
       "vendor": "apps/web/vendor/stack-ui",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "conformance": {
         "file": "apps/web/tests/browser/portal.browser.test.mjs",
         "contains": "Boundry product surface"
@@ -106,11 +98,7 @@
       "accessibility": "portal browser suite 12/12 incl. axe light and dark",
       "responsive": "sidebar fixed-width (D18)",
       "baseline": "none known",
-      "remaining": "portal sidebar is its own, not Shell (D18); re-vendor the released foundation (copy predates the theme type declarations; runtime files identical)",
-      "knownDifferences": [
-        "core/package.json",
-        "core/src/theme.d.ts"
-      ]
+      "remaining": "merge rkendel1/authboundry#135; portal sidebar is its own, not Shell (D18)"
     },
     {
       "id": "appboundry-site",
@@ -120,7 +108,7 @@
       "product": "appboundry",
       "integration": "static",
       "vendor": "apps/cloud-platform/public/vendor/stack-ui",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "conformance": {
         "file": "apps/cloud-platform/package.json",
         "contains": "check-design-foundation"
@@ -136,21 +124,21 @@
       "id": "appboundry-portal",
       "repo": "appboundry",
       "surface": "AppBoundry cloud portal (public/app.js)",
-      "status": "partial",
+      "status": "adopted",
       "product": "appboundry",
       "integration": "static",
       "vendor": "apps/cloud-platform/public/vendor/stack-ui",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "conformance": {
         "file": "apps/cloud-platform/test/stack-ui.test.ts",
-        "contains": "maps every AppBoundry field"
+        "contains": "places the portal in the Boundry family"
       },
       "productIn": "apps/cloud-platform/app/layout.jsx",
       "themes": "system, light, dark (Settings → Appearance)",
       "accessibility": "portal browser suite not run (workspace install blocked)",
       "responsive": "not verified",
       "baseline": "portal browser suite blocked by out-of-date lockfile",
-      "remaining": "merge rkendel1/appboundry#50; Boundry family link in the portal sidebar; run the portal browser suite once the lockfile is fixed"
+      "remaining": "merge rkendel1/appboundry#50 (family link added); run the portal browser suite once the lockfile on main is fixed"
     },
     {
       "id": "appport-services-pages",
@@ -160,7 +148,7 @@
       "product": "appport",
       "integration": "static",
       "vendor": "vendor/stack-ui",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "conformance": {
         "file": "tests/browser/management-pages.browser.ts",
         "contains": "Boundry product surface"
@@ -170,7 +158,7 @@
       "accessibility": "axe clean light and dark at 1280 and 640px",
       "responsive": "no overflow at 640px",
       "baseline": "none known",
-      "remaining": "none"
+      "remaining": "merge rkendel1/appport-services#39 (0.6.1)"
     },
     {
       "id": "feltdb-home",
@@ -180,33 +168,37 @@
       "product": "feltdb",
       "integration": "vendored-packages",
       "vendor": "website/vendor/stack-ui",
-      "version": "0.6.0",
+      "version": "0.6.2",
       "conformance": {
         "file": "website/package.json",
         "contains": "check-design-foundation"
       },
       "productIn": "website/app/layout.tsx",
       "themes": "system, light, dark (stored)",
-      "accessibility": "axe clean at 1280px light, dark, forced dark",
-      "responsive": "64px overflow at 320px (pre-existing code samples)",
-      "baseline": "320px overflow and unfocusable code scroll regions",
-      "remaining": "none for the homepage"
+      "accessibility": "axe clean at 1280 and 320px, light, dark, forced dark",
+      "responsive": "no horizontal scroll at 320px",
+      "baseline": "none known",
+      "remaining": "merge rkendel1/flow_db#439 (after rkendel1/stack-ui#14)"
     },
     {
       "id": "feltdb-site-pages",
       "repo": "flow_db",
       "surface": "feltdb.com blog, docs, playground (website/)",
-      "status": "not-adopted",
+      "status": "adopted",
       "product": "feltdb",
-      "integration": "none",
-      "vendor": null,
-      "version": null,
-      "conformance": null,
-      "themes": "light only",
-      "accessibility": "not verified",
-      "responsive": "not verified",
-      "baseline": "",
-      "remaining": "family footer, themes"
+      "integration": "vendored-packages",
+      "vendor": "website/vendor/stack-ui",
+      "version": "0.6.2",
+      "conformance": {
+        "file": "website/scripts/check-design-foundation.mjs",
+        "contains": "'playground'"
+      },
+      "themes": "system, light, dark (stored)",
+      "accessibility": "axe clean on blog, posts, docs, playground at 1280 and 320px, light, dark, forced dark",
+      "responsive": "no horizontal scroll at 320px",
+      "baseline": "none known",
+      "remaining": "merge rkendel1/flow_db#439 (after rkendel1/stack-ui#14)",
+      "productIn": "website/app/layout.tsx"
     },
     {
       "id": "feltdb-studio-package",
@@ -225,7 +217,7 @@
       "accessibility": "browser suite 3/3 incl. axe on Overview and State, light and dark system",
       "responsive": "not verified",
       "baseline": "",
-      "remaining": "merge rkendel1/flow_db#436 (after rkendel1/stack-ui#12)",
+      "remaining": "none (merged: rkendel1/flow_db#436)",
       "productIn": "packages/studio/src/app.tsx"
     },
     {
@@ -261,7 +253,7 @@
       "accessibility": "compute-ui-e2e 13/16; failures pre-existing or environmental",
       "responsive": "not verified",
       "baseline": "e2e: 'each mode shows only its own navigation' (stale expected list, fails on 0.2.0 too); 'an application is a computer' (compute deploy health check in this container)",
-      "remaining": "merge rkendel1/compute#116 (after rkendel1/stack-ui#12); not a portfolio product, so no family link"
+      "remaining": "none (merged: rkendel1/compute#116); not a portfolio product"
     },
     {
       "id": "appworks-workspace",
@@ -280,23 +272,26 @@
       "accessibility": "axe clean light, dark, forced dark at 1280 and 360px",
       "responsive": "no overflow at 360px",
       "baseline": "",
-      "remaining": "merge rkendel1/appworks#17 (after rkendel1/stack-ui#12); not a portfolio product"
+      "remaining": "none (merged: rkendel1/appworks#17); not a portfolio product"
     },
     {
       "id": "appworks-recipe-studio",
       "repo": "appworks",
       "surface": "AppWorks recipe studio (packages/recipe-studio/ui)",
-      "status": "not-adopted",
+      "status": "adopted",
       "product": null,
-      "integration": "none",
-      "vendor": null,
-      "version": null,
-      "conformance": null,
-      "themes": "system (own tokens)",
-      "accessibility": "not verified",
-      "responsive": "not verified",
-      "baseline": "",
-      "remaining": "adopt"
+      "integration": "static",
+      "vendor": "packages/recipe-studio/vendor/stack-ui",
+      "version": "0.6.2",
+      "conformance": {
+        "file": "packages/recipe-studio/test/ui.test.ts",
+        "contains": "design foundation"
+      },
+      "themes": "system, light, dark (per page, never stored); tokens only, no shared components",
+      "accessibility": "axe clean light and dark at 1280 and 360px",
+      "responsive": "no horizontal scroll at 360px",
+      "baseline": "none known",
+      "remaining": "merge rkendel1/appworks#18 (after rkendel1/stack-ui#14)"
     },
     {
       "id": "appport-protocol",

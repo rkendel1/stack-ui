@@ -57,8 +57,18 @@ function identify(dir, integration, known = []) {
   }
   // An exact match (every difference explained) wins over any near match; otherwise report
   // the closest release, with the files that differ.
-  const exact = candidates.find((c) => !c.unexplained.length);
-  if (exact) return { version: exact.version, differs: exact.differs };
+  // Files that did not change between releases match several of them: then the copy's own
+  // VERSION decides, if it is one of the matches; otherwise the newest match.
+  const exacts = candidates.filter((c) => !c.unexplained.length);
+  if (exacts.length) {
+    const versionFile = join(dir, integration === 'static' ? 'VERSION' : 'core/package.json');
+    const claimed = existsSync(versionFile)
+      ? (integration === 'static' ? readFileSync(versionFile, 'utf8').trim() : JSON.parse(readFileSync(versionFile, 'utf8')).version)
+      : null;
+    const newest = (a, b) => b.version.localeCompare(a.version, undefined, { numeric: true });
+    const exact = exacts.find((c) => c.version === claimed) || exacts.sort(newest)[0];
+    return { version: exact.version, differs: exact.differs };
+  }
   const near = candidates.filter((c) => c.unexplained.length < c.size / 2).sort((a, b) => a.unexplained.length - b.unexplained.length)[0];
   if (near) return { version: near.version, differs: near.differs, unexplained: near.unexplained };
   const versionFile = integration === 'static' ? join(dir, 'VERSION') : join(dir, 'core/package.json');
