@@ -28,7 +28,21 @@ conformance check in each product's build, not by convention.
    node vendor/stack-ui/core/bin/conformance.mjs --product <id> --html <built pages> --css <product's own css> --require-header-family
    ```
 
-   The company site uses `--company` instead of `--product`.
+   The company site uses `--company` instead of `--product`. An **application** (a product UI in the
+   `Shell`, not a website) uses `--app` instead of `--require-header-family`, and needs no `SiteFooter`:
+
+   ```sh
+   node vendor/stack-ui/conformance.mjs --product <id> --app --html <app pages> --css <product's own css>
+   # vendored packages
+   node vendor/stack-ui/core/bin/conformance.mjs --product <id> --app --html <app pages> --css <product's own css>
+   ```
+
+   App mode requires the shared `Shell({ product: { id } })` with its theme control, or the product's own
+   frame marked `data-stack-shell` that carries a theme control (`data-stack-theme-control` on the
+   `select`, as `ThemeSwitch` renders it), a `<main>` landmark and an "A Boundry product" link to
+   https://boundry.company (contract §10). The check reads markup, not scripts: a page that renders its
+   frame in the browser passes a snapshot of its rendered document (for example
+   `document.documentElement.outerHTML` saved by its browser test).
 
 ## What stays the product's
 

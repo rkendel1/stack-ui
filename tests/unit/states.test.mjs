@@ -89,6 +89,14 @@ const SOURCE = {
   'appboundry.conformance.status': ['CONFORMING', 'NON_CONFORMING'],
   // appboundry: apps/cloud-portal/src/authority.ts provider eligibility
   'appboundry.provider.eligibility': ['ELIGIBLE', 'INELIGIBLE'],
+  // appboundry: packages/cli/src/commands.ts catalog entry (running | stopped) and
+  // deployment record (running | available) statuses
+  'appboundry.deployment.status': ['running', 'stopped', 'available'],
+  // appboundry: packages/cli/src/commands.ts `SourceDeploymentStep.status`
+  'appboundry.deployment.step': ['pending', 'complete', 'failed'],
+  // authboundry: crates/cli/src/studio.rs attachment `attached` and Studio's protection states
+  'authboundry.studio.attached': ['true', 'false'],
+  'authboundry.studio.protection': ['active', 'inactive', 'unreachable'],
   // appboundry: apps/cloud-portal/src/read-model.ts health
   'appboundry.health.ready': ['true', 'false'],
   'appboundry.health.check': ['available', 'degraded', 'unavailable'],
@@ -249,4 +257,29 @@ test('AppBoundry: implementation, attestation and conformance are verifications 
   assert.equal(report.state, 'verified');
   // A report that says CONFORMING beside a failed check is not verified.
   assert.equal(verificationOf('appboundry.conformance.status', 'CONFORMING', [{ label: 'artifact hash', status: 'failed' }]).state, 'verification_failed');
+});
+
+test('app states: deployment and Studio attachment map what the products emit, and nothing else', () => {
+  // AppBoundry: the host records `running`; deployed-for-self-managed and stopped are inactive by intent.
+  assert.deepEqual(['running', 'available', 'stopped'].map((v) => resolve('appboundry.deployment.status', v).tone), ['positive', 'neutral', 'neutral']);
+  assert.equal(resolve('appboundry.deployment.status', 'available').label, 'Available');
+  // A failed deployment step is critical; a step a failure left unrun is not "in progress".
+  assert.equal(resolve('appboundry.deployment.step', 'failed').tone, 'critical');
+  assert.deepEqual(resolve('appboundry.deployment.step', 'pending'), { field: 'appboundry.deployment.step', value: 'pending', tone: 'neutral', label: 'Not run', glyph: '○', mapped: true });
+  // AuthBoundry Studio.
+  assert.equal(resolve('authboundry.studio.attached', true).label, 'Attached');
+  assert.equal(resolve('authboundry.studio.attached', false).tone, 'attention');
+  assert.equal(resolve('authboundry.studio.protection', 'active').tone, 'positive');
+  assert.equal(resolve('authboundry.studio.protection', 'inactive').tone, 'neutral');
+  assert.equal(resolve('authboundry.studio.protection', 'unreachable').tone, 'attention');
+  // Values these products do not emit render unknown with their raw word, never a guess.
+  for (const [field, value] of [
+    ['appboundry.deployment.status', 'failed'], ['appboundry.deployment.status', 'RUNNING'], ['appboundry.deployment.status', undefined],
+    ['appboundry.deployment.step', 'running'], ['authboundry.studio.attached', 'yes'], ['authboundry.studio.protection', 'Active'],
+  ]) {
+    const result = resolve(field, value);
+    assert.equal(result.tone, 'unknown', `${field}=${value}`);
+    assert.equal(result.mapped, false);
+    assert.equal(result.label, String(value));
+  }
 });

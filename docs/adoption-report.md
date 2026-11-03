@@ -103,6 +103,9 @@ checksummed releases. Replacing those with npm dependencies waits for a publish 
 - `conformance.mjs` has no app mode: it requires `SiteFooter`, so Shell apps allow that one failure, and
   its theme-control check is a text search that inlined scripts can satisfy. Products also map
   `appboundry.deployment.status` and AuthBoundry Studio states locally; both want foundation mappings.
+  **Addressed in stack-ui 0.7.0** (D33–D35): `--app`, a markup-only theme-control check, and the
+  `appboundry.deployment.*` and `authboundry.studio.*` mappings. The products adopt them when they
+  re-vendor 0.7.0.
 
 **Remaining:**
 

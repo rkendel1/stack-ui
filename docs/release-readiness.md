@@ -34,6 +34,20 @@ Component APIs, tokens and DOM structure are unchanged from 0.6.0.
   test renders `SiteHeader` and `SiteFooter` with `react-dom/server` and checks the result. Earlier sites
   passed only because their family link was hand-written JSX.
 
+## 0.7.0 (minor)
+
+- **Conformance app mode.** `conformance.mjs --product <id> --app` checks an application: the app shell
+  (`Shell`, or a frame marked `data-stack-shell`), a `<main>` landmark, the "A Boundry product" link and
+  the theme control, with no `SiteFooter` (D33). Apps no longer allow-list a failure.
+- **Theme control check fixed.** It was a text search for `data-stack-theme-control`, which an inlined
+  `stack-ui-core.js` or theme script satisfied. It now requires a control element carrying the attribute
+  in the page's markup, in both modes; element checks ignore `<script>`, `<style>` and `<template>`
+  contents (D33). The site-mode messages and arguments are unchanged.
+- **`Shell` theme select carries `data-stack-theme-control`** (dom, html and React, from the shared view
+  tree; D34). Its class `stack-shell__theme` is unchanged.
+- **New mappings** `appboundry.deployment.status`, `appboundry.deployment.step`,
+  `authboundry.studio.attached` and `authboundry.studio.protection` (D35).
+
 ## Decisions needed before npm publishing
 
 1. **Scope (D9).** Neither `@stack-ui` nor `@boundry` exists on the npm registry

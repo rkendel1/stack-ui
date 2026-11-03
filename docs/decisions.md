@@ -301,6 +301,65 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   AppPort). Describe no Boundry product as an agent runtime unless the owner brings one into the
   portfolio.
 
+### D33 — Conformance has an app mode, and reads markup, not scripts — Decided (0.7.0)
+- **Decision:** `conformance.mjs --product <id> --app` checks an application. Instead of `SiteHeader` and
+  `SiteFooter` it requires the app shell (an element with class `stack-shell`, or the product's own frame
+  marked `data-stack-shell`), a `<main>` landmark, and an `<a href="https://boundry.company">` whose visible
+  text says "A Boundry product" (contract §10). In both modes the theme control must be a control element
+  (`select`, `input`, `button`, `fieldset` or `role="radiogroup"`) carrying `data-stack-theme-control`, and
+  every element check reads the page with `<script>`, `<style>`, `<template>` contents and comments
+  removed. `THEME_INIT_SCRIPT` is still found in the whole file. `--company` with `--app` is refused.
+- **Why:** applications have a shell, not a website footer, so their conformance tests allow-list the
+  "missing SiteFooter" failure (the AppBoundry artifact portal and host console:
+  `appboundry:packages/appboundry/test/portal-design-foundation.test.ts`,
+  `appboundry:studio/test/stack-ui.test.ts`). The
+  theme-control check was a text search: an inlined `stack-ui-core.js` names the attribute, so a page with
+  no control passed (`docs/adoption-report.md`, 2026-11-03). A product's own frame is accepted with an
+  explicit marker, not inferred, so a page cannot pass app mode by accident.
+- **Compatibility:** the site-mode arguments and failure messages are unchanged, and the boundry.company,
+  appboundry.com and authboundry.com builds in the checkouts pass the new checker as they passed the old
+  one. A page whose only theme control is rendered by a script now fails; that is the false positive
+  being removed. Client-rendered apps pass a snapshot of the rendered document.
+- **Alternatives:** inferring an app from the absence of a footer (rejected: a website that lost its footer
+  would silently pass as an app), or parsing scripts for rendered markup (rejected: undecidable, and the
+  point is what the page actually shows).
+
+### D34 — The Shell theme select carries data-stack-theme-control — Decided (0.7.0)
+- **Decision:** the `Shell` theme `select` gets the same `data-stack-theme-control` attribute as
+  `ThemeSwitch`, in the shared view tree, so the dom, html and React bindings all render it. The class
+  `stack-shell__theme` stays.
+- **Why:** app-mode conformance recognises a theme control by that attribute. Products already select
+  `[data-stack-theme-control],.stack-shell__theme` (AuthBoundry's theme script), so the addition breaks no
+  selector. Adding an attribute is a minor change under contract §9.
+
+### D35 — Deployment and Studio states are foundation mappings — Decided, owners to confirm (0.7.0)
+- **Decision:** four condition fields, each mapping exactly what the product emits; any other value
+  renders `unknown` with its raw word.
+
+  | Field | Value → tone (label) |
+  |---|---|
+  | `appboundry.deployment.status` | running → positive; available → neutral; stopped → neutral |
+  | `appboundry.deployment.step` | complete → positive; failed → critical; pending → neutral ("Not run") |
+  | `authboundry.studio.attached` | true → positive ("Attached"); false → attention ("Not attached") |
+  | `authboundry.studio.protection` | active → positive; inactive → neutral; unreachable → attention ("Upstream unreachable") |
+
+- **Sources:** `appboundry:packages/cli/src/commands.ts` — host catalog entries are `running | stopped`
+  (what `/appboundry/api/applications` and host discovery report), deployment records `running |
+  available`, source-deployment steps `pending | complete | failed`. `authboundry:crates/cli/src/studio.rs`
+  — the attachment endpoint answers `attached` and `reachable` booleans; Studio's page shows protection
+  Active, Inactive, or Inactive with "upstream unreachable".
+- **Why these tones:** they keep the local choices of the AppBoundry portal and console and of Studio,
+  except in two places. A step left `pending` in a finished response never ran (an earlier step failed),
+  so it is "Not run", not the console's "In progress". An attached application whose upstream does not
+  answer is a problem a person can act on, so it is attention, not Studio's neutral "Inactive". AppBoundry
+  writes no failed deployment status; failure is the operation outcome and the failed step, so no failed
+  value is invented for the status field.
+- **Names:** `authboundry.studio.*` keeps the existing `authboundry.<entity>.<field>` form, and keeps
+  Studio's local application apart from the control-plane `authboundry.application.status`. Protection is
+  per attached application, not per route, so it is not `authboundry.route.*`.
+- **Not mapped yet:** host discovery `lifecycle.observed` (`running | stopped | unknown`) and
+  `lifecycle.authority` (`running | stopped | recoverable`); no screen shows them.
+
 ## Verified facts versus unresolved questions
 
 | Verified (see audit citations) | Unresolved |

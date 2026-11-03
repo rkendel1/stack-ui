@@ -165,6 +165,8 @@ test('the theme preference applies at once, persists across reloads, and system 
   try {
     const surface = () => page.evaluate(() => getComputedStyle(document.querySelector('.stack-shell__bar')).backgroundColor);
     assert.equal(await surface(), 'rgb(255, 255, 255)');
+    // The control conformance recognises (contract §10): the rendered select itself carries the marker.
+    assert.equal(await page.getAttribute('#view-theme', 'data-stack-theme-control'), '');
     await page.selectOption('#view-theme', 'dark');
     assert.equal(await page.getAttribute('html', 'data-stack-theme'), 'dark');
     assert.notEqual(await surface(), 'rgb(255, 255, 255)');
