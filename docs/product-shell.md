@@ -77,11 +77,14 @@ scrolls on its own; the page itself never scrolls sideways (tested at 640 and
 - **Preferences:** theme (`system | light | dark`, sets `data-stack-theme`,
   stored per product origin in `localStorage` under `stack-ui.theme`, every
   access wrapped in try/catch; `theme.js`) and reduced motion (follows OS).
-  Preferences never travel between products. A product drawn in one theme
-  only (FeltDB Studio) omits `theme`, and the shell shows no theme control
-  rather than one that does nothing. A product that keeps nothing in browser
-  storage (AppPort services) omits it too, uses the stateless classic build
-  (decisions D15) and follows the operating system's colour scheme.
+  Preferences never travel between products. Every Boundry **page** offers
+  system, light and dark with a theme control (contract §10, D36). Only a
+  component **embedded in another product's page** (the embedded FeltDB
+  `StudioApp` in `@feltdb/core/studio`) may be drawn in one theme and omit
+  `theme`: the host page owns the theme and its control, and conformance is
+  checked on the host page, not the embed. A product that keeps nothing in
+  browser storage (AppPort services) still shows a theme control; it uses the
+  stateless classic build (decisions D15), so the choice lasts for the page.
 - **Routing and focus:** a product with client-side routing passes
   `onNavigate(href)`; ordinary left clicks on the product link and navigation
   items call it instead of loading a page, while clicks with a modifier key

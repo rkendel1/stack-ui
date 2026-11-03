@@ -490,3 +490,10 @@ product" sentence, and, with `--require-header-family`, "A Boundry product" insi
    it, and such a page does not conform.
 
 App mode does not accept `--company`, and `--require-header-family` adds nothing to it.
+
+**Embedded components are not pages** (D36). A Boundry component rendered inside
+another product's page (for example the embedded FeltDB `StudioApp`) is checked as
+part of its host page. It may be drawn in one theme and render no theme control; the
+host page provides `THEME_INIT_SCRIPT`, its own theme control and the family markers.
+Every standalone or hosted page of a product, including one that renders the same
+component full-page, conforms in site or app mode as above.

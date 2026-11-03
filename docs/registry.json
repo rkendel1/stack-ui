@@ -44,21 +44,21 @@
       "id": "feltkit-dashboard",
       "repo": "feltkit",
       "surface": "FeltKit dashboard /_feltkit/ (packages/sdk/dashboard)",
-      "status": "partial",
+      "status": "adopted",
       "product": "feltkit",
       "integration": "vendored-packages",
       "vendor": "packages/sdk/dashboard/vendor/stack-ui",
-      "version": "0.6.1",
+      "version": "0.7.0",
       "conformance": {
-        "file": "packages/sdk/test/design-foundation.test.ts",
-        "contains": "SHA256SUMS"
+        "file": "packages/sdk/scripts/build-dashboard.mjs",
+        "contains": "app: true"
       },
       "productIn": "packages/sdk/dashboard/index.html",
       "themes": "system, light, dark (stored)",
-      "accessibility": "axe clean on 5 screens, light and dark",
-      "responsive": "not verified",
-      "baseline": "test: create-feltkit starter missing (fails on main)",
-      "remaining": "merge rkendel1/feltkit#16 (0.6.1); screen-level tables, forms and badges; Drawer (D26); responsive verification"
+      "accessibility": "axe clean on 26 development and 15 production screens and dialogs, light and dark, 1280 and 320px",
+      "responsive": "no horizontal overflow at 320px",
+      "baseline": "none known (starter test fixed; refusal refresh loop fixed)",
+      "remaining": "merge rkendel1/feltkit branch claude/compassionate-brahmagupta-nzegki; upstream feltkit.* state mappings to the foundation"
     },
     {
       "id": "authboundry-site",
@@ -68,7 +68,7 @@
       "product": "authboundry",
       "integration": "vendored-packages",
       "vendor": "apps/web/vendor/stack-ui",
-      "version": "0.6.2",
+      "version": "0.7.0",
       "conformance": {
         "file": "apps/web/package.json",
         "contains": "check-design-foundation"
@@ -88,17 +88,17 @@
       "product": "authboundry",
       "integration": "vendored-packages",
       "vendor": "apps/web/vendor/stack-ui",
-      "version": "0.6.2",
+      "version": "0.7.0",
       "conformance": {
         "file": "apps/web/tests/browser/portal.browser.test.mjs",
         "contains": "Boundry product surface"
       },
       "productIn": "apps/web/app/layout.tsx",
       "themes": "system, light, dark (stored)",
-      "accessibility": "portal browser suite 12/12 incl. axe light and dark",
+      "accessibility": "test:browser 15/15 incl. axe light and dark and app-mode conformance on rendered pages; test:api 28 pass",
       "responsive": "Shell navigation becomes a scrolling strip below 768px; no overflow at 320px",
-      "baseline": "Authority model step labels truncate at 1280px (pre-existing layout)",
-      "remaining": "merge rkendel1/authboundry#136 (shared Shell, D18 closed)"
+      "baseline": "none known",
+      "remaining": "merge rkendel1/authboundry#136"
     },
     {
       "id": "appboundry-site",
@@ -168,7 +168,7 @@
       "product": "feltdb",
       "integration": "vendored-packages",
       "vendor": "website/vendor/stack-ui",
-      "version": "0.6.2",
+      "version": "0.7.0",
       "conformance": {
         "file": "website/package.json",
         "contains": "check-design-foundation"
@@ -178,7 +178,7 @@
       "accessibility": "axe clean at 1280 and 320px, light, dark, forced dark",
       "responsive": "no horizontal scroll at 320px",
       "baseline": "none known",
-      "remaining": "merge rkendel1/flow_db#439 (after rkendel1/stack-ui#14)"
+      "remaining": "merge rkendel1/flow_db branch claude/compassionate-brahmagupta-nzegki (0.7.0)"
     },
     {
       "id": "feltdb-site-pages",
@@ -188,7 +188,7 @@
       "product": "feltdb",
       "integration": "vendored-packages",
       "vendor": "website/vendor/stack-ui",
-      "version": "0.6.2",
+      "version": "0.7.0",
       "conformance": {
         "file": "website/scripts/check-design-foundation.mjs",
         "contains": "'playground'"
@@ -197,7 +197,7 @@
       "accessibility": "axe clean on blog, posts, docs, playground at 1280 and 320px, light, dark, forced dark",
       "responsive": "no horizontal scroll at 320px",
       "baseline": "none known",
-      "remaining": "merge rkendel1/flow_db#439 (after rkendel1/stack-ui#14)",
+      "remaining": "merge rkendel1/flow_db branch claude/compassionate-brahmagupta-nzegki (0.7.0)",
       "productIn": "website/app/layout.tsx"
     },
     {
@@ -208,33 +208,37 @@
       "product": "feltdb",
       "integration": "vendored-packages",
       "vendor": "packages/studio/vendor/stack-ui",
-      "version": "0.6.1",
+      "version": "0.7.0",
       "conformance": {
-        "file": "packages/studio/test/design-foundation.test.mjs",
-        "contains": "redefines no foundation token"
+        "file": "packages/studio/test/browser/support.mjs",
+        "contains": "'--app'"
       },
-      "themes": "standalone: system, light, dark (stored); embedded StudioApp: light only by design",
-      "accessibility": "browser suite 3/3 incl. axe on Overview and State, light and dark system",
-      "responsive": "not verified",
+      "themes": "standalone and hosted: system, light, dark (stored); embedded StudioApp: light only, checked on its host page (D36)",
+      "accessibility": "browser suite 4/4 incl. axe and app-mode conformance, light and dark, 1280 and 320px",
+      "responsive": "no horizontal scroll at 320px",
       "baseline": "",
-      "remaining": "none (merged: rkendel1/flow_db#436)",
-      "productIn": "packages/studio/src/app.tsx"
+      "remaining": "merge the flow_db branch (0.7.0)",
+      "productIn": "packages/studio/vite.config.ts"
     },
     {
       "id": "feltdb-hosted",
       "repo": "flow_db",
-      "surface": "Hosted Studio, app, admin (website/app/studio, app, admin)",
-      "status": "blocked",
+      "surface": "Hosted Studio and admin (website/app/studio renders @feltdb/studio/hosted; admin)",
+      "status": "adopted",
       "product": "feltdb",
-      "integration": "none",
-      "vendor": null,
-      "version": null,
-      "conformance": null,
-      "themes": "light only",
-      "accessibility": "not verified",
-      "responsive": "not verified",
-      "baseline": "",
-      "remaining": "owner decision D7: move the hosted Studio onto @feltdb/studio, or adopt it in place (a separate 5,000-line implementation)"
+      "integration": "vendored-packages",
+      "vendor": "website/vendor/stack-ui",
+      "version": "0.7.0",
+      "conformance": {
+        "file": "website/scripts/check-design-foundation.mjs",
+        "contains": "'--app'"
+      },
+      "themes": "system, light, dark (stored)",
+      "accessibility": "axe clean at 1280 and 320px, light and dark (Studio, Connections, admin)",
+      "responsive": "no horizontal scroll at 320px",
+      "baseline": "workspace invitations cannot be accepted (no route; in progress)",
+      "remaining": "D7 decided: rebuilt on @feltdb/studio (rkendel1/flow_db#461); merge the 0.7.0 branch",
+      "productIn": "website/app/layout.tsx"
     },
     {
       "id": "compute-ui",
@@ -333,7 +337,7 @@
       "product": "authboundry",
       "integration": "static",
       "vendor": "crates/server/ui/vendor/stack-ui",
-      "version": "0.6.2",
+      "version": "0.7.0",
       "conformance": {
         "file": "crates/server/tests/design_foundation.rs",
         "contains": "conformance.mjs"
@@ -342,8 +346,8 @@
       "themes": "system, light, dark (stored)",
       "accessibility": "axe clean on 5 pages, light and dark, 1280 and 320px",
       "responsive": "no overflow at 320px",
-      "baseline": "sign-in lists new-password requirements (pre-existing)",
-      "remaining": "merge rkendel1/authboundry#136; owner: branding on customer domains"
+      "baseline": "none known (password policy only where a password is set)",
+      "remaining": "merge rkendel1/authboundry#136; set AUTHBOUNDRY_PUBLIC_URL in production for email links"
     },
     {
       "id": "authboundry-studio",
@@ -353,17 +357,17 @@
       "product": "authboundry",
       "integration": "static",
       "vendor": "crates/server/ui/vendor/stack-ui",
-      "version": "0.6.2",
+      "version": "0.7.0",
       "conformance": {
         "file": "crates/cli/src/studio.rs",
-        "contains": "studio_is_on_the_design_foundation"
+        "contains": "--app"
       },
       "productIn": "crates/cli/ui/generated/studio-shell.html",
       "themes": "system, light, dark (stored)",
       "accessibility": "axe clean light and dark, 1280 and 320px",
       "responsive": "no overflow at 320px",
-      "baseline": "route-access Apply fails with 400 missing tenant (pre-existing)",
-      "remaining": "merge rkendel1/authboundry#136; fix the missing-tenant bug"
+      "baseline": "none known (route-access Apply fixed)",
+      "remaining": "merge rkendel1/authboundry#136"
     },
     {
       "id": "appboundry-artifact-portal",
