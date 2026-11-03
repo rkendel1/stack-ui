@@ -44,21 +44,21 @@
       "id": "feltkit-dashboard",
       "repo": "feltkit",
       "surface": "FeltKit dashboard /_feltkit/ (packages/sdk/dashboard)",
-      "status": "partial",
+      "status": "adopted",
       "product": "feltkit",
       "integration": "vendored-packages",
       "vendor": "packages/sdk/dashboard/vendor/stack-ui",
-      "version": "0.6.1",
+      "version": "0.7.0",
       "conformance": {
-        "file": "packages/sdk/test/design-foundation.test.ts",
-        "contains": "SHA256SUMS"
+        "file": "packages/sdk/scripts/build-dashboard.mjs",
+        "contains": "app: true"
       },
       "productIn": "packages/sdk/dashboard/index.html",
       "themes": "system, light, dark (stored)",
-      "accessibility": "axe clean on 5 screens, light and dark",
-      "responsive": "not verified",
-      "baseline": "test: create-feltkit starter missing (fails on main)",
-      "remaining": "merge rkendel1/feltkit#16 (0.6.1); screen-level tables, forms and badges; Drawer (D26); responsive verification"
+      "accessibility": "axe clean on 26 development and 15 production screens and dialogs, light and dark, 1280 and 320px",
+      "responsive": "no horizontal overflow at 320px",
+      "baseline": "none known (starter test fixed; refusal refresh loop fixed)",
+      "remaining": "merge rkendel1/feltkit branch claude/compassionate-brahmagupta-nzegki; upstream feltkit.* state mappings to the foundation"
     },
     {
       "id": "authboundry-site",
