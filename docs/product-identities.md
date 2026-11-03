@@ -55,7 +55,7 @@ Accents and ids are in `docs/brand.md` §3.2. Surfaces and their current adoptio
 
 ## AppPort — capability discovery (`appport`, steel blue)
 
-- **Status:** a protocol and libraries, with no public site (assessment §2). AppPort services ships packaged
+- **Status:** a protocol and libraries. It will not have a public site (owner, 2026-11-03); boundry.company presents it and links its npm packages. AppPort services ships packaged
   management pages, which already use the foundation.
 - **Optimize for:** catalogs, contracts, semantic metadata, invocation, integrations, configuration.
 - **Rule:** discovering a capability does not authorize invoking it. Catalog views never show an invoke
