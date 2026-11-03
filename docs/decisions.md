@@ -146,7 +146,12 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   §6.3). Drawing it with verification badges would claim checks nobody made;
   leaving the distinction unstated would let a reader assume them.
 
-### D18 — The AuthBoundry portal keeps its own shell for now — Deferred (to the portal's next adoption)
+### D18 — The AuthBoundry portal keeps its own shell for now — Resolved 2026-11-03
+- **Resolution (2026-11-03):** the owner asked for every post-sign-in experience on the foundation. The portal now
+  renders in the shared `Shell`: capability-filtered navigation and per-application scoping are unchanged, the
+  application-context switcher sits in the `context` slot, and navigation becomes a scrolling strip below 768px
+  (rkendel1/authboundry#136).
+- **Original decision:**
 - **Decision:** PR5 draws the portal's sidebar with the tokens and adds
   `aria-current`, but does not replace it with the shared `Shell`.
 - **Why:** the portal's navigation projects capabilities, scopes links to one

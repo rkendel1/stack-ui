@@ -78,13 +78,13 @@
       "accessibility": "axe: 4 pre-existing content contrast findings, none introduced (not re-run for 0.6.2)",
       "responsive": "no overflow at 320px (re-checked 2026-11-03)",
       "baseline": "contrast: text-green-600, text-slate-500 on home and product pages; live authboundry.com does not yet show the foundation",
-      "remaining": "merge rkendel1/authboundry branch claude/compassionate-brahmagupta-nzegki (complete 0.6.2 vendor: the 0.6.1 copy was partial and clean npm ci failed with E404), then redeploy"
+      "remaining": "merge rkendel1/authboundry#136, then redeploy"
     },
     {
       "id": "authboundry-portal",
       "repo": "authboundry",
       "surface": "AuthBoundry portal (apps/web)",
-      "status": "partial",
+      "status": "adopted",
       "product": "authboundry",
       "integration": "vendored-packages",
       "vendor": "apps/web/vendor/stack-ui",
@@ -96,9 +96,9 @@
       "productIn": "apps/web/app/layout.tsx",
       "themes": "system, light, dark (stored)",
       "accessibility": "portal browser suite 12/12 incl. axe light and dark",
-      "responsive": "sidebar fixed-width (D18)",
-      "baseline": "none known",
-      "remaining": "merge the same authboundry branch (0.6.2); portal sidebar is its own, not Shell (D18)"
+      "responsive": "Shell navigation becomes a scrolling strip below 768px; no overflow at 320px",
+      "baseline": "Authority model step labels truncate at 1280px (pre-existing layout)",
+      "remaining": "merge rkendel1/authboundry#136 (shared Shell, D18 closed)"
     },
     {
       "id": "appboundry-site",
@@ -108,7 +108,7 @@
       "product": "appboundry",
       "integration": "static",
       "vendor": "apps/cloud-platform/public/vendor/stack-ui",
-      "version": "0.6.1",
+      "version": "0.6.2",
       "conformance": {
         "file": "apps/cloud-platform/package.json",
         "contains": "check-design-foundation"
@@ -117,8 +117,8 @@
       "themes": "system, light, dark (stored)",
       "accessibility": "axe clean light, dark, forced dark, 320px",
       "responsive": "no overflow at 320px",
-      "baseline": "live appboundry.com is a cached deploy ~21 days old (age header, 2026-11-03), without the foundation; dark theme showed both logos (fixed on branch)",
-      "remaining": "merge rkendel1/appboundry branch claude/compassionate-brahmagupta-nzegki, then check why Vercel has not deployed main"
+      "baseline": "live appboundry.com is a cached deploy ~21 days old (age header, 2026-11-03)",
+      "remaining": "merge rkendel1/appboundry#59, then check why Vercel has not deployed main"
     },
     {
       "id": "appboundry-portal",
@@ -128,17 +128,17 @@
       "product": "appboundry",
       "integration": "static",
       "vendor": "apps/cloud-platform/public/vendor/stack-ui",
-      "version": "0.6.1",
+      "version": "0.6.2",
       "conformance": {
         "file": "apps/cloud-platform/test/stack-ui.test.ts",
         "contains": "places the portal in the Boundry family"
       },
       "productIn": "apps/cloud-platform/app/layout.jsx",
       "themes": "system, light, dark (Settings → Appearance)",
-      "accessibility": "portal browser suite not run: cloud-portal needs the whole workspace built (@appport/appboundry-runtime unresolved)",
-      "responsive": "not verified",
-      "baseline": "workspace installs with --frozen-lockfile (fixed on main by #58); portal suite needs a full workspace build",
-      "remaining": "run the portal browser suite after a full workspace build (CHROMIUM_PATH required outside CI)"
+      "accessibility": "browser suite 14/14 incl. axe light and dark",
+      "responsive": "sidebar scrolls in short windows (1280x600 tested)",
+      "baseline": "portal-theme.css restyles .stack-* in 4 places (state size in dense rows, verification/evidence margins, collapsed label)",
+      "remaining": "merge rkendel1/appboundry#59; remove the 4 .stack-* restylings"
     },
     {
       "id": "appport-services-pages",
@@ -324,6 +324,99 @@
       "responsive": "",
       "baseline": "",
       "remaining": "no web UI"
+    },
+    {
+      "id": "authboundry-hosted",
+      "repo": "authboundry",
+      "surface": "AuthBoundry hosted sign-in, sign-up, password and access-denied pages (in @authboundry/core)",
+      "status": "adopted",
+      "product": "authboundry",
+      "integration": "static",
+      "vendor": "crates/server/ui/vendor/stack-ui",
+      "version": "0.6.2",
+      "conformance": {
+        "file": "crates/server/tests/design_foundation.rs",
+        "contains": "conformance.mjs"
+      },
+      "productIn": "crates/server/src/foundation.rs",
+      "themes": "system, light, dark (stored)",
+      "accessibility": "axe clean on 5 pages, light and dark, 1280 and 320px",
+      "responsive": "no overflow at 320px",
+      "baseline": "sign-in lists new-password requirements (pre-existing)",
+      "remaining": "merge rkendel1/authboundry#136; owner: branding on customer domains"
+    },
+    {
+      "id": "authboundry-studio",
+      "repo": "authboundry",
+      "surface": "AuthBoundry Studio (authboundry studio, in @authboundry/core)",
+      "status": "adopted",
+      "product": "authboundry",
+      "integration": "static",
+      "vendor": "crates/server/ui/vendor/stack-ui",
+      "version": "0.6.2",
+      "conformance": {
+        "file": "crates/cli/src/studio.rs",
+        "contains": "studio_is_on_the_design_foundation"
+      },
+      "productIn": "crates/cli/ui/generated/studio-shell.html",
+      "themes": "system, light, dark (stored)",
+      "accessibility": "axe clean light and dark, 1280 and 320px",
+      "responsive": "no overflow at 320px",
+      "baseline": "route-access Apply fails with 400 missing tenant (pre-existing)",
+      "remaining": "merge rkendel1/authboundry#136; fix the missing-tenant bug"
+    },
+    {
+      "id": "appboundry-artifact-portal",
+      "repo": "appboundry",
+      "surface": "AppBoundry artifact portal (/portal in AppBoundry.wasm, in @appport/appboundry)",
+      "status": "adopted",
+      "product": "appboundry",
+      "integration": "static",
+      "vendor": "apps/cloud-platform/public/vendor/stack-ui",
+      "version": "0.6.2",
+      "conformance": {
+        "file": "packages/appboundry/test/portal-design-foundation.test.ts",
+        "contains": "checkConformance"
+      },
+      "productIn": "packages/appboundry/scripts/portal-page.mjs",
+      "themes": "system, light, dark (stored)",
+      "accessibility": "axe clean on 12 routes and sign-in, light and dark",
+      "responsive": "no overflow at 320px",
+      "baseline": "action results use alert(); some action errors not shown",
+      "remaining": "merge rkendel1/appboundry#59"
+    },
+    {
+      "id": "appboundry-host-console",
+      "repo": "appboundry",
+      "surface": "AppBoundry host console (/appboundry, in npm appport)",
+      "status": "adopted",
+      "product": "appboundry",
+      "integration": "static",
+      "vendor": "apps/cloud-platform/public/vendor/stack-ui",
+      "version": "0.6.2",
+      "conformance": {
+        "file": "studio/test/stack-ui.test.ts",
+        "contains": "checkConformance"
+      },
+      "productIn": "studio/src/index.ts",
+      "themes": "system, light, dark (stored)",
+      "accessibility": "axe clean light and dark, 1280 and 320px",
+      "responsive": "no overflow at 320px",
+      "baseline": "—",
+      "remaining": "merge rkendel1/appboundry#59"
+    },
+    {
+      "id": "appport-dev-studio",
+      "repo": "appboundry",
+      "surface": "AppPort developer studios (renderStudio, contract studios; in npm appport)",
+      "status": "not-adopted",
+      "product": "appport",
+      "integration": "none",
+      "themes": "own palettes",
+      "accessibility": "not verified",
+      "responsive": "not verified",
+      "baseline": "local ✓ proof states",
+      "remaining": "move onto the foundation (AppPort identity)"
     }
   ]
 }
