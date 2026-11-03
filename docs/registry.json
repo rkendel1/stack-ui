@@ -68,17 +68,17 @@
       "product": "authboundry",
       "integration": "vendored-packages",
       "vendor": "apps/web/vendor/stack-ui",
-      "version": "0.6.1",
+      "version": "0.6.2",
       "conformance": {
         "file": "apps/web/package.json",
         "contains": "check-design-foundation"
       },
       "productIn": "apps/web/app/layout.tsx",
       "themes": "system, light, dark (stored)",
-      "accessibility": "axe: 4 pre-existing content contrast findings, none introduced",
-      "responsive": "no overflow at 320px",
-      "baseline": "contrast: text-green-600, text-slate-500 on home and product pages",
-      "remaining": "merge rkendel1/authboundry#135 (0.6.1)"
+      "accessibility": "axe: 4 pre-existing content contrast findings, none introduced (not re-run for 0.6.2)",
+      "responsive": "no overflow at 320px (re-checked 2026-11-03)",
+      "baseline": "contrast: text-green-600, text-slate-500 on home and product pages; live authboundry.com does not yet show the foundation",
+      "remaining": "merge rkendel1/authboundry branch claude/compassionate-brahmagupta-nzegki (complete 0.6.2 vendor: the 0.6.1 copy was partial and clean npm ci failed with E404), then redeploy"
     },
     {
       "id": "authboundry-portal",
@@ -88,7 +88,7 @@
       "product": "authboundry",
       "integration": "vendored-packages",
       "vendor": "apps/web/vendor/stack-ui",
-      "version": "0.6.1",
+      "version": "0.6.2",
       "conformance": {
         "file": "apps/web/tests/browser/portal.browser.test.mjs",
         "contains": "Boundry product surface"
@@ -98,7 +98,7 @@
       "accessibility": "portal browser suite 12/12 incl. axe light and dark",
       "responsive": "sidebar fixed-width (D18)",
       "baseline": "none known",
-      "remaining": "merge rkendel1/authboundry#135; portal sidebar is its own, not Shell (D18)"
+      "remaining": "merge the same authboundry branch (0.6.2); portal sidebar is its own, not Shell (D18)"
     },
     {
       "id": "appboundry-site",
@@ -117,8 +117,8 @@
       "themes": "system, light, dark (stored)",
       "accessibility": "axe clean light, dark, forced dark, 320px",
       "responsive": "no overflow at 320px",
-      "baseline": "workspace install fails on main (pnpm-lock out of date for @feltdb/core)",
-      "remaining": "merge rkendel1/appboundry#50"
+      "baseline": "live appboundry.com is a cached deploy ~21 days old (age header, 2026-11-03), without the foundation; dark theme showed both logos (fixed on branch)",
+      "remaining": "merge rkendel1/appboundry branch claude/compassionate-brahmagupta-nzegki, then check why Vercel has not deployed main"
     },
     {
       "id": "appboundry-portal",
@@ -135,10 +135,10 @@
       },
       "productIn": "apps/cloud-platform/app/layout.jsx",
       "themes": "system, light, dark (Settings → Appearance)",
-      "accessibility": "portal browser suite not run (workspace install blocked)",
+      "accessibility": "portal browser suite not run: cloud-portal needs the whole workspace built (@appport/appboundry-runtime unresolved)",
       "responsive": "not verified",
-      "baseline": "portal browser suite blocked by out-of-date lockfile",
-      "remaining": "merge rkendel1/appboundry#50 (family link added); run the portal browser suite once the lockfile on main is fixed"
+      "baseline": "workspace installs with --frozen-lockfile (fixed on main by #58); portal suite needs a full workspace build",
+      "remaining": "run the portal browser suite after a full workspace build (CHROMIUM_PATH required outside CI)"
     },
     {
       "id": "appport-services-pages",
