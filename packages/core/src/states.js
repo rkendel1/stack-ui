@@ -105,6 +105,19 @@ const CONDITION = {
   'authboundry.delegation.status': { active: P, pending: G, revoked: C, expired: N },
   // authboundry: apps/web/lib/applications.ts `ApplicationStatus`
   'authboundry.application.status': { active: P, awaiting_contract: G, disabled: N },
+  // authboundry: crates/cli/src/studio.rs. Whether Studio's application is attached:
+  // `GET /_authboundry/application/attachment` answers `attached` (true when an
+  // upstream is configured). Not attached needs a person (Studio offers "Attach
+  // Application"), so it is attention, not a fault.
+  'authboundry.studio.attached': { true: [P, 'Attached'], false: [A, 'Not attached'] },
+  // authboundry: crates/cli/src/studio.rs runtime protection of the attached
+  // application, from the attachment and `upstream_reachable`: `active` when the
+  // attached upstream answers, `inactive` when nothing is attached (by intent),
+  // `unreachable` when attached but the upstream did not answer the probe (Studio
+  // shows "Inactive" with "upstream unreachable"). Any other word is unknown.
+  'authboundry.studio.protection': {
+    active: [P, 'Active'], inactive: [N, 'Inactive'], unreachable: [A, 'Upstream unreachable'],
+  },
   // appport-services: src/jobs/models.ts `JobStatus`
   'appport.job.status': { completed: P, scheduled: G, pending: G, running: G, retrying: G, failed: C },
   // appport-services: src/notifications/models.ts `NotificationStatus`
@@ -145,6 +158,20 @@ const CONDITION = {
   // appboundry: apps/cloud-portal/src/authority.ts provider `eligibility`
   // (ELIGIBLE | INELIGIBLE). Not being eligible in a context is not a fault.
   'appboundry.provider.eligibility': { ELIGIBLE: [P, 'Eligible'], INELIGIBLE: [N, 'Ineligible'] },
+  // appboundry: packages/cli/src/commands.ts, the host's deployment status. Host
+  // catalog entries (`PortableHostCatalogEntry.status`, what /appboundry/api/applications
+  // and host discovery report) are `running` | `stopped`; deployment records
+  // (`AppBoundryDeploymentRecord.status`) are `running` (managed: the host executes
+  // it) | `available` (deployed for self-provided compute; the host does not run it).
+  // AppBoundry writes no failed value here: a failed deployment is the operation's
+  // outcome and the failed step below. `running` is the recorded status, not an
+  // observation (host discovery's `lifecycle.observed` is that).
+  'appboundry.deployment.status': { running: P, available: N, stopped: N },
+  // appboundry: packages/cli/src/commands.ts `SourceDeploymentStep.status`, in the
+  // `AppBoundry/source-deployment/1` response. The response arrives when the
+  // deployment has finished, so a step still `pending` was never run (an earlier
+  // step failed); it is not in progress.
+  'appboundry.deployment.step': { complete: P, failed: C, pending: [N, 'Not run'] },
   // appboundry: apps/cloud-portal/src/read-model.ts `health.ready`
   'appboundry.health.ready': { true: [P, 'Ready'], false: [C, 'Not ready'] },
   // appboundry: apps/cloud-portal/src/read-model.ts `PortalHealthCheck.status`

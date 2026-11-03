@@ -43,7 +43,14 @@ No product depends on another product at runtime. Portfolio links are plain hype
 ## Conformance every adopting product keeps
 
 Every adopting build runs `conformance.mjs`, which ships in the static release and in `@stack-ui/core` as
-`bin/conformance.mjs` (`docs/building-with-the-foundation.md`). It checks the built pages and the product's
+`bin/conformance.mjs` (`docs/building-with-the-foundation.md`):
+
+```sh
+node conformance.mjs --product <id> --html <built pages> --css <own css> --require-header-family   # a product site
+node conformance.mjs --company --html <built pages> --css <own css>                                # boundry.company
+node conformance.mjs --product <id> --app --html <app pages> --css <own css>                       # an application (0.7.0)
+```
+ It checks the built pages and the product's
 own CSS for the items below and fails the build on any of them. These are tested in
 `tests/unit/conformance.test.mjs`.
 
@@ -52,7 +59,12 @@ own CSS for the items below and fails the build on any of them. These are tested
 - Light and dark themes follow the OS by default, a theme control is present, and `THEME_INIT_SCRIPT`
   (or an equivalent) runs before first paint.
 - The header shows "A Boundry product" and the footer shows the Boundry family (`SiteHeader` and
-  `SiteFooter`, or `Shell` for apps).
+  `SiteFooter`). An application runs the check with `--app` (0.7.0) and needs the app shell instead: the
+  shared `Shell` (or its own frame marked `data-stack-shell`), a `<main>` landmark, and the "A Boundry
+  product" link to boundry.company. The exact markers are in contract §10.
+- The theme control and the other element checks are read from the page's markup, never from the text of
+  an inlined script, style or template (0.7.0). A client-rendered app checks a snapshot of its rendered
+  document.
 - No product CSS redefines `--stack-*` tokens or recolours `.stack-status*`, `.stack-verification*`,
   `.stack-alert*` or `.stack-button*`.
 - Existing product tests stay green, and the product's own accessibility checks show no new serious or

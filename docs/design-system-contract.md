@@ -1,6 +1,6 @@
 # Stack design-system contract (the Boundry design foundation)
 
-Status: **0.6.0**. Brand and identity rules: `docs/brand.md`. Normative words: **must**, **must not**, **should**, **may**.
+Status: **0.7.0**. Brand and identity rules: `docs/brand.md`. Normative words: **must**, **must not**, **should**, **may**.
 Evidence for every constraint below is in `docs/audit.md`.
 
 ## 1. Principles
@@ -314,6 +314,8 @@ answers `{ok: true}`; it has no failed, degraded or starting value. A UI shows
 | `EnforcementOutcome` (`authboundry:dist/server.d.ts:145`) | AUTHORIZED | — | — | DENIED, INVALID_REQUEST | — | AUTHORITY_UNAVAILABLE, AUTHORIZATION_TIMEOUT → outcome_unknown |
 | `DelegationStatus` (`authboundry:crates/contract/src/delegation.rs:61`) | active | pending | — | revoked | expired | — |
 | `ApplicationStatus` (`authboundry:crates/storage/src/control_plane.rs:60`) | active | awaiting_contract | — | — | disabled | — |
+| Studio attachment `authboundry.studio.attached` (`attached` from `GET /_authboundry/application/attachment`, `authboundry:crates/cli/src/studio.rs:330-345`) | true ("Attached") | — | false ("Not attached") | — | — | — |
+| Studio protection `authboundry.studio.protection` (`authboundry:crates/cli/src/studio.rs:901-914`) | active | — | unreachable ("Upstream unreachable": attached, upstream did not answer) | — | inactive (nothing attached) | — |
 
 An authorization decision is a recorded fact, not a verification. Decision
 evidence (`ApplicationAuthorizationEvidence`) is shown with `EvidenceSummary`
@@ -332,7 +334,16 @@ fields, not with `VerificationBadge`.
 | Implementation `appboundry.implementation.verification` | → Verification: verified = verified; stale = not_verified (the contract changed since). Checks: source verified, capability covered by source, contract fingerprint matches. Revoked has no verification | | | | | |
 | Contract attestation `appboundry.attestation.status` (`appboundry:packages/core/src/contract-attestation.ts:30`) | → Verification: verified = verified; CONTRACT_MISMATCH, IDENTITY_MISMATCH = verification_failed (the failed check is named by the value) | | | | | |
 | Conformance report `appboundry.conformance.status` (`appboundry:packages/core/src/application-conformance.ts:57`) | → Verification: CONFORMING = verified (checks = report checks, PASS → passed, FAIL → failed); NON_CONFORMING = verification_failed | | | | | |
+| Host deployment `appboundry.deployment.status` (catalog entry `appboundry:packages/cli/src/commands.ts:232`, deployment record `appboundry:packages/cli/src/commands.ts:258`) | running | — | — | — | available (deployed for self-provided compute), stopped | — |
+| Deployment step `appboundry.deployment.step` (`appboundry:packages/cli/src/commands.ts:353`, in the finished `AppBoundry/source-deployment/1` response) | complete | — | — | failed | pending ("Not run": an earlier step failed) | — |
 | Execution (`appboundry:packages/core/src/appboundry-execution.ts:29`), not shown by the cloud portal | COMPLETED | CREATED, MATERIALIZED, RUNNING | — | MATERIALIZATION_FAILED, EXECUTION_FAILED | — | — |
+
+AppBoundry writes no failed value for a deployment's status: a failed deployment is
+the operation's outcome (`failed`) and its failed step. `running` is the status the
+host recorded; host discovery's `lifecycle.observed` (`running`, `stopped`, `unknown`)
+is the observation and is not mapped yet. AuthBoundry Studio's JSON gives `attached`
+and `reachable` booleans; `authboundry.studio.protection` names Studio's three
+cases, so a product passes the word, never a boolean.
 
 Completing these tables for every field a screen uses is part of each product's
 adoption PR, reviewed by that product's owner.
@@ -444,3 +455,38 @@ Target: **WCAG 2.2 AA** for every shared component and every adopted screen.
 - **Compute vendoring:** Compute copies released `tokens.css`, `core.css` and
   the classic-script build `stack-ui-core.js` into its UI directory with a
   version file and checksum test; an upgrade is an ordinary Compute PR.
+
+## 10. Conformance markers (0.7.0)
+
+`conformance.mjs` reads a page's **markup**: the text of `<script>`, `<style>` and
+`<template>` elements and of comments is removed first, so an inlined
+`stack-ui-core.js`, theme script or client template never satisfies an element check.
+A client-rendered page passes a snapshot of its rendered document (for example
+`document.documentElement.outerHTML` saved by its browser test), not its served shell.
+
+Both modes require, on every page:
+
+- `THEME_INIT_SCRIPT` verbatim (it is a script, so this one check reads the whole file);
+- `data-stack-product="<id>"` on an element (`--product`);
+- a **theme control**: a `select`, `input`, `button` or `fieldset` element, or an element
+  with `role="radiogroup"`, carrying the attribute `data-stack-theme-control`.
+  `ThemeSwitch` and the `Shell` theme select (from 0.7.0) both render one.
+
+**Site mode** (default; `--company` or `--product <id> [--require-header-family]`)
+additionally requires the `SiteFooter` (an element with class `stack-site-footer`) with
+links to boundry.company and every portfolio product, the footer's "is a Boundry
+product" sentence, and, with `--require-header-family`, "A Boundry product" inside a
+`<header>`.
+
+**App mode** (`--product <id> --app`) requires, instead of `SiteHeader`/`SiteFooter`:
+
+1. **The app shell:** an element with class `stack-shell` (the shared `Shell`), or the
+   product's own frame marked with the attribute `data-stack-shell`. A product's own
+   frame must provide the remaining items itself.
+2. **A main landmark:** a `<main>` element (or `role="main"`).
+3. **The Boundry family link:** an `<a>` whose `href` is `https://boundry.company` (a
+   trailing slash is allowed) and whose visible text contains "A Boundry product".
+   `Shell({ product: { id } })` renders it for a portfolio id; `family: false` removes
+   it, and such a page does not conform.
+
+App mode does not accept `--company`, and `--require-header-family` adds nothing to it.

@@ -555,7 +555,7 @@ export function Shell(props) {
       node('div', { class: 'stack-shell__end' }, [
         theme ? node('div', { class: 'stack-shell__prefs' }, [
           node('label', { class: 'stack-visually-hidden', for: themeId }, 'Theme'),
-          node('select', { class: 'stack-shell__theme', id: themeId },
+          node('select', { class: 'stack-shell__theme', id: themeId, 'data-stack-theme-control': '' },
             THEME_OPTIONS.map((option) => node('option', {
               value: option.value, ...(option.value === (theme.preference || 'system') ? { selected: true } : {}),
             }, option.label)), theme.onChange ? { change: (event) => theme.onChange(event.target.value) } : undefined),
