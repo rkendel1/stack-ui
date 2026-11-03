@@ -45,7 +45,13 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
 - PR1 fixes names, categories, contrast thresholds and direction (contract §3).
   Values are chosen against rendered Compute and Studio screens.
 
-### D7 — FeltDB's two Studios — Open
+### D7 — FeltDB's two Studios — Decided (2026-11-03)
+- **Decision (owner):** rebuild the hosted Studio on `@feltdb/studio`. The website renders
+  `HostedStudio` from `@feltdb/studio/hosted`, which shares its frame, navigation and
+  components with `StudioApp`; the website's own 5,504-line Studio is deleted
+  (rkendel1/flow_db#461 and this branch). Platform admin is a separate surface, in the
+  shared `Shell`.
+- **Original question:**
 - `packages/studio` (architecturally governed, ships in `@feltdb/core`) vs
   `website/app/studio/page.tsx` (hosted). PR2 adopts in `packages/studio`.
   Whether the website Studio is replaced, embedded or kept is a FeltDB product
@@ -381,3 +387,12 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   product-supplied text so localization stays possible.
 - Hygiene items found during the audit (AuthBoundry committed credentials and
   `node_modules`, stale lockfiles and docs) are reported to owners, not fixed here.
+
+### D36 — Embedded components are checked on their host page — Decided (0.7.0 docs)
+- **Decision:** contract §10 applies to pages. A component embedded in another product's
+  page (the embedded FeltDB `StudioApp`) is checked as part of that page and may be drawn
+  in one theme without a theme control; standalone and hosted pages always offer
+  system, light and dark.
+- **Why:** `product-shell.md` §2 allowed one-theme products to omit the control while
+  §10 required one on every page. The only one-theme surface is an embed, whose host
+  owns the theme; theming the embed would push its dark rules into third-party pages.
