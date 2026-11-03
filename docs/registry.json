@@ -108,7 +108,7 @@
       "product": "appboundry",
       "integration": "static",
       "vendor": "apps/cloud-platform/public/vendor/stack-ui",
-      "version": "0.6.2",
+      "version": "0.7.0",
       "conformance": {
         "file": "apps/cloud-platform/package.json",
         "contains": "check-design-foundation"
@@ -128,17 +128,17 @@
       "product": "appboundry",
       "integration": "static",
       "vendor": "apps/cloud-platform/public/vendor/stack-ui",
-      "version": "0.6.2",
+      "version": "0.7.0",
       "conformance": {
-        "file": "apps/cloud-platform/test/stack-ui.test.ts",
-        "contains": "places the portal in the Boundry family"
+        "file": "apps/cloud-platform/test/browser/support.mjs",
+        "contains": "app: true"
       },
       "productIn": "apps/cloud-platform/app/layout.jsx",
       "themes": "system, light, dark (Settings → Appearance)",
-      "accessibility": "browser suite 14/14 incl. axe light and dark",
+      "accessibility": "test:browser 57/57 incl. app-mode conformance on rendered pages and axe light and dark, 1280 and 320px",
       "responsive": "sidebar scrolls in short windows (1280x600 tested)",
-      "baseline": "portal-theme.css restyles .stack-* in 4 places (state size in dense rows, verification/evidence margins, collapsed label)",
-      "remaining": "merge rkendel1/appboundry#59; remove the 4 .stack-* restylings"
+      "baseline": "none known (.stack-* restylings removed; org scoping and sign-out redirect fixed)",
+      "remaining": "merge rkendel1/appboundry#59"
     },
     {
       "id": "appport-services-pages",
@@ -377,17 +377,17 @@
       "product": "appboundry",
       "integration": "static",
       "vendor": "apps/cloud-platform/public/vendor/stack-ui",
-      "version": "0.6.2",
+      "version": "0.7.0",
       "conformance": {
         "file": "packages/appboundry/test/portal-design-foundation.test.ts",
-        "contains": "checkConformance"
+        "contains": "app: true"
       },
       "productIn": "packages/appboundry/scripts/portal-page.mjs",
       "themes": "system, light, dark (stored)",
       "accessibility": "axe clean on 12 routes and sign-in, light and dark",
       "responsive": "no overflow at 320px",
-      "baseline": "action results use alert(); some action errors not shown",
-      "remaining": "merge rkendel1/appboundry#59"
+      "baseline": "none known (every action shows its outcome; versioned writes commit)",
+      "remaining": "merge rkendel1/appboundry#59; publish @appport/appboundry 1.7.1"
     },
     {
       "id": "appboundry-host-console",
@@ -397,10 +397,10 @@
       "product": "appboundry",
       "integration": "static",
       "vendor": "apps/cloud-platform/public/vendor/stack-ui",
-      "version": "0.6.2",
+      "version": "0.7.0",
       "conformance": {
         "file": "studio/test/stack-ui.test.ts",
-        "contains": "checkConformance"
+        "contains": "app: true"
       },
       "productIn": "studio/src/index.ts",
       "themes": "system, light, dark (stored)",
@@ -413,14 +413,21 @@
       "id": "appport-dev-studio",
       "repo": "appboundry",
       "surface": "AppPort developer studios (renderStudio, contract studios; in npm appport)",
-      "status": "not-adopted",
+      "status": "adopted",
       "product": "appport",
-      "integration": "none",
-      "themes": "own palettes",
-      "accessibility": "not verified",
-      "responsive": "not verified",
-      "baseline": "local ✓ proof states",
-      "remaining": "move onto the foundation (AppPort identity)"
+      "integration": "static",
+      "themes": "system, light, dark (stored)",
+      "accessibility": "axe clean light and dark, 1280 and 320px; checked against a real bridged FastAPI app",
+      "responsive": "no overflow at 320px",
+      "baseline": "none known",
+      "remaining": "merge rkendel1/appboundry#59; publish appport",
+      "vendor": "apps/cloud-platform/public/vendor/stack-ui",
+      "version": "0.7.0",
+      "conformance": {
+        "file": "studio/test/appport-studio-foundation.test.ts",
+        "contains": "app: true"
+      },
+      "productIn": "studio/src/foundation.ts"
     }
   ]
 }
