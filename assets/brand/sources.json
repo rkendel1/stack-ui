@@ -200,6 +200,55 @@
       "origin": "original",
       "sha256": "d9719da191c849de2804353ea9ac939c270d01ff0005915eedd1f6105c56d1d5",
       "source": "appport:packages/sdk/appport_logo.png"
+    },
+    {
+      "product": "appport-services",
+      "file": "products/appport-services/appport-services-mark.svg",
+      "kind": "mark",
+      "background": "any",
+      "origin": "original",
+      "sha256": "ca6db17c267341416b59c8d4421161b94cc968423f9077e419fbedf870d4c5b6",
+      "source": "stack-ui:assets/brand/products/appport-services/appport-services-mark.svg",
+      "note": "Drawn in stack-ui on 2026-11-04 in AppPort's visual language (orbit arcs, cyan to magenta) with six service modules around a core. No product repository holds it yet; this SVG is the master."
+    },
+    {
+      "product": "appport-services",
+      "file": "products/appport-services/appport-services-mark.png",
+      "kind": "mark",
+      "background": "any",
+      "origin": "derived",
+      "derived": {
+        "from": "appport-services-mark.svg",
+        "by": "sharp (density 300), 512px square",
+        "how": "the SVG rendered to a transparent 512px PNG"
+      },
+      "sha256": "0d8776321c75fb4cd4d77c0da782079a1ef56fbb48d9fbbdaef87f3130892ada"
+    },
+    {
+      "product": "appport-services",
+      "file": "products/appport-services/appport-services-logo.png",
+      "kind": "logo",
+      "background": "light",
+      "origin": "derived",
+      "derived": {
+        "from": "appport-services-mark.png",
+        "by": "scripts/derive-product-logos.mjs",
+        "how": "the mark beside \"AppPort Services\" typeset in Inter Display Bold, ink #0b1538"
+      },
+      "sha256": "ccdfc449d0b79ce40d43b34723418de59066cb9b4c9c3b9792b22bfd003c9ddd"
+    },
+    {
+      "product": "appport-services",
+      "file": "products/appport-services/appport-services-logo-dark.png",
+      "kind": "logo",
+      "background": "dark",
+      "origin": "derived",
+      "derived": {
+        "from": "appport-services-mark.png",
+        "by": "scripts/derive-product-logos.mjs",
+        "how": "the mark beside \"AppPort Services\" typeset in Inter Display Bold, ink #e6ebf7"
+      },
+      "sha256": "8fd930feb6bdf2e9e11f3d6d89e16da024cf8b5f6eefa04e352a85320a8b1a13"
     }
   ],
   "gaps": [

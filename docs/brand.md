@@ -103,9 +103,10 @@ file's origin and checksum.
 | AppBoundry | `appboundry-logo.png` | `appboundry-logo-dark.png` | `appboundry-mark.png`, `appboundry-mark-dark.png` (derived) |
 | AuthBoundry | `authboundry-logo.png` (derived, typeset name) | `authboundry-logo-dark.png` (derived, typeset name) | `authboundry-mark.png`, `authboundry-mark-dark.png` (derived: navy recoloured) |
 | AppPort | `appport-logo.png` (derived, typeset name) | `appport-logo-dark.png` (derived, typeset name) | `appport-mark.png` (any) |
+| AppPort Services (part of AppPort; not a portfolio product) | `appport-services-logo.png` (derived, typeset name) | `appport-services-logo-dark.png` (derived, typeset name) | `appport-services-mark.svg` (master, drawn in stack-ui) and `appport-services-mark.png` (any) |
 
 `node scripts/derive-product-logos.mjs` produces every derived file from the originals, and re-running it
-reproduces them exactly. AuthBoundry and AppPort have no wordmark artwork, so their full logos set the name
+reproduces them exactly. AuthBoundry, AppPort and AppPort Services have no wordmark artwork, so their full logos set the name
 in Inter Display Bold beside the real mark. That is a **stand-in** until a wordmark is supplied or
 approved.
 

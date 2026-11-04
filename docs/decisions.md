@@ -396,3 +396,13 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
 - **Why:** `product-shell.md` §2 allowed one-theme products to omit the control while
   §10 required one on every page. The only one-theme surface is an embed, whose host
   owns the theme; theming the embed would push its dark rules into third-party pages.
+
+### D37 — AppPort Services has a mark of its own — Decided (unreleased)
+- **Decision:** `assets/brand/products/appport-services/` holds a mark for AppPort Services, drawn here as
+  an SVG master (`appport-services-mark.svg`), its 512px PNG, and typeset lockups for light and dark
+  backgrounds. AppPort Services stays part of AppPort: it gets no portfolio entry and no accent of its own,
+  and pages that need an accent for it use AppPort's (`data-stack-product="appport"`).
+- **Why:** the owner asked for an AppPort Services logo for the investor deck and websites (2026-11-04).
+  The mark keeps AppPort's visual language (two orbit arcs, cyan to magenta) and adds six service modules
+  around a core, one per operational capability family. No product repository held artwork to copy, so the
+  SVG here is the master until the AppPort Services repository adopts it.

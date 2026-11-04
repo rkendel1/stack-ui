@@ -5,7 +5,7 @@
 //   - marks cropped from logos that carry a wordmark (FeltDB, AppBoundry);
 //   - FeltDB's logo for light backgrounds: its white wordmark recoloured to FeltDB ink;
 //   - AuthBoundry's mark for dark backgrounds: its navy parts recoloured light;
-//   - AuthBoundry and AppPort logos: the product's own mark beside its name, typeset in
+//   - AuthBoundry, AppPort and AppPort Services logos: the product's own mark beside its name, typeset in
 //     Inter Display Bold. No wordmark artwork exists for them; this is a stand-in.
 // Needs Chromium (playwright-core) and Inter Display. Run: node scripts/derive-product-logos.mjs
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -82,4 +82,7 @@ await write('authboundry/authboundry-logo-dark.png', page.evaluate(([s, i]) => d
 // AppPort: the mark reads on both backgrounds.
 await write('appport/appport-logo.png', page.evaluate(([s, i]) => derive.lockup(s, 'AppPort', i), [dataUrl('appport/appport-mark.png'), ink.light]));
 await write('appport/appport-logo-dark.png', page.evaluate(([s, i]) => derive.lockup(s, 'AppPort', i), [dataUrl('appport/appport-mark.png'), ink.dark]));
+// AppPort Services: its mark (drawn in stack-ui, appport-services-mark.svg) reads on both backgrounds.
+await write('appport-services/appport-services-logo.png', page.evaluate(([s, i]) => derive.lockup(s, 'AppPort Services', i), [dataUrl('appport-services/appport-services-mark.png'), ink.light]));
+await write('appport-services/appport-services-logo-dark.png', page.evaluate(([s, i]) => derive.lockup(s, 'AppPort Services', i), [dataUrl('appport-services/appport-services-mark.png'), ink.dark]));
 await browser.close();
