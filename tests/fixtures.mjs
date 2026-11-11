@@ -2,7 +2,7 @@
 // named in FUNCTION_PROPS are `true` here, at any depth, and are replaced by a
 // handler on each side, since functions cannot cross into the browser.
 export const FUNCTION_PROPS = ['onClick', 'onRetry', 'onSelect', 'onSort', 'onChange', 'onSubmit', 'onClear', 'onPrevious', 'onNext',
-  'onClose', 'onConfirm', 'onCancel', 'onTypedChange', 'onMore'];
+  'onClose', 'onConfirm', 'onCancel', 'onTypedChange', 'onMore', 'onNavigate', 'onNavigationToggle'];
 
 export const FIXTURES = [
   ['StatusIndicator', { field: 'compute.health', value: 'healthy' }],
@@ -78,6 +78,13 @@ export const FIXTURES = [
     activityHref: '#/events', otherProducts: [{ id: 'feltdb', name: 'FeltDB Studio', href: 'https://studio.example' }],
     theme: { preference: 'dark', onChange: true }, children: 'Page content' }],
   ['Shell', { product: { name: 'FeltDB Studio', homeHref: '/' }, navigation: [{ id: 'o', label: 'Overview', href: '/overview', group: 'Operate' }] }],
+  // Opt-in narrow menu, closed and open (the product owns the open state).
+  ['Shell', { product: { name: 'PersonalOS', homeHref: '#/' }, mainId: 'menu-closed', narrowNavigation: 'menu', navigationOpen: false, onNavigationToggle: true,
+    navigation: [{ id: 'chat', label: 'Chat', href: '#/chat', current: true }, { id: 'tasks', label: 'Tasks', href: '#/tasks' }] }],
+  ['Shell', { product: { name: 'PersonalOS', homeHref: '#/' }, mainId: 'menu-open', narrowNavigation: 'menu', navigationOpen: true, onNavigationToggle: true, onNavigate: true, menuLabel: 'Navigation',
+    navigation: [{ id: 'chat', label: 'Chat', href: '#/chat', current: true }, { id: 'tasks', label: 'Tasks', href: '#/tasks', group: 'Plan' }] }],
+  // Menu requested without a toggle: stays the strip (nothing could open it).
+  ['Shell', { product: { name: 'PersonalOS', homeHref: '#/' }, mainId: 'menu-no-toggle', narrowNavigation: 'menu', navigation: [{ id: 'chat', label: 'Chat', href: '#/chat' }] }],
   ['TextField', { name: 'name', label: 'Key name', required: true, placeholder: 'ci-deployer', hint: 'Shown in lists and audit records.' }],
   ['TextField', { id: 'variable-name', name: 'name', label: 'Name', value: 'DATABASE_URL', pattern: '[A-Z][A-Z0-9_]*', error: 'Use capital letters, digits and underscores.', onChange: true }],
   ['TextField', { name: 'payload', label: 'Payload JSON', multiline: true, rows: 3, value: '{}' }],

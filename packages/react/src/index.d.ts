@@ -221,6 +221,18 @@ export interface ShellProps extends Passthrough {
    * a modifier key stay normal links. Links to other products are never routed.
    */
   onNavigate?: (href: string) => void;
+  /**
+   * Below 768px: `'strip'` (default) keeps the navigation as a horizontal strip
+   * that scrolls on its own; `'menu'` puts it behind a menu button in the bar.
+   * Menu mode needs `onNavigationToggle`; the product owns the open state.
+   */
+  narrowNavigation?: 'strip' | 'menu';
+  /** Menu mode: whether the navigation menu is open. */
+  navigationOpen?: boolean;
+  /** Menu mode: called with the new open state (button, Escape, following a link). */
+  onNavigationToggle?: (open: boolean) => void;
+  /** Menu mode: the menu button's accessible name. Default "Menu". */
+  menuLabel?: string;
   /** Id of the main landmark; the skip link targets it. Default `stack-main`. */
   mainId?: string;
   mainAttrs?: Record<string, string>;
