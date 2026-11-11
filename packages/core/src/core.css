@@ -271,6 +271,9 @@ a.stack-identity__name { color: var(--stack-color-text-link); }
   padding: var(--stack-space-2) var(--stack-space-3); border-radius: var(--stack-radius-md);
   background: var(--stack-color-action-primary-bg); color: var(--stack-color-action-primary-fg);
 }
+/* Hidden until focused wherever the shell sits: a host may place it below its own content
+   (an extension's side panel), where top: -100px alone would land inside that content. */
+.stack-shell__skip:not(:focus) { clip-path: inset(50%); }
 .stack-shell__skip:focus { top: var(--stack-space-2); }
 .stack-shell__bar {
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--stack-space-3);

@@ -48,7 +48,7 @@ of the bar (`__menu-button`, `aria-expanded`, `aria-controls` the nav, a 44px
 target, accessible name `menuLabel`, default "Menu") and opens as a vertical
 list with its group headings. The product owns the open state
 (`navigationOpen`, `onNavigationToggle(open)`), like `Tabs` and `Dialog`: the
-button toggles it, Escape in the open menu closes it and returns focus to the
+button toggles it, Escape (on the button or in the menu) closes it, returning focus to the
 button, and following a link closes it before routing, so `focusMain` still
 lands on the new page. Without `onNavigationToggle` nothing could open the
 menu, so the shell keeps the strip. Above 768px nothing changes. The strip

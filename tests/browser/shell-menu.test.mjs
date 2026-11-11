@@ -13,11 +13,13 @@ import { assets } from './harness.mjs';
 const PAGE = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>Shell menu test</title>
 <style>${assets.tokens}</style><style>${assets.core}</style><style>body{margin:0}</style>
-<script>${assets.script}</script></head><body><div id="app"></div><script>
+<script>${assets.script}</script></head><body><div id="host"><div id="app"></div></div><script>
 'use strict';
 const S = window.StackUI;
 const params = new URLSearchParams(location.search);
 window.state = { open: false, route: '#/chat', toggles: [] };
+// ?below=1: the shell sits below the host's own content in a positioned container (an extension panel).
+if (params.get('below')) { const host = document.getElementById('host'); host.style.position = 'relative'; const bar = document.createElement('div'); bar.id = 'host-bar'; bar.style.height = '120px'; bar.textContent = 'Host content'; host.before(bar); }
 window.preference = S.initThemePreference(window);
 const items = [
   { id: 'chat', label: 'Chat', href: '#/chat', order: 0 },
@@ -144,6 +146,37 @@ test('keyboard: Enter on the button opens, Tab reaches the first link, Escape cl
     assert.equal(await visible(page, '.stack-shell__nav'), false);
     assert.equal(await page.evaluate(() => document.activeElement.id), 'view-menu-button', 'focus returns to the button');
     assert.deepEqual(await page.evaluate(() => window.state.toggles), [true, false]);
+  } finally {
+    await context.close();
+  }
+});
+
+test('Escape on the menu button closes the open menu', async () => {
+  const { context, page } = await open();
+  try {
+    await page.evaluate(() => { window.__refocus = 'view-menu-button'; });
+    await page.click('#view-menu-button');
+    assert.equal(await page.getAttribute('#view-menu-button', 'aria-expanded'), 'true');
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'view-menu-button');
+    await page.keyboard.press('Escape');
+    assert.equal(await page.getAttribute('#view-menu-button', 'aria-expanded'), 'false');
+    assert.equal(await visible(page, '.stack-shell__nav'), false);
+  } finally {
+    await context.close();
+  }
+});
+
+test('a shell placed below host content keeps its skip link hidden until it is focused', async () => {
+  const { context, page } = await open({ query: '?below=1' });
+  try {
+    const hidden = () => page.$eval('.stack-shell__skip', (el) => {
+      const box = el.getBoundingClientRect();
+      const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+      return box.width === 0 || box.height === 0 || getComputedStyle(el).clipPath === 'inset(50%)' || !el.contains(hit);
+    });
+    assert.ok(await hidden(), 'not shown over the host content');
+    await page.focus('.stack-shell__skip');
+    assert.equal(await page.$eval('.stack-shell__skip', (el) => getComputedStyle(el).clipPath), 'none', 'shown when focused');
   } finally {
     await context.close();
   }

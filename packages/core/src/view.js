@@ -577,7 +577,11 @@ export function Shell(props) {
       }, [
         node('span', { 'aria-hidden': 'true' }, open ? '\u2715' : '\u2630'),
         node('span', { class: 'stack-visually-hidden' }, props.menuLabel || 'Menu'),
-      ], { click: () => props.onNavigationToggle(!open) }) : null,
+      ], {
+        click: () => props.onNavigationToggle(!open),
+        // Escape closes the open menu from its button too, not only from inside it.
+        ...(open ? { keydown: (event) => { if (event.key === 'Escape') { event.preventDefault(); props.onNavigationToggle(false); } } } : {}),
+      }) : null,
       node('a', { class: 'stack-shell__product', href: product.homeHref || '#' }, [
         present(product.mark) ? node('span', { class: 'stack-shell__mark', 'aria-hidden': 'true' }, product.mark) : null,
         node('span', { class: 'stack-shell__product-name' }, product.name || ''),
