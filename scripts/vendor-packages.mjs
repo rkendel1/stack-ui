@@ -24,7 +24,9 @@ for (const name of ['tokens', 'core', 'react']) {
   const file = execFileSync('pnpm', ['pack', '--pack-destination', packed], { cwd: dir }).toString().trim().split('\n').pop();
   rmSync(join(out, name), { recursive: true, force: true });
   mkdirSync(join(out, name), { recursive: true });
-  execFileSync('tar', ['-xzf', resolve(dir, file), '-C', join(out, name), '--strip-components=1']);
+  // -m: give the files the current time. With the archive's times, a re-vendored file of the same
+  // size can look unchanged to git's stat cache and the old bytes stay committed.
+  execFileSync('tar', ['-xzmf', resolve(dir, file), '-C', join(out, name), '--strip-components=1']);
 }
 rmSync(packed, { recursive: true, force: true });
 if (versions.size !== 1) throw new Error(`packages must release together: ${[...versions].join(', ')}`);
