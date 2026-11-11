@@ -55,9 +55,7 @@ Component APIs, tokens and DOM structure are unchanged from 0.6.0.
    confirmed by creating the org under the owner's account. Publishing under `@stack-ui` keeps every
    import in the six consuming products unchanged. Publishing as `@boundry/*` is a rename: a major
    release with a migration note.
-2. **License.** All three packages are `"license": "UNLICENSED"`. Publishing public packages with that
-   value contradicts "public, provenance" in the adoption plan. Choose a license, or publish as
-   restricted packages.
+2. **License.** Decided: MIT (owner, 2026-11-11; released in 0.8.1). Each package carries its `LICENSE`.
 3. **Credentials.** An `NPM_TOKEN` secret and the `NPM_PUBLISH` repository variable.
 
 Until then products vendor the release (the static release, or `scripts/vendor-packages.mjs`). The

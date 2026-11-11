@@ -418,3 +418,11 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   the skip link stays clipped until focused wherever the shell sits. Nothing changes for products that do
   not opt in.
 
+### D38 — The foundation is MIT-licensed — Decided (owner, 2026-11-11; released in 0.8.1)
+- **Decision:** `@stack-ui/tokens`, `@stack-ui/core` and `@stack-ui/react` are MIT (`LICENSE` at the
+  repository root and in each package, so vendored and packed copies carry it). Copyright as FeltKit's.
+- **Why:** open-source products vendor the foundation (PersonalOS, an open-source FeltKit starter), and
+  an `UNLICENSED` copy cannot be redistributed. It also settles the license item in
+  `release-readiness.md` for npm publishing.
+- **0.8.1 (patch):** license only; no code, token, class or DOM change.
+
