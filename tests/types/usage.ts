@@ -76,3 +76,7 @@ export const successAlert = Alert({ tone: 'positive' });
 import { THEME_INIT_SCRIPT as coreScript, type ThemePreference as CorePreference } from '@stack-ui/core/theme';
 export const serverScript: string = coreScript;
 export const corePreference: CorePreference = 'system';
+export const shellMenu = Shell({
+  product: { name: 'PersonalOS', homeHref: '#/' }, navigation: [{ id: 'chat', label: 'Chat', href: '#/chat', current: true }],
+  narrowNavigation: 'menu', navigationOpen: false, onNavigationToggle: (open: boolean) => void open, menuLabel: 'Navigation',
+});

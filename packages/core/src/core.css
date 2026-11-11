@@ -271,6 +271,9 @@ a.stack-identity__name { color: var(--stack-color-text-link); }
   padding: var(--stack-space-2) var(--stack-space-3); border-radius: var(--stack-radius-md);
   background: var(--stack-color-action-primary-bg); color: var(--stack-color-action-primary-fg);
 }
+/* Hidden until focused wherever the shell sits: a host may place it below its own content
+   (an extension's side panel), where top: -100px alone would land inside that content. */
+.stack-shell__skip:not(:focus) { clip-path: inset(50%); }
 .stack-shell__skip:focus { top: var(--stack-space-2); }
 .stack-shell__bar {
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--stack-space-3);
@@ -316,6 +319,13 @@ a.stack-identity__name { color: var(--stack-color-text-link); }
    which would otherwise size it to its content and overflow narrow screens. */
 .stack-shell__main { box-sizing: border-box; width: 100%; min-width: 0; padding: var(--stack-space-6); }
 .stack-shell__main:focus { outline: none; }
+/* Only shown in menu mode on narrow screens (below). */
+.stack-shell__menu-button {
+  display: none; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; margin: 0;
+  padding: 0; border: 0; border-radius: var(--stack-radius-md); background: transparent; color: var(--stack-color-text-default);
+  font: inherit; font-size: var(--stack-text-lg-size); cursor: pointer;
+}
+.stack-shell__menu-button:hover { background: var(--stack-color-bg-sunken); }
 @media (max-width: 767px) {
   /* The nav strip takes its own height; the page below takes the rest. */
   .stack-shell__body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; }
@@ -328,13 +338,25 @@ a.stack-identity__name { color: var(--stack-color-text-link); }
   .stack-shell__nav-list { display: flex; gap: var(--stack-space-1); }
   .stack-shell__nav-item { white-space: nowrap; }
   .stack-shell__main { padding: var(--stack-space-4); }
+
+  /* Opt-in menu mode (narrowNavigation: 'menu'): the navigation is hidden
+     behind the bar's menu button and opens as a full-width vertical list. */
+  .stack-shell--menu .stack-shell__menu-button { display: inline-flex; }
+  .stack-shell--menu .stack-shell__nav { display: none; }
+  .stack-shell--menu.stack-shell--menu-open .stack-shell__nav {
+    display: block; padding: var(--stack-space-3); overflow-x: visible; overflow-y: auto;
+  }
+  .stack-shell--menu.stack-shell--menu-open .stack-shell__nav-group + .stack-shell__nav-group { margin-top: var(--stack-space-4); }
+  .stack-shell--menu.stack-shell--menu-open .stack-shell__nav-heading { display: block; }
+  .stack-shell--menu.stack-shell--menu-open .stack-shell__nav-list { display: block; }
+  .stack-shell--menu.stack-shell--menu-open .stack-shell__nav-item { white-space: normal; }
 }
 
 /* Focus rings for the new interactive parts. */
 .stack-tabs__tab:focus-visible, .stack-table__sort:focus-visible, .stack-table:focus-visible,
 .stack-table__row--selectable:focus-visible, .stack-filter__control:focus-visible, .stack-shell__theme:focus-visible,
 .stack-shell__nav-item:focus-visible, .stack-shell__product:focus-visible, .stack-breadcrumbs__link:focus-visible,
-.stack-shell__skip:focus-visible, .stack-tabpanel:focus-visible {
+.stack-shell__skip:focus-visible, .stack-tabpanel:focus-visible, .stack-shell__menu-button:focus-visible {
   outline: var(--stack-focus-ring-width) solid var(--stack-focus-ring-color);
   outline-offset: var(--stack-focus-ring-offset);
 }

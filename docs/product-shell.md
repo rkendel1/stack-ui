@@ -42,6 +42,21 @@ Below 768px the navigation becomes a horizontal strip under the bar that
 scrolls on its own; the page itself never scrolls sideways (tested at 640 and
 320px).
 
+A product may opt in to a **narrow menu** instead (`narrowNavigation: 'menu'`,
+D37): below 768px the navigation is hidden behind a menu button at the start
+of the bar (`__menu-button`, `aria-expanded`, `aria-controls` the nav, a 44px
+target, accessible name `menuLabel`, default "Menu") and opens as a vertical
+list with its group headings. The product owns the open state
+(`navigationOpen`, `onNavigationToggle(open)`), like `Tabs` and `Dialog`: the
+button toggles it, Escape (on the button or in the menu) closes it, returning focus to the
+button, and following a link closes it before routing, so `focusMain` still
+lands on the new page. Without `onNavigationToggle` nothing could open the
+menu, so the shell keeps the strip. Above 768px nothing changes. The strip
+remains the default; menu mode suits hosts that are narrow all the time (a
+browser extension's side panel), where a strip would hide most destinations.
+Tested at 400 and 320px in both themes (axe, keyboard, routing, no sideways
+scroll) in `tests/browser/shell-menu.test.mjs`.
+
 ## 2. Navigation and resource-context conventions
 
 - **Product navigation** lists the current product's surfaces only, grouped and
@@ -115,6 +130,9 @@ interface ShellProps {
   activityHref?: string; activityLabel?: string; activityCurrent?: boolean;
   otherProducts?: Array<{ id: string; name: string; href: string }>;
   onNavigate?: (href: string) => void;  // client-side routing
+  narrowNavigation?: 'strip' | 'menu';  // below 768px; default 'strip' (D37)
+  navigationOpen?: boolean; onNavigationToggle?: (open: boolean) => void;
+  menuLabel?: string;        // menu button's accessible name, default "Menu"
   mainId?: string;           // default 'stack-main'; the skip link targets it
   mainAttrs?: Record<string, string>; skipLabel?: string;
   children?: Node;           // the page

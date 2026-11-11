@@ -514,6 +514,19 @@ export function Shell(props) {
     },
   } : undefined);
   const mainId = idPart(props.mainId || 'stack-main');
+  // Narrow screens: the navigation is a scrolling strip (the default), or,
+  // when a product opts in with `narrowNavigation: 'menu'` and owns the open
+  // state (`navigationOpen`, `onNavigationToggle`), a menu behind a button in
+  // the bar. Without the toggle there is no way to open it, so it stays a strip.
+  const menu = props.narrowNavigation === 'menu' && typeof props.onNavigationToggle === 'function';
+  const open = menu && Boolean(props.navigationOpen);
+  const navId = `${mainId}-nav`;
+  const menuButtonId = `${mainId}-menu-button`;
+  const closeMenu = (event) => {
+    props.onNavigationToggle(false);
+    const button = event.currentTarget.ownerDocument.getElementById(menuButtonId);
+    if (button) button.focus();
+  };
   const groups = [];
   for (const item of props.navigation || []) {
     const name = item.group || '';
@@ -522,12 +535,24 @@ export function Shell(props) {
     group.items.push(item);
   }
   for (const group of groups) group.items.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  // In an open menu, following a link also closes it.
+  const follow = (href) => {
+    const routed = navigate(href);
+    if (!open) return routed;
+    return {
+      // Close first: the route change then moves focus to the new page.
+      click: (event) => {
+        if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) props.onNavigationToggle(false);
+        if (routed) routed.click(event);
+      },
+    };
+  };
   const navItem = (item) => node('li', { class: 'stack-shell__nav-entry' }, node('a', {
     class: cx('stack-shell__nav-item', item.className),
     href: item.href,
     ...(item.current ? { 'aria-current': 'page' } : {}),
     ...passthrough(item.attrs),
-  }, item.label, navigate(item.href)));
+  }, item.label, follow(item.href)));
   const theme = props.theme;
   const themeId = `${mainId}-theme`;
   // A product in the Boundry portfolio lists its siblings by default; a
@@ -538,7 +563,7 @@ export function Shell(props) {
       : []);
   const family = present(product.id) && portfolioProduct(product.id) && props.family !== false;
   return node('div', {
-    class: cx('stack-shell', props.className),
+    class: cx('stack-shell', menu ? 'stack-shell--menu' : null, open ? 'stack-shell--menu-open' : null, props.className),
     ...(present(product.id) ? { 'data-stack-product': product.id } : {}),
     ...passthrough(props.attrs),
   }, [
@@ -546,6 +571,17 @@ export function Shell(props) {
     // `#main` would change the route.
     node('a', { class: 'stack-shell__skip', href: `#${mainId}` }, props.skipLabel || 'Skip to content', { click: skipToMain(mainId) }),
     node('header', { class: 'stack-shell__bar' }, [
+      menu ? node('button', {
+        class: 'stack-shell__menu-button', type: 'button', id: menuButtonId,
+        'aria-expanded': open ? 'true' : 'false', 'aria-controls': navId,
+      }, [
+        node('span', { 'aria-hidden': 'true' }, open ? '\u2715' : '\u2630'),
+        node('span', { class: 'stack-visually-hidden' }, props.menuLabel || 'Menu'),
+      ], {
+        click: () => props.onNavigationToggle(!open),
+        // Escape closes the open menu from its button too, not only from inside it.
+        ...(open ? { keydown: (event) => { if (event.key === 'Escape') { event.preventDefault(); props.onNavigationToggle(false); } } } : {}),
+      }) : null,
       node('a', { class: 'stack-shell__product', href: product.homeHref || '#' }, [
         present(product.mark) ? node('span', { class: 'stack-shell__mark', 'aria-hidden': 'true' }, product.mark) : null,
         node('span', { class: 'stack-shell__product-name' }, product.name || ''),
@@ -568,7 +604,10 @@ export function Shell(props) {
       ]),
     ]),
     node('div', { class: 'stack-shell__body' }, [
-      node('nav', { class: 'stack-shell__nav', 'aria-label': `${product.name || 'Product'} navigation` }, [
+      node('nav', {
+        class: 'stack-shell__nav', 'aria-label': `${product.name || 'Product'} navigation`,
+        ...(menu ? { id: navId } : {}),
+      }, [
         groups.map((group) => node('div', { class: 'stack-shell__nav-group' }, [
           present(group.name) ? node('p', { class: 'stack-shell__nav-heading' }, group.name) : null,
           node('ul', { class: 'stack-shell__nav-list' }, group.items.map(navItem)),
@@ -583,7 +622,7 @@ export function Shell(props) {
             family ? node('li', { class: 'stack-shell__nav-entry' }, node('a', { class: 'stack-shell__nav-item stack-shell__nav-item--company', href: PORTFOLIO.company.href }, ['About ', PORTFOLIO.company.name])) : null,
           ]),
         ]) : null,
-      ]),
+      ], open ? { keydown: (event) => { if (event.key === 'Escape') { event.preventDefault(); closeMenu(event); } } } : undefined),
       node('main', { class: 'stack-shell__main', id: mainId, tabindex: '-1', ...passthrough(props.mainAttrs) }, props.children || null),
     ]),
   ]);

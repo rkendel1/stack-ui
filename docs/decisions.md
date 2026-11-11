@@ -396,3 +396,20 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
 - **Why:** `product-shell.md` §2 allowed one-theme products to omit the control while
   §10 required one on every page. The only one-theme surface is an embed, whose host
   owns the theme; theming the embed would push its dark rules into third-party pages.
+
+### D37 — The Shell offers an opt-in narrow menu; the strip stays the default — Decided (owner, 2026-11-11)
+- **Decision:** `Shell` takes `narrowNavigation: 'strip' | 'menu'` (default `'strip'`).
+  Menu mode hides the navigation behind a button in the bar below 768px and needs the
+  product to own the open state (`navigationOpen`, `onNavigationToggle`). It changes
+  nothing above 768px and nothing for products that do not opt in.
+- **Why:** a browser extension's side panel (PersonalOS, about 400px wide all the time)
+  is never wide enough for the sidebar, and a strip there shows two or three of eight
+  destinations. The owner asked for a menu, governed by the shared Shell rather than
+  built per app, while keeping the existing behaviour available: the strip by default,
+  a menu where the host is narrow by nature.
+- **Uses:** one so far (the PersonalOS extension panel). It is a mode of an existing
+  component, not a new component; a second use is expected from other products'
+  narrow hosts and should be recorded here when it lands.
+- **Kept out:** no state inside the shell, no storage, no focus trap (the menu is
+  inline under the bar, not modal), no automatic open/close on resize.
+
