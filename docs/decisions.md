@@ -397,7 +397,7 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   §10 required one on every page. The only one-theme surface is an embed, whose host
   owns the theme; theming the embed would push its dark rules into third-party pages.
 
-### D37 — The Shell offers an opt-in narrow menu; the strip stays the default — Decided (owner, 2026-11-11)
+### D37 — The Shell offers an opt-in narrow menu; the strip stays the default — Decided (owner, 2026-11-11; released in 0.8.0)
 - **Decision:** `Shell` takes `narrowNavigation: 'strip' | 'menu'` (default `'strip'`).
   Menu mode hides the navigation behind a button in the bar below 768px and needs the
   product to own the open state (`navigationOpen`, `onNavigationToggle`). It changes
@@ -412,4 +412,9 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   narrow hosts and should be recorded here when it lands.
 - **Kept out:** no state inside the shell, no storage, no focus trap (the menu is
   inline under the bar, not modal), no automatic open/close on resize.
+- **0.8.0 (minor, additive):** `narrowNavigation`, `navigationOpen`, `onNavigationToggle`, `menuLabel` on
+  `Shell` (React and `dom.js`), the `stack-shell__menu-button` part and the `stack-shell--menu` /
+  `stack-shell--menu-open` modifiers. Fixes shipped with it: Escape on the menu button closes the menu;
+  the skip link stays clipped until focused wherever the shell sits. Nothing changes for products that do
+  not opt in.
 
