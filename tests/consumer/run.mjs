@@ -25,7 +25,7 @@ try {
   }, null, 2));
   cpSync(join(here, 'app.tsx'), join(dir, 'app.tsx'));
   writeFileSync(join(dir, 'tsconfig.json'), JSON.stringify({ compilerOptions: { strict: true, noEmit: true, jsx: 'react-jsx', module: 'ESNext', moduleResolution: 'Bundler', target: 'ES2020', skipLibCheck: false, types: [] }, files: ['app.tsx', 'css.d.ts'] }));
-  writeFileSync(join(dir, 'css.d.ts'), "declare module '*.css';\n// @stack-ui/core/html ships no type declarations (pre-existing; GAP-REGISTER V-04).\ndeclare module '@stack-ui/core/html' { export const html: Record<string, (props: object) => string>; }\n");
+  writeFileSync(join(dir, 'css.d.ts'), "declare module '*.css';\n// @stack-ui/core/html ships no type declarations (pre-existing; docs/charts.md, "Not supported").\ndeclare module '@stack-ui/core/html' { export const html: Record<string, (props: object) => string>; }\n");
   run('npm', ['install', '--no-audit', '--no-fund', '--ignore-scripts', '--loglevel=error']);
   run('npx', ['tsc', '-p', '.']);
   console.log('consumer: types resolve from the packed packages');
