@@ -588,10 +588,13 @@ export interface LineChartProps extends CartesianChartProps {
   points?: boolean;
   /** `false` fits the value axis to the data instead of including zero. */
   zeroBaseline?: boolean;
+  /** 'step' holds each value until the next x (balances between postings). Default 'linear'. */
+  curve?: 'linear' | 'step';
 }
 export interface AreaChartProps extends CartesianChartProps {
   /** Stack the series: positive values up, negative values down. */
   stacked?: boolean;
+  curve?: 'linear' | 'step';
 }
 export interface BarChartProps extends CartesianChartProps {
   orientation?: 'vertical' | 'horizontal';

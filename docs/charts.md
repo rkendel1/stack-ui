@@ -36,7 +36,9 @@ until two products need them; the owner promoted them with one real consumer
   measure their plot area with `ResizeObserver` and redraw when it changes;
   framework-free pages use `mountChart(el, 'LineChart', props)`. Before
   measurement (and on the server) the `width` prop or 640px is used; the SVG
-  scales by `viewBox`. Tick density and category labels thin with width.
+  scales by `viewBox`. Tick density follows the size; axis labels are placed at
+  their real positions and skipped when they would touch the previous one, and
+  the first and last labels align to the chart's edge instead of spilling past it.
 - **Themed.** Series use `--stack-color-chart-1 … 8` (new tokens, light and
   dark, each ≥ 3:1 on every background, tested); everything else uses the
   existing text and border tokens. `core.css` contains no literal colours for
@@ -85,8 +87,8 @@ fixed width. Static sites: `html.BarChart(props)` from `esm/html.js`.
 
 | Component | Options beyond the common ones |
 |---|---|
-| `LineChart` | `points` (mark every value), `zeroBaseline: false` (fit the axis to the data) |
-| `AreaChart` | `stacked` (positives up, negatives down) |
+| `LineChart` | `points` (mark every value), `zeroBaseline: false` (fit the axis to the data), `curve: 'step'` (hold each value until the next: balances) |
+| `AreaChart` | `stacked` (positives up, negatives down), `curve: 'step'` |
 | `BarChart` | `orientation: 'vertical' \| 'horizontal'`, `stacked` |
 | `StackedBarChart` | `BarChart` with `stacked` |
 | `DonutChart` | one series whose x values name slices; `centerValue`, `centerLabel`, `center: false`, `innerRatio`; zero slices are listed, not drawn |
@@ -137,13 +139,21 @@ span.stack-sparkline[data-trend] > svg[role=img][aria-label]
 
 | Check | Result |
 |---|---|
-| `pnpm test` (build, boundary, types, unit, browser) | 111 unit, 177 browser, all pass (was 89 and 154) |
-| Unit `tests/unit/charts.test.mjs` | 20 tests: rendering, legends, toggles, gaps, ordering, validation, immutability, determinism, formatting, states, sizing, long labels, 500-point data, negative and zero values, single points, donut rules, sparkline, ticks, a11y structure, token-only CSS. Mutation check: disabling label truncation or the zero-bar rule fails the matching tests |
+| `pnpm test` (build, boundary, types, unit, browser) | 113 unit, 177 browser, all pass (was 89 and 154) |
+| Unit `tests/unit/charts.test.mjs` | 22 tests: rendering, legends, toggles, gaps, ordering, validation, immutability, determinism, formatting, states, sizing, long labels, 500-point data, negative and zero values, single points, donut rules, sparkline, ticks, a11y structure, token-only CSS, axis labels never overlapping (clustered dates, three widths), step curves. Mutation check: disabling label truncation or the zero-bar rule fails the matching tests |
 | Browser `tests/browser/charts.test.mjs` | layout at container width and redraw on resize (DOM and React), no overflow at 320px, keyboard tooltips inside the chart (light and dark), colours resolve to the theme tokens, React legend toggles |
 | Parity and axe | 15 chart fixtures through React ⇄ DOM and HTML ⇄ DOM parity and the axe gallery |
 | Types `tests/types/usage.ts` | chart props and data contract; misuse fails to compile |
 | Consumer `pnpm test:consumer` | packs the three packages, installs the tarballs in a fresh project, typechecks, bundles and server-renders six charts via public entry points |
 | Showcase `tests/browser/showcase.test.mjs` | builds `examples/charts`, checks every chart type, no errors, no page scroll, axe |
+
+## Found by the first consumer
+
+Ledger's real data found three defects the showcase had not: time labels
+overlapped when postings clustered on nearby dates (labels were thinned by
+index, not by position), a balance drawn as a straight line between postings
+implied a gradual change that never happened (now `curve: 'step'`), and donut
+legend values wrapped mid-value. All three are fixed in 0.9.0 with tests.
 
 ## Size
 

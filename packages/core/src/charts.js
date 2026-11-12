@@ -393,16 +393,28 @@ function cartesian(kind, props) {
         : { class: 'stack-chart__tick stack-chart__tick--end', x: chR(plot.x0 - 6), y: chR(p + 4) }, tickText[i], `t${i}`),
     ];
   })));
-  // Category / time axis labels, thinned so they never overlap.
-  const room = horizontal ? Math.max(1, Math.floor(plotH / (font + 6))) : Math.max(1, Math.floor(plotW / (Math.max(...xLabels.map((l) => Math.min(chTextWidth(l), 120))) + 10)));
-  const every = Math.max(1, Math.ceil(n / room));
-  const labelRoom = horizontal ? left - yLabelSpace - 8 : Math.max(24, (bars || xType === 'category' ? band : plotW / Math.max(1, n - 1)) * every - 6);
+  // Category / time axis labels: placed left to right (top to bottom) at their real
+  // positions, skipping any that would touch the previous one, so labels never overlap
+  // even when time points are unevenly spaced. The first label is always placed.
+  const labelRoom = horizontal ? left - yLabelSpace - 8 : Math.min(140, Math.max(24, plotW / 2));
+  let lastEdge = -Infinity;
   parts.push(chNode('g', { class: 'stack-chart__axis stack-chart__axis--category', 'aria-hidden': 'true' }, xLabels.map((label, i) => {
-    if (i % every !== 0) return null;
     const p = chR(position(i));
-    return horizontal
-      ? chNode('text', { class: 'stack-chart__tick stack-chart__tick--end', x: chR(plot.x0 - 8), y: chR(p + 4) }, chFit(label, labelRoom), i)
-      : chNode('text', { class: 'stack-chart__tick stack-chart__tick--middle', x: p, y: chR(plot.y1 + font + 6) }, chFit(label, labelRoom), i);
+    const text = chFit(label, labelRoom);
+    if (horizontal) {
+      if (p - font / 2 < lastEdge + 4) return null;
+      lastEdge = p + font / 2;
+      return chNode('text', { class: 'stack-chart__tick stack-chart__tick--end', x: chR(plot.x0 - 8), y: chR(p + 4) }, text, i);
+    }
+    // Edge labels are aligned to the chart's edge instead of spilling past it.
+    const w = chTextWidth(text);
+    let x0 = p - w / 2;
+    let anchor = 'middle';
+    let at = p;
+    if (x0 < 0) { x0 = 0; anchor = 'start'; at = 0; } else if (x0 + w > width) { x0 = width - w; anchor = 'end'; at = width; }
+    if (x0 < lastEdge + 8 || x0 < 0) return null;
+    lastEdge = x0 + w;
+    return chNode('text', { class: `stack-chart__tick stack-chart__tick--${anchor}`, x: chR(at), y: chR(plot.y1 + font + 6) }, text, i);
   })));
   if (props.yLabel) {
     const mid = chR((plot.y0 + plot.y1) / 2);
@@ -442,10 +454,13 @@ function cartesian(kind, props) {
       });
       if (current.length) segments.push(current);
       const children = [];
+      const step = props.curve === 'step';
       segments.forEach((seg, s) => {
-        const line = seg.map((p, k) => `${k ? 'L' : 'M'}${chR(p.x)} ${chR(p.y)}`).join(' ');
+        // A step holds each value until the next x (a balance between postings), then moves.
+        const path = step ? seg.flatMap((p, k) => (k ? [{ ...p, y: seg[k - 1].y, base: seg[k - 1].base }, p] : [p])) : seg;
+        const line = path.map((p, k) => `${k ? 'L' : 'M'}${chR(p.x)} ${chR(p.y)}`).join(' ');
         if (kind === 'area' && seg.length > 1) {
-          const back = [...seg].reverse().map((p) => `L${chR(p.x)} ${chR(p.base)}`).join(' ');
+          const back = [...path].reverse().map((p) => `L${chR(p.x)} ${chR(p.base)}`).join(' ');
           children.push(chNode('path', { class: 'stack-chart__area', d: `${line} ${back} Z` }, [], `a${s}`));
         }
         if (seg.length > 1) children.push(chNode('path', { class: 'stack-chart__line', d: line }, [], `l${s}`));
@@ -496,9 +511,10 @@ function cartesian(kind, props) {
 
 const kindName = (kind) => ({ line: 'LineChart', area: 'AreaChart', bar: 'BarChart' }[kind] || kind);
 
-/// Lines over categories or time; `points` marks every value, `zeroBaseline: false` fits the axis to the data.
+/// Lines over categories or time; `points` marks every value, `zeroBaseline: false` fits the axis to the data,
+/// `curve: 'step'` holds each value until the next (balances).
 export function LineChart(props) { return cartesian('line', props || {}); }
-/// Filled areas from zero; `stacked` stacks the series (positives up, negatives down).
+/// Filled areas from zero; `stacked` stacks the series (positives up, negatives down); `curve: 'step'`.
 export function AreaChart(props) { return cartesian('area', props || {}); }
 /// Grouped bars; `orientation: 'horizontal'`; `stacked` stacks the series.
 export function BarChart(props) { return cartesian('bar', props || {}); }

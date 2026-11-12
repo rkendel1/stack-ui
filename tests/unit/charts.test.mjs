@@ -293,3 +293,34 @@ test('chart styles use theme tokens only: no literal colours', () => {
   assert.deepEqual(charts.match(/#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(/g), null);
   for (let i = 1; i <= 8; i++) assert.match(charts, new RegExp(`--stack-color-chart-${i}\\b`));
 });
+
+test('axis labels never overlap, even when time points cluster (found by Ledger, 0.9.0)', () => {
+  const days = ['2025-12-31', '2026-06-01', '2026-06-05', '2026-06-10', '2026-08-01', '2026-08-02', '2026-08-20', '2026-11-01', '2026-11-20'];
+  for (const width of [320, 640, 1100]) {
+    const t = LineChart({ title: 'Balance', width, xType: 'time', series: [{ id: 'b', label: 'Balance', data: days.map((x, i) => ({ x, y: i })) }] });
+    // Extents from each label's anchor (start / middle / end) and estimated width.
+    const labels = all(t, hasClass('stack-chart__axis--category'))[0].c.filter(Boolean).map((n) => {
+      const w = text(n).length * 12 * 0.6;
+      const x = Number(n.a.x);
+      const anchor = n.a.class.match(/--(start|middle|end)/)[1];
+      const left = anchor === 'start' ? x : anchor === 'end' ? x - w : x - w / 2;
+      return { left, right: left + w };
+    }).sort((a, b) => a.left - b.left);
+    assert.ok(labels.length >= 2, `${width}: at least two labels`);
+    for (let i = 1; i < labels.length; i++) assert.ok(labels[i].left >= labels[i - 1].right + 8, `${width}px: labels ${i - 1} and ${i} overlap`);
+    assert.ok(labels.every((l) => l.left >= -0.01 && l.right <= width + 0.01), `${width}px: labels stay inside`);
+  }
+});
+
+test("curve 'step' holds each value until the next point (balances), for lines and areas", () => {
+  const props = { title: 'Balance', width: 400, height: 200, series: [{ id: 'b', label: 'Balance', data: [{ x: 'a', y: 10 }, { x: 'b', y: 30 }, { x: 'c', y: 20 }] }] };
+  const linear = all(LineChart(props), hasClass('stack-chart__line'))[0].a.d.split(/[ML]/).filter(Boolean);
+  const stepped = all(LineChart({ ...props, curve: 'step' }), hasClass('stack-chart__line'))[0].a.d.split(/[ML]/).filter(Boolean);
+  assert.equal(linear.length, 3);
+  assert.equal(stepped.length, 5);
+  const pt = (s) => s.trim().split(' ').map(Number);
+  assert.equal(pt(stepped[1])[1], pt(stepped[0])[1], 'holds the first value');
+  assert.equal(pt(stepped[1])[0], pt(stepped[2])[0], 'then moves at the next x');
+  const area = all(AreaChart({ ...props, curve: 'step' }), hasClass('stack-chart__area'))[0].a.d;
+  assert.equal((area.match(/L/g) || []).length, 4 + 5, 'stepped top and its baseline');
+});

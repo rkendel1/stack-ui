@@ -696,7 +696,7 @@ textarea.stack-field__control { min-height: calc(var(--stack-size-control-md) * 
 .stack-chart__legend { display: flex; flex-wrap: wrap; gap: var(--stack-space-1) var(--stack-space-4); margin: 0; padding: 0; list-style: none; font-size: var(--stack-text-sm-size); line-height: var(--stack-text-sm-line); }
 .stack-chart__legend-item, .stack-chart__legend-toggle { display: inline-flex; align-items: center; gap: var(--stack-space-2); min-width: 0; }
 .stack-chart__legend-label { overflow-wrap: anywhere; }
-.stack-chart__legend-note { color: var(--stack-color-text-muted); font-variant-numeric: tabular-nums; }
+.stack-chart__legend-note { color: var(--stack-color-text-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .stack-chart__legend-toggle {
   font: inherit; color: inherit; background: none; border: var(--stack-border-width-thin) solid transparent;
   border-radius: var(--stack-radius-sm); padding: 2px var(--stack-space-1); min-height: 24px; cursor: pointer;
