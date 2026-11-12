@@ -536,37 +536,8 @@ export declare function SiteFooter(props: SiteFooterProps): ReactElement;
 // Charts present values a product has already computed; they never compute
 // authoritative values and never mutate their input.
 
-/** A category name, a number, or (xType "time") epoch milliseconds or an ISO date. */
-export type ChartX = string | number;
-/** One value. `null` is missing: a gap in lines and areas, no bar, "—" in the table. */
-export interface ChartDataPoint { x: ChartX; y: number | null }
-export interface ChartSeries {
-  /** Stable identity: keys legend toggles and `data-series`. Unique per chart. */
-  id: string;
-  /** Human-readable name shown in the legend, tooltips and data table. */
-  label: string;
-  /** Points in any order; one per x. Missing x values are treated as null. */
-  data: ChartDataPoint[];
-  /** Drawn? Hidden series stay in the legend (so they can be shown again) but leave the plot and table. */
-  hidden?: boolean;
-  /** Palette colour 1–8 (--stack-color-chart-N). Default: the series' position. */
-  palette?: number;
-  /** Product metadata; charts ignore it. */
-  meta?: Record<string, unknown>;
-}
-/** How values are written: a function, or these options (en-US, deterministic: no Intl). */
-export type ChartFormat = ((value: number) => string) | {
-  style?: 'number' | 'currency' | 'percent';
-  /** ISO 4217 code for style "currency" (default USD). */
-  currency?: string;
-  /** Presentation only: divide before writing (minor units → major units). */
-  divisor?: number;
-  minimumFractionDigits?: number;
-  maximumFractionDigits?: number;
-  /** 1.2K, 3.4M. */
-  compact?: boolean;
-  suffix?: string;
-};
+import type { ChartX, ChartDataPoint, ChartSeries, ChartFormat } from '@stack-ui/core/charts';
+export type { ChartX, ChartDataPoint, ChartSeries, ChartFormat };
 export interface ChartError { message: string; code?: string; requestId?: string }
 interface ChartCommonProps extends Passthrough {
   /** Required: the figure's caption and accessible name. */

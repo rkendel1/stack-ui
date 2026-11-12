@@ -26,6 +26,8 @@ jobs:
       - name: Install Chromium
         run: pnpm exec playwright-core install --with-deps chromium
       - run: pnpm test:browser
+      # Packs the packages and builds a fresh consumer from the tarballs (docs/charts.md).
+      - run: pnpm test:consumer
       - name: Package static assets
         run: node scripts/package-static.mjs
       # A version's contents never change once recorded (releases/<version>).

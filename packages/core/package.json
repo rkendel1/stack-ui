@@ -11,7 +11,10 @@
     ".": "./src/index.js",
     "./states": "./src/states.js",
     "./view": "./src/view.js",
-    "./charts": "./src/charts.js",
+    "./charts": {
+      "types": "./src/charts.d.ts",
+      "default": "./src/charts.js"
+    },
     "./dom": "./src/dom.js",
     "./core.css": "./src/core.css",
     "./classic": "./classic/stack-ui-core.js",
