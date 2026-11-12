@@ -15,7 +15,9 @@ until the npm scope is decided (D9).
 | `@stack-ui/core` | Component structure, field-keyed state semantics, the Boundry portfolio (`brand.js`), a framework-free DOM renderer, a build-time HTML renderer for static sites (`html.js`), `core.css`, and `stack-ui-core.js` (a strict classic-script build exposing `window.StackUI`) |
 | `@stack-ui/react` | React 18/19 components that render the same DOM as the core renderer (peers: `react`, `@stack-ui/core`) |
 
-Thirty-two components. Marketing: `SiteHeader`, `SiteFooter`, `ThemeSwitch` and
+Thirty-eight components. Charts (0.9.0, [docs/charts.md](docs/charts.md)): `LineChart`, `AreaChart`,
+`BarChart`, `StackedBarChart`, `DonutChart` and `Sparkline`, native SVG with no dependencies, plus
+`mountChart` for framework-free pages and a live showcase (`pnpm showcase` → `examples/charts/dist/`). Marketing: `SiteHeader`, `SiteFooter`, `ThemeSwitch` and
 `BrandMark`, plus layout classes (`stack-hero`, `stack-section`, `stack-feature-grid`, …).
 Application: `Alert`, `Checkbox`, `FieldGroup`, `ActivityTimeline`, `StatusIndicator`, `VerificationBadge`, `FreshnessLabel`,
 `Unavailable`, `Loading`, `EmptyState`, `ErrorPanel`, `MetadataList`,
@@ -27,7 +29,7 @@ replace `confirm()` and `prompt()` on framework-free pages. The theme preference
 (`theme.js`) is the only value any package stores; `stack-ui-core-stateless.js`
 is the classic build without it. State mappings cover the Compute
 and FeltDB fields the first adopting screens render
-(`packages/core/src/states.js`). Not published to npm yet (scope: D9). Version 0.7.0.
+(`packages/core/src/states.js`). Not published to npm yet (scope: D9). Version 0.9.0.
 
 ### Using it
 
@@ -74,6 +76,7 @@ Browser tests use `playwright-core`; install Chromium with
 | [docs/audit.md](docs/audit.md) | What exists today in each product, with repository evidence |
 | [docs/design-system-contract.md](docs/design-system-contract.md) | Tokens, components, interaction patterns, accessibility, state and evidence semantics, versioning |
 | [docs/product-shell.md](docs/product-shell.md) | Shared shell as a UI composition contract |
+| [docs/charts.md](docs/charts.md) | Charts: architecture, data contract, accessibility, verification, size, unsupported features |
 | [docs/adoption-plan.md](docs/adoption-plan.md) | Package ownership, the Compute + FeltDB slices (PR2, PR3), AppPort services (PR4), the AuthBoundry portal (PR5), migration order, CI |
 | [docs/decisions.md](docs/decisions.md) | Decisions, alternatives, open and deferred questions |
 

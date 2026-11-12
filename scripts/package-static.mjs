@@ -38,6 +38,7 @@ const files = {
   'esm/states.js': 'packages/core/src/states.js',
   'esm/brand.js': 'packages/core/src/brand.js',
   'esm/view.js': 'packages/core/src/view.js',
+  'esm/charts.js': 'packages/core/src/charts.js',
   'esm/html.js': 'packages/core/src/html.js',
   'esm/theme.js': 'packages/core/src/theme.js',
   // Run by every adopting build (docs/release.md, Conformance).

@@ -191,8 +191,10 @@ not templates:
 | `BrandMark` | The Boundry mark | `idPrefix`, `title?` | Decorative unless titled (`role=img`) |
 | `.stack-site-container`, `.stack-section`, `.stack-hero`, `.stack-eyebrow`, `.stack-display`, `.stack-heading`, `.stack-lede`, `.stack-feature-grid`, `.stack-feature` | Layout and type primitives for pages | CSS classes | Headings stay real headings; product supplies them |
 
-Not in the initial inventory: charts, code editors, diff viewers, graph views.
-They stay product-owned until two products need the same one.
+Not in the initial inventory: code editors, diff viewers, graph views.
+They stay product-owned until two products need the same one. Charts
+(`LineChart`, `AreaChart`, `BarChart`, `StackedBarChart`, `DonutChart`, `Sparkline`)
+were promoted in 0.9.0 by the owner (D38); their contract is docs/charts.md.
 
 ## 6. State and evidence semantics
 

@@ -418,3 +418,24 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   the skip link stays clipped until focused wherever the shell sits. Nothing changes for products that do
   not opt in.
 
+
+### D38 — Charts are a shared capability, native SVG in core — Decided (owner, 2026-11-12; released in 0.9.0)
+- **Decision:** `LineChart`, `AreaChart`, `BarChart`, `StackedBarChart`, `DonutChart` and `Sparkline` ship in
+  `@stack-ui/core/charts` as view trees, bound by `@stack-ui/react` and `dom.js` (`mountChart`) and served by
+  `html.js` (docs/charts.md). Chart colours are new data-palette tokens, `--stack-color-chart-1 … 8`.
+- **Why:** the owner directed that visualization be solved once in the platform rather than per application, after
+  Ledger needed revenue, expense, cash-flow, composition and balance charts and nothing in the platform drew one.
+- **Uses:** one real consumer (Ledger's overview and reports). No other Boundry product draws charts today (search
+  of FeltKit, AppBoundry, AppPort, AppPort Services, 2026-11-12). This is an owner-directed exception to the
+  two-use rule (contract §5, §9), recorded as such; the next product dashboard (FeltKit Studio activity, FeltDB
+  Studio metrics) should adopt these components and be recorded here as the second use.
+- **Alternatives:** (a) a charting library (Recharts, Chart.js, ECharts, uPlot) behind adapters: rejected; the
+  boundary check forbids runtime dependencies outside `@stack-ui/*`, three of the five product UIs have no
+  framework or build (D2), and a library would not render through `html.js` or the classic build. (b) Per-product
+  charts: the current state, which this replaces.
+- **Kept out:** no data fetching, no aggregation of authoritative values, no internal state (series visibility is
+  the product's, through `onToggleSeries`), no `Intl` (output must be identical in every renderer).
+- **0.9.0 (minor, additive):** the six components, `formatChartValue`, `niceTicks`, `mountChart`, the
+  `@stack-ui/core/charts` entry point with types, chart tokens, `stack-chart*`/`stack-sparkline*` classes, and
+  `esm/charts.js` in the static release (needed by `esm/html.js`). No existing token, class, prop or structure
+  changed; no migration is required.
