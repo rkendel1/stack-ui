@@ -1,6 +1,6 @@
 {
   "name": "@stack-ui/core",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Stack design-system core: component structure, state semantics, framework-free DOM rendering and styles.",
   "type": "module",
   "license": "MIT",
@@ -11,6 +11,10 @@
     ".": "./src/index.js",
     "./states": "./src/states.js",
     "./view": "./src/view.js",
+    "./charts": {
+      "types": "./src/charts.d.ts",
+      "default": "./src/charts.js"
+    },
     "./dom": "./src/dom.js",
     "./core.css": "./src/core.css",
     "./classic": "./classic/stack-ui-core.js",

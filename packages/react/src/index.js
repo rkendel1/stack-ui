@@ -6,6 +6,7 @@
 // from server components: the components still render on the server.
 import { cloneElement, createElement, Fragment, isValidElement, useEffect, useRef, useState } from 'react';
 import { COMPONENTS, isTree } from '@stack-ui/core/view';
+import { CHARTS } from '@stack-ui/core/charts';
 
 const RENAMED = {
   class: 'className', for: 'htmlFor', datetime: 'dateTime', tabindex: 'tabIndex',
@@ -102,6 +103,47 @@ export const ThemeSwitch = bind('ThemeSwitch');
 export const SiteHeader = bind('SiteHeader');
 export const SiteFooter = bind('SiteFooter');
 
+/// Charts lay themselves out at the width they are given room for: the binding
+/// measures the plot area (ResizeObserver) and redraws when it changes. Before
+/// the first measurement (and on the server) a chart uses its `width` prop or
+/// the core default. A `width` prop fixes the width.
+function useChartWidth(fixed) {
+  const ref = useRef(null);
+  const [width, setWidth] = useState(undefined);
+  useEffect(() => {
+    const figure = ref.current;
+    if (fixed || !figure || typeof ResizeObserver === 'undefined') return undefined;
+    const measure = () => {
+      const plot = figure.querySelector('.stack-chart__plot');
+      const next = Math.round((plot && plot.clientWidth) || figure.clientWidth || 0);
+      if (next > 0) setWidth((prev) => (prev === next ? prev : next));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(figure);
+    return () => observer.disconnect();
+  }, [fixed]);
+  return [ref, fixed || width];
+}
+
+const bindChart = (name) => {
+  const chart = CHARTS[name];
+  const Chart = (props) => {
+    const [ref, width] = useChartWidth(props.width);
+    const element = toReact(chart(width ? { ...props, width } : props));
+    return name === 'Sparkline' ? element : cloneElement(element, { ref });
+  };
+  Chart.displayName = `Stack${name}`;
+  return Chart;
+};
+
+export const LineChart = bindChart('LineChart');
+export const AreaChart = bindChart('AreaChart');
+export const BarChart = bindChart('BarChart');
+export const StackedBarChart = bindChart('StackedBarChart');
+export const DonutChart = bindChart('DonutChart');
+export const Sparkline = bindChart('Sparkline');
+
 /// Opens the rendered <dialog> as a modal while `open` is true. If the browser
 /// closes it by itself while it should be open (a repeated Esc), a busy
 /// dialog is shown again and any other calls `onDismiss`, so the product's
@@ -162,4 +204,5 @@ export {
 export { PORTFOLIO, portfolioProduct } from '@stack-ui/core/brand';
 
 export { resolve, verification, verificationOf, freshnessOf, capability, humanize, TONES, GLYPHS } from '@stack-ui/core/states';
-export { focusMain, openDialog, confirmAction, formDialog } from '@stack-ui/core/dom';
+export { focusMain, openDialog, confirmAction, formDialog, mountChart } from '@stack-ui/core/dom';
+export { formatChartValue, niceTicks, CHART_PALETTE_SIZE } from '@stack-ui/core/charts';

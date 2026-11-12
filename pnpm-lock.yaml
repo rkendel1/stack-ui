@@ -14,6 +14,9 @@ importers:
       '@stack-ui/react':
         specifier: workspace:*
         version: link:packages/react
+      '@stack-ui/tokens':
+        specifier: workspace:*
+        version: link:packages/tokens
       '@types/react':
         specifier: 19.2.0
         version: 19.2.0

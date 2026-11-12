@@ -531,3 +531,109 @@ export declare function BrandMark(props: BrandMarkProps): ReactElement;
 export declare function ThemeSwitch(props: ThemeSwitchProps): ReactElement;
 export declare function SiteHeader(props: SiteHeaderProps): ReactElement;
 export declare function SiteFooter(props: SiteFooterProps): ReactElement;
+
+// ---- Charts (0.9.0, docs/charts.md) -------------------------------------------
+// Charts present values a product has already computed; they never compute
+// authoritative values and never mutate their input.
+
+import type { ChartX, ChartDataPoint, ChartSeries, ChartFormat } from '@stack-ui/core/charts';
+export type { ChartX, ChartDataPoint, ChartSeries, ChartFormat };
+export interface ChartError { message: string; code?: string; requestId?: string }
+interface ChartCommonProps extends Passthrough {
+  /** Required: the figure's caption and accessible name. */
+  title: string;
+  description?: string;
+  /** Render the title as h1–h6 (default: a plain caption). */
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+  /** Layout width in px. Default: the measured width of the chart's container. */
+  width?: number;
+  height?: number;
+  /** Width ÷ height when no height is given. */
+  aspectRatio?: number;
+  /** Shows the loading state instead of the plot. */
+  loading?: boolean;
+  loadingWhat?: string;
+  loadingLong?: boolean;
+  /** Shows an error panel instead of the plot (takes precedence over loading). */
+  error?: string | ChartError;
+  errorTitle?: string;
+  onRetry?: () => void;
+  emptyTitle?: string;
+  emptyBody?: ReactNode;
+  /** Value format for tooltips, the table and (unless `axisFormat`) the value axis. */
+  format?: ChartFormat;
+  /** The data table alternative: collapsed (default), open, or omitted. */
+  table?: 'details' | 'visible' | 'none';
+  tableLabel?: string;
+}
+export interface CartesianChartProps extends ChartCommonProps {
+  series: ChartSeries[];
+  /** "category" (default): x values are names in first-seen order. "time" and "number" sort ascending. */
+  xType?: 'category' | 'time' | 'number';
+  /** Text for x values (time defaults to "Jan 2026" for month starts, else "2026-01-15", UTC). */
+  xFormat?: ((x: ChartX) => string) | ChartFormat;
+  axisFormat?: ChartFormat;
+  xLabel?: string;
+  yLabel?: string;
+  /** Default: shown when there is more than one series. */
+  legend?: boolean;
+  legendLabel?: string;
+  /** Horizontal grid lines (default true). */
+  grid?: boolean;
+  /** Legend entries become toggle buttons; the product owns `hidden`. */
+  onToggleSeries?: (seriesId: string) => void;
+}
+export interface LineChartProps extends CartesianChartProps {
+  /** Mark every value (isolated values are always marked). */
+  points?: boolean;
+  /** `false` fits the value axis to the data instead of including zero. */
+  zeroBaseline?: boolean;
+  /** 'step' holds each value until the next x (balances between postings). Default 'linear'. */
+  curve?: 'linear' | 'step';
+}
+export interface AreaChartProps extends CartesianChartProps {
+  /** Stack the series: positive values up, negative values down. */
+  stacked?: boolean;
+  curve?: 'linear' | 'step';
+}
+export interface BarChartProps extends CartesianChartProps {
+  orientation?: 'vertical' | 'horizontal';
+  stacked?: boolean;
+}
+export type StackedBarChartProps = Omit<BarChartProps, 'stacked'>;
+export interface DonutChartProps extends ChartCommonProps {
+  /** Exactly one visible series; its x values name the slices. Negative values are refused visibly. */
+  series: ChartSeries[];
+  /** Centre text: defaults to the formatted sum of the slices. Pass the product's own total to show it. */
+  centerValue?: string;
+  centerLabel?: string;
+  center?: boolean;
+  /** Inner radius as a fraction of the outer (default 0.62). */
+  innerRatio?: number;
+  legend?: boolean;
+  xLabel?: string;
+  shareLabel?: string;
+}
+export interface SparklineProps extends Passthrough {
+  /** Required: the accessible name; the image's text states first, last, low and high. */
+  label: string;
+  data: ChartDataPoint[];
+  xType?: 'category' | 'time' | 'number';
+  format?: ChartFormat;
+  width?: number;
+  height?: number;
+  /** Mark the first and last values. */
+  endpoints?: boolean;
+}
+export declare function LineChart(props: LineChartProps): ReactElement;
+export declare function AreaChart(props: AreaChartProps): ReactElement;
+export declare function BarChart(props: BarChartProps): ReactElement;
+export declare function StackedBarChart(props: StackedBarChartProps): ReactElement;
+export declare function DonutChart(props: DonutChartProps): ReactElement;
+export declare function Sparkline(props: SparklineProps): ReactElement;
+export declare function formatChartValue(value: number | null | undefined, format?: ChartFormat): string;
+export declare function niceTicks(min: number, max: number, count?: number): { min: number; max: number; ticks: number[] };
+export declare const CHART_PALETTE_SIZE: number;
+export type ChartName = 'LineChart' | 'AreaChart' | 'BarChart' | 'StackedBarChart' | 'DonutChart' | 'Sparkline';
+/** Framework-free: draw a chart into an element and redraw it when the element resizes. */
+export declare function mountChart(container: Element, chart: ChartName, props: object, doc?: Document): { update(props: object): void; destroy(): void };

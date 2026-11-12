@@ -2,7 +2,7 @@
 // named in FUNCTION_PROPS are `true` here, at any depth, and are replaced by a
 // handler on each side, since functions cannot cross into the browser.
 export const FUNCTION_PROPS = ['onClick', 'onRetry', 'onSelect', 'onSort', 'onChange', 'onSubmit', 'onClear', 'onPrevious', 'onNext',
-  'onClose', 'onConfirm', 'onCancel', 'onTypedChange', 'onMore', 'onNavigate', 'onNavigationToggle'];
+  'onClose', 'onConfirm', 'onCancel', 'onTypedChange', 'onMore', 'onNavigate', 'onNavigationToggle', 'onToggleSeries'];
 
 export const FIXTURES = [
   ['StatusIndicator', { field: 'compute.health', value: 'healthy' }],
@@ -130,6 +130,26 @@ export const FIXTURES = [
   ['SiteHeader', { mainId: 'product', product: { id: 'feltdb' }, navigation: [{ label: 'Docs', href: '/docs' }], actions: 'Sign in' }],
   ['SiteFooter', { id: 'f-company', tagline: 'Infrastructure for applications and agents.', year: 2026, columns: [{ title: 'Company', links: [{ label: 'About', href: '/about/' }] }] }],
   ['SiteFooter', { id: 'f-product', product: { id: 'feltkit' }, year: 2026, legal: 'MIT licensed', columns: [{ title: 'Product', links: [{ label: 'Docs', href: '/docs' }] }] }],
+  // Charts (0.9.0). Illustrative values; widths fixed so every renderer lays out identically.
+  ['LineChart', { title: 'Revenue', description: 'Illustrative', width: 480, xType: 'time', format: { style: 'currency', currency: 'USD', divisor: 100, maximumFractionDigits: 0 }, points: true,
+    series: [{ id: 'rev', label: 'Revenue', data: [{ x: '2026-01-01', y: 1200000 }, { x: '2026-02-01', y: null }, { x: '2026-03-01', y: 1500000 }, { x: '2026-04-01', y: 1450000 }] },
+      { id: 'tgt', label: 'Target', data: [{ x: '2026-01-01', y: 1300000 }, { x: '2026-04-01', y: 1400000 }] }] }],
+  ['LineChart', { title: 'Nothing yet', width: 320, series: [{ id: 'a', label: 'A', data: [] }, { id: 'b', label: 'B', data: [] }] }],
+  ['LineChart', { title: 'Loading trend', loading: true, series: [] }],
+  ['LineChart', { title: 'Failed trend', error: { message: 'The report could not be computed.', code: 'UNAVAILABLE' }, onRetry: true, series: [] }],
+  ['AreaChart', { title: 'Net cash flow', width: 420, series: [{ id: 'cash', label: 'Net cash', data: [{ x: 'Jan', y: 300 }, { x: 'Feb', y: -120 }, { x: 'Mar', y: 450 }] }] }],
+  ['AreaChart', { title: 'Stacked areas', width: 420, stacked: true, series: [{ id: 'a', label: 'Services', data: [{ x: 'Q1', y: 3 }, { x: 'Q2', y: 4 }] }, { id: 'b', label: 'Products', data: [{ x: 'Q1', y: 1 }, { x: 'Q2', y: null }] }] }],
+  ['BarChart', { title: 'Income and expenses', width: 480, onToggleSeries: true, format: { style: 'currency', currency: 'USD' },
+    series: [{ id: 'in', label: 'Income', data: [{ x: 'Jan', y: 9000 }, { x: 'Feb', y: 0 }, { x: 'Mar', y: -500 }] }, { id: 'out', label: 'Expenses', hidden: true, data: [{ x: 'Jan', y: 7000 }, { x: 'Feb', y: 8200 }] }] }],
+  ['BarChart', { title: 'Horizontal', width: 360, orientation: 'horizontal', xLabel: 'Account', yLabel: 'Balance', series: [{ id: 'b', label: 'Balance', data: [{ x: 'A very long account name that cannot fit', y: 120 }, { x: 'Cash', y: 80 }] }] }],
+  ['StackedBarChart', { title: 'Revenue composition', width: 480, table: 'visible', series: [{ id: 's', label: 'Services', data: [{ x: 'Q1', y: 24 }, { x: 'Q2', y: -3 }] }, { id: 'p', label: 'Products', data: [{ x: 'Q1', y: 6 }, { x: 'Q2', y: 9 }] }] }],
+  ['DonutChart', { title: 'Expenses by category', width: 300, format: { style: 'percent' }, centerValue: '100%', centerLabel: 'of spend',
+    series: [{ id: 'e', label: 'Share', data: [{ x: 'Rent', y: 0.5 }, { x: 'Software', y: 0.3 }, { x: 'Travel', y: 0.2 }, { x: 'Meals', y: 0 }] }] }],
+  ['DonutChart', { title: 'Refunds included', width: 300, series: [{ id: 'e', label: 'Amount', data: [{ x: 'Sales', y: 10 }, { x: 'Refunds', y: -2 }] }] }],
+  ['DonutChart', { title: 'One part', width: 300, series: [{ id: 'e', label: 'Amount', data: [{ x: 'Everything', y: 5 }] }] }],
+  ['StackedBarChart', { title: 'Empty composition', width: 300, series: [] }],
+  ['Sparkline', { label: 'Checking balance', endpoints: true, data: [{ x: 1, y: 5 }, { x: 2, y: 7 }, { x: 3, y: null }, { x: 4, y: 9 }], xType: 'number' }],
+  ['Sparkline', { label: 'No history', data: [] }],
 ];
 
 export const COMPONENT_NAMES = [
@@ -138,6 +158,7 @@ export const COMPONENT_NAMES = [
   'Breadcrumbs', 'Tabs', 'TabPanel', 'DataTable', 'FilterBar', 'Pagination', 'Shell',
   'TextField', 'Select', 'Form', 'Dialog', 'ConfirmAction', 'EvidenceSummary',
   'Alert', 'Checkbox', 'FieldGroup', 'ActivityTimeline', 'BrandMark', 'ThemeSwitch', 'SiteHeader', 'SiteFooter',
+  'LineChart', 'AreaChart', 'BarChart', 'StackedBarChart', 'DonutChart', 'Sparkline',
 ];
 
 /// Replaces `true` placeholders with `handler`, at any depth. The same source

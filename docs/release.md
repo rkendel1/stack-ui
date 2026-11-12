@@ -24,7 +24,7 @@
    - `tokens.css` and `tokens-light.css`;
    - `core.css`;
    - the full and stateless classic builds;
-   - `esm/` (`states`, `brand`, `view`, `html`, `theme`) for Node-built static sites;
+   - `esm/` (`states`, `brand`, `view`, `charts`, `html`, `theme`) for Node-built static sites;
    - `brand/` (`brand.json` and the mark SVGs);
    - `VERSION` and `SHA256SUMS`.
 4. The owner tags `v<version>`. `.github/workflows/release.yml` re-verifies everything and attaches the

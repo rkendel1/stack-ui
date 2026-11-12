@@ -3,4 +3,4 @@ node_modules/
 packages/tokens/css/
 packages/core/classic/
 release/
-.env.local
+.env.localexamples/charts/dist/

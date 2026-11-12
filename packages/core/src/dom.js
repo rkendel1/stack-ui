@@ -4,6 +4,7 @@
 // Compute scans its served script for them literally (scripts/check-boundary.mjs).
 
 import { Button, COMPONENTS, ConfirmAction, Dialog, ErrorPanel, Form, Select, TextField, isTree } from './view.js';
+import { CHARTS } from './charts.js';
 
 /// Render a view tree (or string, number, array, Node) to a DOM Node.
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -45,8 +46,45 @@ export function focusMain(id, doc) {
 /// Each component as a function returning a DOM element, e.g.
 ///   StackUI.dom.StatusIndicator({ field: 'compute.health', value: 'healthy' })
 export const dom = Object.freeze(Object.fromEntries(
-  Object.entries(COMPONENTS).map(([name, component]) => [name, (props, doc) => toDom(component(props || {}), doc)]),
+  Object.entries({ ...COMPONENTS, ...CHARTS }).map(([name, component]) => [name, (props, doc) => toDom(component(props || {}), doc)]),
 ));
+
+/// The width a chart should be laid out at: its plot area's width if it has been
+/// drawn, else the container's.
+export function chartWidth(container) {
+  const plot = container.querySelector && container.querySelector('.stack-chart__plot');
+  const width = (plot && plot.clientWidth) || container.clientWidth || 0;
+  return width > 0 ? Math.round(width) : undefined;
+}
+
+/// Draws a chart into `container` at the container's width and redraws it when
+/// that width changes (ResizeObserver), so labels stay legible at every size.
+///   const chart = StackUI.mountChart(el, 'LineChart', { title, series });
+///   chart.update(nextProps); chart.destroy();
+/// `chart` is a CHARTS name or a chart function. A `width` prop fixes the width.
+export function mountChart(container, chart, props, doc) {
+  const render = typeof chart === 'function' ? chart : CHARTS[chart];
+  if (!render) throw new TypeError(`mountChart: unknown chart ${String(chart)}`);
+  const d = doc || container.ownerDocument || document;
+  let current = props || {};
+  let laidOut;
+  const draw = () => {
+    laidOut = current.width || chartWidth(container);
+    container.replaceChildren(toDom(render(laidOut ? { ...current, width: laidOut } : current), d));
+  };
+  draw();
+  const View = d.defaultView && d.defaultView.ResizeObserver;
+  const observer = View ? new View(() => {
+    if (current.width) return;
+    const next = chartWidth(container);
+    if (next && next !== laidOut) draw();
+  }) : null;
+  if (observer) observer.observe(container);
+  return {
+    update(next) { current = next || {}; draw(); },
+    destroy() { if (observer) observer.disconnect(); container.replaceChildren(); },
+  };
+}
 
 // ---- Dialogs (PR4) -----------------------------------------------------------
 

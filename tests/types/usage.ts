@@ -80,3 +80,25 @@ export const shellMenu = Shell({
   product: { name: 'PersonalOS', homeHref: '#/' }, navigation: [{ id: 'chat', label: 'Chat', href: '#/chat', current: true }],
   narrowNavigation: 'menu', navigationOpen: false, onNavigationToggle: (open: boolean) => void open, menuLabel: 'Navigation',
 });
+// 0.9.0: charts. The data contract is typed; misuse fails to compile.
+import { LineChart, AreaChart, BarChart, StackedBarChart, DonutChart, Sparkline, formatChartValue, mountChart, type ChartSeries, type ChartFormat } from '@stack-ui/react';
+const revenue: ChartSeries[] = [{ id: 'rev', label: 'Revenue', data: [{ x: '2026-01-01', y: 1200 }, { x: '2026-02-01', y: null }], meta: { account: '4000' } }];
+const money: ChartFormat = { style: 'currency', currency: 'USD', divisor: 100 };
+export const line = LineChart({ title: 'Revenue', xType: 'time', series: revenue, format: money, points: true, zeroBaseline: false });
+export const areaChart = AreaChart({ title: 'Cash', series: revenue, stacked: true, loading: false, error: { message: 'x', code: 'E' }, onRetry: () => undefined });
+export const bar = BarChart({ title: 'Mix', series: revenue, orientation: 'horizontal', onToggleSeries: (id: string) => void id, table: 'visible' });
+export const stacked = StackedBarChart({ title: 'Stack', series: revenue, format: (v: number) => `${v}` });
+export const donut = DonutChart({ title: 'Share', series: revenue, centerValue: '$12.00', centerLabel: 'Total' });
+export const spark = Sparkline({ label: 'Balance', data: [{ x: 1, y: 2 }], endpoints: true });
+export const formatted: string = formatChartValue(1, money);
+export const mounted = typeof document === 'undefined' ? null : mountChart(document.body, 'LineChart', { title: 'T', series: revenue });
+// @ts-expect-error: a chart needs a title (its caption and accessible name).
+export const untitled = LineChart({ series: revenue });
+// @ts-expect-error: values are numbers or null, never strings.
+export const stringy: ChartSeries = { id: 'a', label: 'A', data: [{ x: 'Jan', y: '12' }] };
+// @ts-expect-error: a series needs a label.
+export const unlabelledSeries: ChartSeries = { id: 'a', data: [] };
+// @ts-expect-error: StackedBarChart is always stacked.
+export const doubleStack = StackedBarChart({ title: 'S', series: revenue, stacked: false });
+// @ts-expect-error: a sparkline needs its accessible label.
+export const anonymousSpark = Sparkline({ data: [] });
