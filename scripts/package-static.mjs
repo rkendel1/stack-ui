@@ -21,6 +21,8 @@ rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
 
 const files = {
+  // The license travels with every copy (MIT, D38).
+  'LICENSE': 'LICENSE',
   'tokens.css': 'packages/tokens/css/tokens.css',
   'core.css': 'packages/core/src/core.css',
   'stack-ui-core.js': 'packages/core/classic/stack-ui-core.js',
