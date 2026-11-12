@@ -20,6 +20,7 @@
    version's contents in `releases/<version>/` (D31). CI rejects any later change to those files under
    the same version. It writes `release/stack-ui-static-<version>/` and its `.tar.gz`,
    containing:
+   - `LICENSE` (MIT);
    - `tokens.css` and `tokens-light.css`;
    - `core.css`;
    - the full and stateless classic builds;
