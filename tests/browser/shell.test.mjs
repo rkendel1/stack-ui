@@ -296,8 +296,12 @@ test('client-side routing: ordinary clicks are routed, modified clicks stay link
     const modified = await page.evaluate(() => {
       const link = Array.from(document.querySelectorAll('a')).find((a) => a.textContent === 'Data');
       const event = new MouseEvent('click', { bubbles: true, cancelable: true, button: 0, ctrlKey: true });
+      // Read the shell's decision at the document, then stop the browser following the link
+      // so the page (and its recorded routes) survive: newer Chromium activates synthetic clicks.
+      let preventedByShell = null;
+      document.addEventListener('click', (e) => { preventedByShell = e.defaultPrevented; e.preventDefault(); }, { once: true });
       link.dispatchEvent(event);
-      return event.defaultPrevented;
+      return preventedByShell;
     });
     assert.equal(modified, false, 'a modified click is left to the browser');
     await page.click('a:has-text("Compute") >> nth=-1');
