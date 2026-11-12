@@ -17,11 +17,13 @@
     "check:release": "node scripts/package-static.mjs >/dev/null && node scripts/check-release-manifest.mjs",
     "check:registry": "node scripts/check-registry.mjs",
     "publish:packages": "node scripts/publish-packages.mjs",
-    "test:consumer": "node tests/consumer/run.mjs"
+    "test:consumer": "node tests/consumer/run.mjs",
+    "showcase": "node examples/charts/build.mjs"
   },
   "devDependencies": {
     "@stack-ui/core": "workspace:*",
     "@stack-ui/react": "workspace:*",
+    "@stack-ui/tokens": "workspace:*",
     "@types/react": "19.2.0",
     "axe-core": "4.10.3",
     "esbuild": "0.24.0",
