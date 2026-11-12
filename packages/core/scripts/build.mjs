@@ -1,4 +1,4 @@
-// Builds classic/stack-ui-core.js: states.js + view.js + dom.js as one
+// Builds classic/stack-ui-core.js: states.js + view.js + charts.js + dom.js as one
 // strict-mode classic script exposing a single frozen global, `StackUI`, for
 // pages without a module loader (Compute loads its UI as a classic script).
 // Zero dependencies: the sources are written so that removing `import` lines and
@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
-const ORDER = ['states.js', 'brand.js', 'view.js', 'dom.js', 'theme.js'];
+const ORDER = ['states.js', 'brand.js', 'view.js', 'charts.js', 'dom.js', 'theme.js'];
 
 /// One classic script from the given sources, exposing a frozen `StackUI`.
 function bundle(files, label) {

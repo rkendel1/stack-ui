@@ -36,6 +36,8 @@ pairs.push(['color-text-default', 'color-status-progress-bg', 4.5]);
 // form or dialog background. (An invalid control's border uses the critical
 // glyph colour, already held to 3:1 on every background above.)
 for (const bg of backgrounds) pairs.push(['color-status-critical-fg', bg, 4.5]);
+// Chart series colours are non-text graphics: 3:1 on every background (charts, docs/charts.md).
+for (const bg of backgrounds) for (let i = 1; i <= 8; i++) pairs.push([`color-chart-${i}`, bg, 3]);
 for (const intent of ['primary', 'secondary', 'danger']) {
   for (const s of ['bg', 'bg-hover', 'bg-active']) pairs.push([`color-action-${intent}-fg`, `color-action-${intent}-${s}`, 4.5]);
 }
@@ -60,7 +62,7 @@ for (const theme of ['light', 'dark']) {
 }
 
 test('the pair list covers every declared pair', () => {
-  assert.equal(pairs.length, 85, 'update this count when pairs are added or removed');
+  assert.equal(pairs.length, 117, 'update this count when pairs are added or removed');
 });
 
 test('the light-only stylesheet carries no dark values and no colour scheme', async () => {

@@ -8,6 +8,7 @@
 // content (DOM nodes, React elements) cannot be serialized and throws.
 
 import { COMPONENTS, isTree } from './view.js';
+import { CHARTS } from './charts.js';
 
 const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr']);
 const TEXT = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
@@ -39,5 +40,5 @@ export function toHtml(value) {
 /// Each component as a function returning HTML text, e.g.
 ///   html.SiteFooter({ product: { id: 'feltdb' }, year: 2026 })
 export const html = Object.freeze(Object.fromEntries(
-  Object.entries(COMPONENTS).map(([name, component]) => [name, (props) => toHtml(component(props || {}))]),
+  Object.entries({ ...COMPONENTS, ...CHARTS }).map(([name, component]) => [name, (props) => toHtml(component(props || {}))]),
 ));
