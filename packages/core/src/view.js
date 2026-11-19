@@ -522,6 +522,12 @@ export function Shell(props) {
   const open = menu && Boolean(props.navigationOpen);
   const navId = `${mainId}-nav`;
   const menuButtonId = `${mainId}-menu-button`;
+  // Wide screens: the sidebar collapses when the product owns the state
+  // (`sidebarCollapsed`, `onSidebarToggle`), as with the narrow menu. The page
+  // takes the whole width; the bar's button brings the sidebar back.
+  const collapsible = typeof props.onSidebarToggle === 'function';
+  const collapsed = collapsible && Boolean(props.sidebarCollapsed);
+  const sidebarLabel = props.sidebarLabel || 'sidebar';
   const closeMenu = (event) => {
     props.onNavigationToggle(false);
     const button = event.currentTarget.ownerDocument.getElementById(menuButtonId);
@@ -547,12 +553,23 @@ export function Shell(props) {
       },
     };
   };
-  const navItem = (item) => node('li', { class: 'stack-shell__nav-entry' }, node('a', {
-    class: cx('stack-shell__nav-item', item.className),
-    href: item.href,
-    ...(item.current ? { 'aria-current': 'page' } : {}),
-    ...passthrough(item.attrs),
-  }, item.label, follow(item.href)));
+  // A row: the label, an optional second line (`detail`) and trailing value
+  // (`meta`, a count), and an optional `action` beside the link (a button: it
+  // cannot be inside the link). Laid out on a grid whose text column shrinks,
+  // so nothing a row carries can push past the sidebar's edge.
+  const navItem = (item) => node('li', { class: cx('stack-shell__nav-entry', item.action ? 'stack-shell__nav-entry--action' : null) }, !item.action ? navLink(item) : [navLink(item), node('div', { class: 'stack-shell__nav-action' }, item.action)]);
+  const navLink = (item) => (
+    node('a', {
+      class: cx('stack-shell__nav-item', item.className),
+      href: item.href,
+      ...(item.current ? { 'aria-current': 'page' } : {}),
+      ...passthrough(item.attrs),
+    // A plain row keeps its label as the link's own text (unchanged DOM for existing products).
+    }, present(item.detail) || present(item.meta) ? [
+      node('span', { class: 'stack-shell__nav-label' }, item.label),
+      present(item.detail) ? node('span', { class: 'stack-shell__nav-detail' }, item.detail) : null,
+      present(item.meta) ? node('span', { class: 'stack-shell__nav-meta' }, item.meta) : null,
+    ] : item.label, follow(item.href)));
   const theme = props.theme;
   const themeId = `${mainId}-theme`;
   // A product in the Boundry portfolio lists its siblings by default; a
@@ -563,7 +580,8 @@ export function Shell(props) {
       : []);
   const family = present(product.id) && portfolioProduct(product.id) && props.family !== false;
   return node('div', {
-    class: cx('stack-shell', menu ? 'stack-shell--menu' : null, open ? 'stack-shell--menu-open' : null, props.className),
+    class: cx('stack-shell', menu ? 'stack-shell--menu' : null, open ? 'stack-shell--menu-open' : null,
+      collapsible ? 'stack-shell--collapsible' : null, collapsed ? 'stack-shell--collapsed' : null, props.className),
     ...(present(product.id) ? { 'data-stack-product': product.id } : {}),
     ...passthrough(props.attrs),
   }, [
@@ -571,6 +589,14 @@ export function Shell(props) {
     // `#main` would change the route.
     node('a', { class: 'stack-shell__skip', href: `#${mainId}` }, props.skipLabel || 'Skip to content', { click: skipToMain(mainId) }),
     node('header', { class: 'stack-shell__bar' }, [
+      collapsible ? node('button', {
+        class: 'stack-shell__sidebar-button', type: 'button',
+        'aria-expanded': collapsed ? 'false' : 'true', 'aria-controls': navId,
+        'aria-label': `${collapsed ? 'Show' : 'Hide'} ${sidebarLabel}`, title: `${collapsed ? 'Show' : 'Hide'} ${sidebarLabel}`,
+      }, node('svg', { class: 'stack-shell__sidebar-icon', xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 20 20', focusable: 'false', 'aria-hidden': 'true' }, [
+        node('rect', { x: '2.75', y: '3.75', width: '14.5', height: '12.5', rx: '2', fill: 'none', stroke: 'currentColor', 'stroke-width': '1.5' }),
+        node('rect', { x: '2.75', y: '3.75', width: '5.5', height: '12.5', rx: '2', fill: collapsed ? 'none' : 'currentColor', stroke: 'currentColor', 'stroke-width': '1.5' }),
+      ]), { click: () => props.onSidebarToggle(!collapsed) }) : null,
       menu ? node('button', {
         class: 'stack-shell__menu-button', type: 'button', id: menuButtonId,
         'aria-expanded': open ? 'true' : 'false', 'aria-controls': navId,
@@ -606,7 +632,7 @@ export function Shell(props) {
     node('div', { class: 'stack-shell__body' }, [
       node('nav', {
         class: 'stack-shell__nav', 'aria-label': `${product.name || 'Product'} navigation`,
-        ...(menu ? { id: navId } : {}),
+        ...(menu || collapsible ? { id: navId } : {}),
       }, [
         groups.map((group) => node('div', { class: 'stack-shell__nav-group' }, [
           present(group.name) ? node('p', { class: 'stack-shell__nav-heading' }, group.name) : null,

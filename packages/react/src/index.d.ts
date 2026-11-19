@@ -192,6 +192,12 @@ export interface ShellNavItem {
   group?: string;
   order?: number;
   current?: boolean;
+  /** A second, muted line under the label (e.g. "named by Appwrite"). Wraps; never widens the sidebar. */
+  detail?: ReactNode;
+  /** A short trailing value, such as a count. */
+  meta?: ReactNode;
+  /** A control beside the row (e.g. a Track button). Kept inside the sidebar; it is not part of the link. */
+  action?: ReactNode;
   className?: string;
   attrs?: Record<string, string>;
 }
@@ -233,6 +239,14 @@ export interface ShellProps extends Passthrough {
   onNavigationToggle?: (open: boolean) => void;
   /** Menu mode: the menu button's accessible name. Default "Menu". */
   menuLabel?: string;
+  /**
+   * 768px and wider: the sidebar can be hidden with a button in the bar. Give `onSidebarToggle` to
+   * offer it; the product owns the state (and may remember it). Hidden, the page takes the whole width.
+   */
+  sidebarCollapsed?: boolean;
+  onSidebarToggle?: (collapsed: boolean) => void;
+  /** Names the toggle: "Hide <label>" / "Show <label>". Default "sidebar". */
+  sidebarLabel?: string;
   /** Id of the main landmark; the skip link targets it. Default `stack-main`. */
   mainId?: string;
   mainAttrs?: Record<string, string>;

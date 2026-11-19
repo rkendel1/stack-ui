@@ -3,7 +3,7 @@
 // handler on each side, since functions cannot cross into the browser.
 export const FUNCTION_PROPS = ['onClick', 'onRetry', 'onSelect', 'onSort', 'onChange', 'onSubmit', 'onClear', 'onPrevious', 'onNext',
   'onClose', 'onConfirm', 'onCancel', 'onTypedChange', 'onMore', 'onNavigate', 'onNavigationToggle', 'onToggleSeries',
-  'onSignal', 'onPause', 'onResume', 'onInterrupt', 'onStop', 'onWithdraw'];
+  'onSignal', 'onPause', 'onResume', 'onInterrupt', 'onStop', 'onWithdraw', 'onSidebarToggle'];
 
 export const FIXTURES = [
   ['StatusIndicator', { field: 'compute.health', value: 'healthy' }],
@@ -107,6 +107,11 @@ export const FIXTURES = [
   ] }],
   ['EvidenceSummary', { title: 'Checks', headingLevel: 3, claims: [{ label: 'Hash', value: 'ok', verification: 'verified', checks: ['Hash'] }, { label: 'Size', value: 0, verification: 'verified', checks: ['Size'] }] }],
   ['Shell', { product: { id: 'feltdb', name: 'FeltDB', homeHref: '/', mark: 'FD' }, mainId: 'family', navigation: [{ id: 'o', label: 'Overview', href: '/' }] }],
+  ['Shell', { product: { name: 'Radar', homeHref: '#/' }, mainId: 'rich', sidebarCollapsed: false, onSidebarToggle: true, family: false, navigation: [
+    { id: 'convex', label: 'Convex', detail: 'convex.dev', meta: '196', href: '#/convex', group: 'Competitors', current: true },
+    { id: 'ext', label: 'Code Extensions That Replace Entire Dev Tools And Then Some', detail: 'named by Appwrite', href: '#/ext', group: 'Worth tracking', action: { t: 'button', a: { class: 'stack-button stack-button--secondary stack-button--sm', type: 'button' }, c: ['Track'] } },
+  ] }],
+  ['Shell', { product: { name: 'Radar', homeHref: '#/' }, mainId: 'collapsed', sidebarCollapsed: true, onSidebarToggle: true, sidebarLabel: 'competitors', family: false, navigation: [{ id: 's', label: 'Summary', href: '#/' }] }],
   ['Alert', { tone: 'info', title: 'Maintenance window', children: 'Writes pause at 02:00 UTC.' }],
   ['Alert', { tone: 'attention', title: 'Read only', children: 'The authority lease is held elsewhere.', attrs: { 'data-x': '1' } }],
   ['Alert', { tone: 'critical', title: 'Authority unavailable', children: 'Changes cannot be made.' }],

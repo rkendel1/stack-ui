@@ -455,3 +455,17 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   different shape.
 - **Minor release (0.10.0) when published:** four new components and two mappings; no existing class, DOM
   structure or tone mapping changes. Products pinned to 0.9.0 (FeltKit Studio) adopt them on upgrade.
+
+### D40 — Shell sidebar rows can carry detail, a count and an action; the sidebar collapses — Decided (owner, 2026-11-19; unreleased)
+- **Problem seen in a product:** sidebar rows built by the product (a name, a second line, a count or a Track
+  button) drew past the sidebar's edge over the page, because the Shell only offered a label and nothing kept
+  richer rows inside its 220px column.
+- **Decision:** a navigation item may have `detail` (a muted second line), `meta` (a trailing count) and `action`
+  (a control beside the link, never inside it). The row is a grid whose text column shrinks and wraps
+  (`overflow-wrap: anywhere`), so the count and action always fit; the sidebar clips anything still wider instead
+  of drawing over `<main>`. A plain item renders exactly as before (its label is the link's own text), so this is
+  not a DOM change for existing products.
+- **Collapse:** with `onSidebarToggle` the bar shows a button that hides the sidebar at 768px and wider and gives
+  the page the whole width; `sidebarCollapsed` is the product's state (it may remember it; the foundation keeps no
+  storage), as with the narrow menu (D37). Below 768px the strip or menu applies and the button is not shown.
+- **Minor (0.10.0, with D39).**
