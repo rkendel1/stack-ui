@@ -161,6 +161,8 @@ export const FIXTURES = [
   ['AgentControls', { phase: 'running', labels: true, onSignal: true, onPause: true, onInterrupt: true, onStop: true }],
   ['AgentUpdateComposer', { value: 'Use EU data only.', signaled: true, onChange: true, onSubmit: true }],
   ['AgentUpdateComposer', { value: '', phase: 'completed', onSubmit: true }],
+  ['AgentUpdateComposer', { value: 'Use EU data only.', signaled: true, onChange: true, onSubmit: true, controls: { phase: 'running', onSignal: true, onPause: true, onResume: true, onInterrupt: true, onStop: true } }],
+  ['AgentUpdateComposer', { value: '', placeholder: 'Tell the agent what changed', onChange: true, onSubmit: true, controls: { phase: 'paused', busy: 'resume', onSignal: true, onResume: true, onInterrupt: true, onStop: true } }],
   ['AgentUpdateList', { items: [] }],
   ['AgentUpdateList', { onWithdraw: true, items: [
     { instructionId: 'ins-1', state: 'incorporated', text: 'Use EU data only.', from: 'user:ada', receivedAt: '2026-11-19T10:00:00Z', resolvedAt: '2026-11-19T10:02:00Z', resolution: { by: 'user:ada', note: 'Switched the remaining steps to EU data.' } },

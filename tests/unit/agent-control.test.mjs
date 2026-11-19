@@ -96,3 +96,38 @@ test('composer: says the agent keeps working; refuses input once the task has en
   assert.equal(find(ended, (n) => n.t === 'textarea')[0].a.disabled, true);
   assert.match(text(ended), /The task has ended/);
 });
+
+test('composer: the controls sit in the box toolbar — update coming on the left; hold, interrupt, stop and send on the right', () => {
+  const tree = AgentUpdateComposer({ value: 'x', onSubmit: noop, onChange: noop, controls: { phase: 'running', ...all } });
+  const box = find(tree, (n) => n.a && n.a.class && n.a.class.startsWith('stack-agent-composer__box'))[0];
+  assert.ok(find(box, (n) => n.t === 'textarea').length === 1, 'the text is inside the box');
+  const ops = (cls) => find(find(box, (n) => n.a && n.a.class === cls)[0], (n) => n.t === 'button').map((b) => b.a['data-op']);
+  assert.deepEqual(ops('stack-agent-composer__start'), ['signal']);
+  assert.deepEqual(ops('stack-agent-composer__end'), ['pause', 'interrupt', 'stop', 'send'], 'send last, as in a chat box');
+  const send = find(box, (n) => n.a && n.a['data-op'] === 'send')[0];
+  assert.equal(send.a.type, 'submit');
+  assert.equal(send.a['aria-label'], 'Send update');
+  let sent = 0;
+  const blank = AgentUpdateComposer({ value: 'ignored', onSubmit: () => sent++ });
+  blank.on.submit({ preventDefault() {}, target: { querySelector: () => ({ value: '   ' }) } });
+  assert.equal(sent, 0, 'blank text typed in the field is not sent');
+  blank.on.submit({ preventDefault() {}, target: { querySelector: () => ({ value: 'typed' }) } });
+  assert.equal(sent, 1, 'what is in the field is sent, whatever value was rendered');
+  assert.deepEqual(find(AgentUpdateComposer({ value: 'x', onSubmit: noop }), (n) => n.t === 'button').map((b) => b.a['data-op']), ['send'], 'without controls, only send');
+  const paused = find(AgentUpdateComposer({ value: 'x', onSubmit: noop, controls: { phase: 'paused', ...all } }), (n) => n.t === 'button').map((b) => b.a['data-op']);
+  assert.deepEqual(paused, ['signal', 'resume', 'interrupt', 'stop', 'send']);
+});
+
+test('composer: Enter sends, Shift+Enter is a new line, nothing is sent once the task has ended', () => {
+  let sent = 0;
+  const key = (tree, init) => { const ev = { key: 'Enter', shiftKey: false, isComposing: false, target: { tagName: 'TEXTAREA', value: 'hi' }, preventDefault() { this.prevented = true; }, ...init }; tree.on.keydown(ev); return ev; };
+  const open = AgentUpdateComposer({ value: 'hi', onSubmit: () => sent++ });
+  assert.equal(key(open).prevented, true);
+  assert.equal(sent, 1);
+  assert.equal(key(open, { shiftKey: true }).prevented, undefined);
+  assert.equal(sent, 1);
+  key(open, { target: { tagName: 'TEXTAREA', value: '   ' } });
+  assert.equal(sent, 1, 'blank is not sent');
+  key(AgentUpdateComposer({ value: 'hi', phase: 'stopped', onSubmit: () => sent++ }));
+  assert.equal(sent, 1);
+});

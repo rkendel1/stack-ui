@@ -516,6 +516,9 @@ export interface AgentControlsProps extends Passthrough {
   onStop?: () => void;
 }
 export interface AgentUpdateComposerProps extends Passthrough {
+  /** Put the agent controls in the composer's toolbar: "update coming" on the left; pause or resume, interrupt and stop beside send on the right. */
+  controls?: AgentControlsProps;
+  placeholder?: string;
   value?: string;
   onChange?: (value: string) => void;
   onSubmit?: (event: unknown) => void;

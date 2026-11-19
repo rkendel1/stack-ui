@@ -436,7 +436,12 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
 - **Pause, interrupt and stop stay separate buttons**, enabled from the phase. They show SVG icons (20-unit grid,
   `currentColor`, so they follow the button variant and theme); each button's name is its accessible name and
   tooltip, and `labels: true` shows the words beside the icons. Font glyphs were tried first and rendered too
-  small and inconsistently across fonts. Only phases the contract
+  small and inconsistently across fonts.
+- **The controls live in the composer, as in a chat box.** `AgentUpdateComposer` with `controls` is one box: the
+  text on top and a toolbar along its bottom edge, "update coming" on the left and pause or resume, interrupt, stop
+  and send on the right, send last. Enter sends, Shift+Enter is a new line. `AgentControls` remains for products that
+  place the controls elsewhere; both use one button builder. Send reads the field itself, so it works without the
+  product re-rendering on every keystroke, and blank text is never sent. Only phases the contract
   defines enable anything. Stop ends the task, so products confirm it (`ConfirmAction`) before calling the
   platform.
 - **Received is not queued plus something else.** The platform has one state for an update that has arrived
