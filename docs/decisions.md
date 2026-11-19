@@ -426,3 +426,46 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   `release-readiness.md` for npm publishing.
 - **0.8.1 (patch):** license only; no code, token, class or DOM change.
 
+
+### D39 — Agent control primitives are foundation components — Decided (owner, 2026-11-19; unreleased)
+- **Decision:** `AgentStatus`, `AgentControls`, `AgentUpdateComposer` and `AgentUpdateList`, with the field
+  mappings `appport.agent.phase` and `appport.agent.instruction.state`, are foundation components. They render
+  AppPort's `appport.agent-control/1` (`appport:spec/agent-control-1.md`): a task's phase, work in flight,
+  updates coming and queued, and each update's state and the agent's resolution. Every state is a prop from
+  the platform; no component infers state from its own clicks, and callbacks only report intent.
+- **Pause, interrupt and stop stay separate buttons**, enabled from the phase. They show SVG icons (20-unit grid,
+  `currentColor`, so they follow the button variant and theme); each button's name is its accessible name and
+  tooltip, and `labels: true` shows the words beside the icons. Font glyphs were tried first and rendered too
+  small and inconsistently across fonts.
+- **The controls live in the composer, as in a chat box.** `AgentUpdateComposer` with `controls` is one box: the
+  text on top and a toolbar along its bottom edge, "update coming" on the left and pause or resume, interrupt, stop
+  and send on the right, send last. Enter sends, Shift+Enter is a new line. `AgentControls` remains for products that
+  place the controls elsewhere; both use one button builder. Send reads the field itself, so it works without the
+  product re-rendering on every keystroke, and blank text is never sent. Only phases the contract
+  defines enable anything. Stop ends the task, so products confirm it (`ConfirmAction`) before calling the
+  platform.
+- **Received is not queued plus something else.** The platform has one state for an update that has arrived
+  and waits for the agent's next checkpoint; the label says both ("Received, queued") rather than inventing a
+  second state the platform does not have. The progress track (Coming → Received → Incorporating →
+  Incorporated) shows where an update is on the normal path; a conflict, withdrawal or abandonment is off it.
+- **Exception to the two-products rule (contract §9), by the owner's direction.** The uses are the FeltKit
+  Studio Agent screen and FeltKit applications' own agent surfaces, both FeltKit-built; AppPort defines the
+  contract so other providers can serve it, but no second provider exists yet. The owner directed these be
+  reusable foundation primitives rather than FeltKit-only components. Revisit if a second product needs a
+  different shape.
+- **Minor release (0.10.0) when published:** four new components and two mappings; no existing class, DOM
+  structure or tone mapping changes. Products pinned to 0.9.0 (FeltKit Studio) adopt them on upgrade.
+
+### D40 — Shell sidebar rows can carry detail, a count and an action; the sidebar collapses — Decided (owner, 2026-11-19; unreleased)
+- **Problem seen in a product:** sidebar rows built by the product (a name, a second line, a count or a Track
+  button) drew past the sidebar's edge over the page, because the Shell only offered a label and nothing kept
+  richer rows inside its 220px column.
+- **Decision:** a navigation item may have `detail` (a muted second line), `meta` (a trailing count) and `action`
+  (a control beside the link, never inside it). The row is a grid whose text column shrinks and wraps
+  (`overflow-wrap: anywhere`), so the count and action always fit; the sidebar clips anything still wider instead
+  of drawing over `<main>`. A plain item renders exactly as before (its label is the link's own text), so this is
+  not a DOM change for existing products.
+- **Collapse:** with `onSidebarToggle` the bar shows a button that hides the sidebar at 768px and wider and gives
+  the page the whole width; `sidebarCollapsed` is the product's state (it may remember it; the foundation keeps no
+  storage), as with the narrow menu (D37). Below 768px the strip or menu applies and the button is not shown.
+- **Minor (0.10.0, with D39).**

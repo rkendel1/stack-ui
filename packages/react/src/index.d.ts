@@ -192,6 +192,12 @@ export interface ShellNavItem {
   group?: string;
   order?: number;
   current?: boolean;
+  /** A second, muted line under the label (e.g. "named by Appwrite"). Wraps; never widens the sidebar. */
+  detail?: ReactNode;
+  /** A short trailing value, such as a count. */
+  meta?: ReactNode;
+  /** A control beside the row (e.g. a Track button). Kept inside the sidebar; it is not part of the link. */
+  action?: ReactNode;
   className?: string;
   attrs?: Record<string, string>;
 }
@@ -233,6 +239,14 @@ export interface ShellProps extends Passthrough {
   onNavigationToggle?: (open: boolean) => void;
   /** Menu mode: the menu button's accessible name. Default "Menu". */
   menuLabel?: string;
+  /**
+   * 768px and wider: the sidebar can be hidden with a button in the bar. Give `onSidebarToggle` to
+   * offer it; the product owns the state (and may remember it). Hidden, the page takes the whole width.
+   */
+  sidebarCollapsed?: boolean;
+  onSidebarToggle?: (collapsed: boolean) => void;
+  /** Names the toggle: "Hide <label>" / "Show <label>". Default "sidebar". */
+  sidebarLabel?: string;
   /** Id of the main landmark; the skip link targets it. Default `stack-main`. */
   mainId?: string;
   mainAttrs?: Record<string, string>;
@@ -481,6 +495,87 @@ export declare function Alert(props: AlertProps): ReactElement;
 export declare function Checkbox(props: CheckboxProps): ReactElement;
 export declare function FieldGroup(props: FieldGroupProps): ReactElement;
 export declare function ActivityTimeline(props: ActivityTimelineProps): ReactElement;
+
+// ---- Agent control (appport.agent-control/1; docs/decisions.md D39) -------------
+
+/** AppPort's `appport.agent-control/1` phase, as the platform reports it. */
+export type AgentPhase = 'running' | 'pausing' | 'paused' | 'interrupted' | 'blocked' | 'completed' | 'stopped';
+/** An update's state, as the platform reports it. `received` is receipt, not incorporation. */
+export type AgentUpdateState = 'signaled' | 'received' | 'delivered' | 'incorporated' | 'conflict' | 'withdrawn' | 'abandoned';
+export type AgentControlOp = 'signal' | 'pause' | 'resume' | 'interrupt' | 'stop';
+export interface AgentStatusProps extends Passthrough {
+  phase: AgentPhase | string;
+  reason?: string | null;
+  /** Work in flight: counts, or the ids the platform reports. */
+  inFlight?: { generations?: number | string[]; actions?: number | string[] };
+  /** Updates signaled and not yet sent. */
+  signaled?: number;
+  /** Updates received and waiting for the agent's next checkpoint. */
+  queued?: number;
+}
+export interface AgentControlsProps extends Passthrough {
+  phase: AgentPhase | string;
+  /** The operation in progress. */
+  busy?: AgentControlOp | null;
+  disabled?: boolean;
+  label?: string;
+  /** Show each operation's name beside its symbol. The name is always the button's accessible name and tooltip. */
+  labels?: boolean;
+  signalLabel?: string;
+  onSignal?: () => void;
+  onPause?: () => void;
+  onResume?: () => void;
+  onInterrupt?: () => void;
+  /** Ends the task: confirm before calling the platform. */
+  onStop?: () => void;
+}
+export interface AgentUpdateComposerProps extends Passthrough {
+  /** Put the agent controls in the composer's toolbar: "update coming" on the left; pause or resume, interrupt and stop beside send on the right. */
+  controls?: AgentControlsProps;
+  placeholder?: string;
+  value?: string;
+  onChange?: (value: string) => void;
+  onSubmit?: (event: unknown) => void;
+  /** This person told the agent an update is coming. */
+  signaled?: boolean;
+  phase?: AgentPhase | string;
+  busy?: boolean;
+  disabled?: boolean;
+  error?: string;
+  id?: string;
+  label?: string;
+  fieldLabel?: string;
+  submitLabel?: string;
+  rows?: number;
+  maxLength?: number;
+  actions?: ReactNode;
+}
+export interface AgentUpdate {
+  instructionId?: string;
+  state: AgentUpdateState | string;
+  text?: string;
+  note?: string;
+  from?: string;
+  signaledAt?: string;
+  receivedAt?: string;
+  deliveredAt?: string;
+  resolvedAt?: string;
+  resolution?: { by?: string; note: string };
+}
+export interface AgentUpdateListProps extends Passthrough {
+  items: AgentUpdate[];
+  label?: string;
+  emptyTitle?: string;
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+  /** Offered for updates the agent has not been given (signaled, received). */
+  onWithdraw?: (item: AgentUpdate) => void;
+  /** The instructionId being withdrawn. */
+  busy?: string | null;
+}
+export declare function AgentStatus(props: AgentStatusProps): ReactElement;
+export declare function AgentControls(props: AgentControlsProps): ReactElement;
+export declare function AgentUpdateComposer(props: AgentUpdateComposerProps): ReactElement;
+export declare function AgentUpdateList(props: AgentUpdateListProps): ReactElement;
 
 // ---- Brand and marketing foundation (0.6.0) -----------------------------------
 
