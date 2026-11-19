@@ -994,6 +994,161 @@ export function ActivityTimeline(props) {
   ]);
 }
 
+// ---- Agent control (docs/decisions.md D39) -------------------------------------
+// Steering a running agent: AppPort's `appport.agent-control/1`. Every state shown
+// here is the platform's (`phase`, an update's `state`), passed as props; these
+// components never infer state from their own clicks. Callbacks only report intent.
+
+const AGENT_TERMINAL = ['completed', 'stopped'];
+const AGENT_LIVE = ['running', 'pausing', 'paused', 'interrupted', 'blocked'];
+// Text-presentation symbols (U+FE0E keeps them from rendering as colour emoji).
+const AGENT_CONTROL_ICONS = { signal: '\u270E\uFE0E', pause: '\u23F8\uFE0E', resume: '\u25B6\uFE0E', interrupt: '\u21AF', stop: '\u23F9\uFE0E' };
+const count = (value) => (Array.isArray(value) ? value.length : Number(value) || 0);
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+
+/// What the agent is doing now: its phase, work in flight, updates coming or
+/// queued, and why it is held. `inFlight` is `{ generations, actions }` (counts
+/// or id lists), `signaled` and `queued` are counts.
+export function AgentStatus(props) {
+  const phase = present(props.phase) ? props.phase : 'unknown';
+  const generations = count(props.inFlight && props.inFlight.generations);
+  const actions = count(props.inFlight && props.inFlight.actions);
+  const signaled = count(props.signaled);
+  const queued = count(props.queued);
+  const facts = [
+    generations || actions ? node('li', { class: 'stack-agent-status__fact', 'data-fact': 'in_flight' }, [
+      [generations ? plural(generations, 'model call', 'model calls') : null, actions ? plural(actions, 'action', 'actions') : null].filter(Boolean).join(', '),
+      ' in flight',
+      phase === 'pausing' ? ' — it finishes before the pause takes effect' : '',
+    ]) : null,
+    signaled ? node('li', { class: 'stack-agent-status__fact', 'data-fact': 'signaled' }, `${signaled === 1 ? 'An update is' : `${signaled} updates are`} coming; the agent keeps working`) : null,
+    queued ? node('li', { class: 'stack-agent-status__fact', 'data-fact': 'queued' }, `${plural(queued, 'update', 'updates')} queued for the next checkpoint`) : null,
+    present(props.reason) && !AGENT_TERMINAL.includes(phase) && phase !== 'running' ? node('li', { class: 'stack-agent-status__fact', 'data-fact': 'reason' }, ['Reason: ', props.reason]) : null,
+  ].filter(Boolean);
+  return node('div', {
+    class: cx('stack-agent-status', props.className),
+    'data-phase': phase,
+    role: 'status',
+    ...passthrough(props.attrs),
+  }, [
+    StatusIndicator({ field: 'appport.agent.phase', value: phase }),
+    facts.length ? node('ul', { class: 'stack-agent-status__facts' }, facts) : null,
+  ]);
+}
+
+/// The controls for a running task, enabled from its phase. Pause, interrupt
+/// and stop are different operations and stay separate buttons. `busy` names
+/// the operation in progress (`signal`, `pause`, …). Stop ends the task: a
+/// product confirms it (ConfirmAction) before calling the platform.
+export function AgentControls(props) {
+  const phase = present(props.phase) ? props.phase : 'unknown';
+  // Only a phase the platform defines enables anything: an unknown one is never steerable by guess.
+  const live = AGENT_LIVE.includes(phase) && !props.disabled;
+  const held = phase === 'paused' || phase === 'interrupted' || phase === 'pausing';
+  // Symbols by default (`labels: true` adds the words). Each button keeps its name as
+  // aria-label and a tooltip, so a symbol is never the only way to know what it does.
+  const control = (op, label, enabled, handler, variant, hint) => Button({
+    label: [
+      node('span', { class: 'stack-agent-controls__icon', 'aria-hidden': 'true' }, AGENT_CONTROL_ICONS[op]),
+      props.labels ? node('span', { class: 'stack-agent-controls__text' }, label) : null,
+    ],
+    variant: variant || 'secondary',
+    size: 'sm',
+    disabled: !enabled || !handler,
+    busy: props.busy === op,
+    onClick: handler,
+    attrs: { 'data-op': op, 'aria-label': label, title: hint ? `${label}: ${hint}` : label },
+  });
+  return node('div', {
+    class: cx('stack-agent-controls', props.className),
+    role: 'group',
+    'aria-label': present(props.label) ? props.label : 'Agent controls',
+    'data-phase': phase,
+    ...passthrough(props.attrs),
+  }, [
+    control('signal', props.signalLabel || 'Update coming', live, props.onSignal, 'primary', 'Tell the agent an update is coming. It keeps working while you write it.'),
+    held
+      ? control('resume', 'Resume', live, props.onResume, 'secondary', 'Continue from where the agent stopped.')
+      : control('pause', 'Pause', live && (phase === 'running' || phase === 'blocked'), props.onPause, 'secondary', 'Start no new work. Work in flight finishes first.'),
+    control('interrupt', 'Interrupt', live && phase !== 'interrupted', props.onInterrupt, 'secondary', 'Stop the agent’s current thinking now and hold. A running action still finishes.'),
+    control('stop', 'Stop', live, props.onStop, 'danger', 'End the task. Updates not yet used are closed.'),
+  ]);
+}
+
+/// Write an update while the agent works. `signaled` says this person already
+/// told the agent an update is coming. Submitting reports intent only: the
+/// update's state comes back from the platform (AgentUpdateList).
+export function AgentUpdateComposer(props) {
+  const terminal = AGENT_TERMINAL.includes(props.phase);
+  const hint = terminal
+    ? 'The task has ended; it takes no more updates.'
+    : props.signaled
+      ? 'The agent knows an update is coming and keeps working. It takes your update at its next checkpoint.'
+      : 'The agent keeps working. It takes your update at its next checkpoint.';
+  return Form({
+    label: present(props.label) ? props.label : 'Update for the agent',
+    className: cx('stack-agent-composer', props.className),
+    submitLabel: props.submitLabel || 'Send update',
+    busy: props.busy,
+    onSubmit: terminal || props.disabled ? undefined : props.onSubmit,
+    attrs: { 'data-signaled': props.signaled ? 'true' : 'false', ...passthrough(props.attrs) },
+    children: [
+      TextField({
+        id: props.id || 'agent-update',
+        label: present(props.fieldLabel) ? props.fieldLabel : 'Update',
+        multiline: true,
+        rows: props.rows || 3,
+        value: props.value,
+        onChange: props.onChange,
+        maxlength: props.maxLength || 8000,
+        disabled: terminal || props.disabled,
+        hint,
+        error: props.error,
+      }),
+    ],
+    actions: props.actions || null,
+  });
+}
+
+const UPDATE_STEPS = ['signaled', 'received', 'delivered', 'incorporated'];
+const UPDATE_STEP_LABELS = { signaled: 'Coming', received: 'Received', delivered: 'Incorporating', incorporated: 'Incorporated' };
+
+/// Every update to a task, oldest first, each with its platform state and,
+/// for the four steps of the normal path, where it is on that path. The
+/// agent's resolution note says what an update changed or why it conflicts.
+export function AgentUpdateList(props) {
+  const items = (props.items || []).filter((item) => item && present(item.state));
+  const label = present(props.label) ? props.label : 'Updates';
+  const body = !items.length
+    ? EmptyState({ title: present(props.emptyTitle) ? props.emptyTitle : 'No updates sent', headingLevel: props.headingLevel || 3 })
+    : node('ol', { class: 'stack-agent-updates__list', 'aria-label': label }, items.map((item, index) => {
+      const reached = UPDATE_STEPS.indexOf(item.state);
+      const at = item.resolvedAt || item.deliveredAt || item.receivedAt || item.signaledAt;
+      return node('li', { class: 'stack-agent-update', 'data-state': item.state }, [
+        node('div', { class: 'stack-agent-update__head' }, [
+          StatusIndicator({ field: 'appport.agent.instruction.state', value: item.state }),
+          present(at) ? timeNode(at, 'stack-agent-update__at') : null,
+        ]),
+        reached >= 0 ? node('ol', { class: 'stack-agent-update__track', 'aria-label': 'Progress' }, UPDATE_STEPS.map((step, i) => node('li', {
+          class: 'stack-agent-update__step',
+          'data-reached': i <= reached ? 'true' : 'false',
+          ...(i === reached ? { 'aria-current': 'step' } : {}),
+        }, UPDATE_STEP_LABELS[step]))) : null,
+        present(item.text)
+          ? node('p', { class: 'stack-agent-update__text' }, item.text)
+          : node('p', { class: 'stack-agent-update__text', 'data-missing': 'true' }, item.note ? `Being written (${item.note})` : 'Being written'),
+        present(item.from) ? node('p', { class: 'stack-agent-update__from' }, ['From ', item.from]) : null,
+        item.resolution && present(item.resolution.note)
+          ? node('p', { class: 'stack-agent-update__resolution' }, [node('span', { class: 'stack-agent-update__resolution-by' }, item.state === 'incorporated' || item.state === 'conflict' ? 'Agent: ' : 'Note: '), item.resolution.note])
+          : null,
+        props.onWithdraw && (item.state === 'signaled' || item.state === 'received')
+          ? Button({ label: 'Withdraw', size: 'sm', variant: 'ghost', onClick: () => props.onWithdraw(item), busy: props.busy === item.instructionId, attrs: { 'data-op': 'withdraw' } })
+          : null,
+      ], undefined, present(item.instructionId) ? item.instructionId : index);
+    }));
+  return node('section', { class: cx('stack-agent-updates', props.className), ...passthrough(props.attrs) }, body);
+}
+
 // ---- Brand and marketing foundation (0.6.0, docs/brand.md) --------------------
 
 /// The Boundry mark: two bands forming a B, drawn from the company mark
@@ -1132,4 +1287,5 @@ export const COMPONENTS = Object.freeze({
   TextField, Select, Form, Dialog, ConfirmAction, EvidenceSummary,
   Alert, Checkbox, FieldGroup, ActivityTimeline,
   BrandMark, ThemeSwitch, SiteHeader, SiteFooter,
+  AgentStatus, AgentControls, AgentUpdateComposer, AgentUpdateList,
 });

@@ -102,3 +102,9 @@ export const unlabelledSeries: ChartSeries = { id: 'a', data: [] };
 export const doubleStack = StackedBarChart({ title: 'S', series: revenue, stacked: false });
 // @ts-expect-error: a sparkline needs its accessible label.
 export const anonymousSpark = Sparkline({ data: [] });
+
+import { AgentStatus, AgentControls, AgentUpdateComposer, AgentUpdateList } from '@stack-ui/react';
+export const agentStatus = AgentStatus({ phase: 'pausing', inFlight: { generations: 1, actions: ['act-1'] }, signaled: 1, queued: 0, reason: null });
+export const agentControls = AgentControls({ phase: 'running', busy: 'pause', onSignal: () => {}, onPause: () => {}, onResume: () => {}, onInterrupt: () => {}, onStop: () => {} });
+export const agentComposer = AgentUpdateComposer({ value: '', signaled: true, onChange: (v: string) => void v, onSubmit: () => {} });
+export const agentUpdates = AgentUpdateList({ items: [{ instructionId: 'i', state: 'received', text: 'x', from: 'user:ada' }], onWithdraw: (u) => void u.instructionId });

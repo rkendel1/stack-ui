@@ -118,6 +118,19 @@ const CONDITION = {
   'authboundry.studio.protection': {
     active: [P, 'Active'], inactive: [N, 'Inactive'], unreachable: [A, 'Upstream unreachable'],
   },
+  // appport: packages/protocol/src/agent-control.ts `AGENT_PHASES` (appport.agent-control/1).
+  // Paused and stopped are a person's deliberate choice (neutral); interrupted held work
+  // mid-step and blocked waits on an approval (attention).
+  'appport.agent.phase': {
+    running: [G, 'Working'], pausing: [G, 'Pausing'], paused: [N, 'Paused'],
+    interrupted: [A, 'Interrupted'], blocked: [A, 'Waiting for approval'], completed: [P, 'Completed'], stopped: [N, 'Stopped'],
+  },
+  // appport: packages/protocol/src/agent-control.ts `AGENT_INSTRUCTION_STATES`. `received`
+  // is receipt only, never incorporation; a conflict needs a person.
+  'appport.agent.instruction.state': {
+    signaled: [G, 'Coming'], received: [G, 'Received, queued'], delivered: [G, 'Incorporating'],
+    incorporated: [P, 'Incorporated'], conflict: [A, 'Conflict'], withdrawn: [N, 'Withdrawn'], abandoned: [N, 'Not used'],
+  },
   // appport-services: src/jobs/models.ts `JobStatus`
   'appport.job.status': { completed: P, scheduled: G, pending: G, running: G, retrying: G, failed: C },
   // appport-services: src/notifications/models.ts `NotificationStatus`

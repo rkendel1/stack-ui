@@ -172,13 +172,17 @@ component guarantees by construction.
 | `ResourceIdentity` | Name, kind, id, digest | `kind`, `name`, `id`, `digest?`, `href?` | full, truncated | Full value available (copy action and accessible name); mono font for ids | Kind icon slot |
 | `MetadataList` | Key-value facts | `items[{label,value}]` | value, missing (renders `—`, never `0`) | `<dl>` | Value renderers |
 | `ActivityTimeline` | Events, audit, history | `items[{at,actor?,summary,status?,href?}]`, `hasMore` | loading, empty, populated, partial (more exist) | `<ol>` with `<time>` | Item detail slot |
+| `AgentStatus` | A running agent task's state | `phase`, `inFlight{generations,actions}`, `signaled`, `queued`, `reason` | each `appport.agent.phase` value | status + facts list | — |
+| `AgentControls` | Steering a running task | `phase`, `busy`, `onSignal/onPause/onResume/onInterrupt/onStop` | enabled from the phase; terminal and unknown phases disable all | button group | — |
+| `AgentUpdateComposer` | Writing an update while the agent works | `value`, `onChange`, `onSubmit`, `signaled`, `phase` | signaled, ended | form with textarea | Extra actions |
+| `AgentUpdateList` | Updates to a task and what became of them | `items[{instructionId,state,text?,from?,resolution?}]`, `onWithdraw` | each `appport.agent.instruction.state` value, empty | `<ol>` with a progress track per update | — |
 | `EvidenceSummary` | What is proven and by what | `claims[{label,value,verification?,checks[],evidenceHref}]`, `outcome`, `source`, `recordedAt` | all verified, mixed, none (recorded facts only: a claim without `verification` is a record, never shown as checked) | Each claim has its own label; a missing value is `—` | Product claim content |
 | `StepList` | Multi-step operation progress | `steps[{id,label,status,evidence?}]` | pending, running, succeeded, failed, skipped | `<ol>`; `aria-current="step"` on the running step | Step evidence slot |
 
 **Implementation status (0.6.0).** Implemented: every row above except
 `ActionMenu`, `Drawer`, `Notification`, `Skeleton`, `List` and `StepList`
 (D26: promoted when two consuming products need them). `Checkbox`,
-`FieldGroup`, `Alert` and `ActivityTimeline` arrived in 0.6.0.
+`FieldGroup`, `Alert` and `ActivityTimeline` arrived in 0.6.0. The four agent-control components (D39) are unreleased.
 
 **Marketing foundation (0.6.0, `docs/brand.md` §7).** These are patterns,
 not templates:

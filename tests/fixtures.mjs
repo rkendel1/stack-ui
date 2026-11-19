@@ -2,7 +2,8 @@
 // named in FUNCTION_PROPS are `true` here, at any depth, and are replaced by a
 // handler on each side, since functions cannot cross into the browser.
 export const FUNCTION_PROPS = ['onClick', 'onRetry', 'onSelect', 'onSort', 'onChange', 'onSubmit', 'onClear', 'onPrevious', 'onNext',
-  'onClose', 'onConfirm', 'onCancel', 'onTypedChange', 'onMore', 'onNavigate', 'onNavigationToggle', 'onToggleSeries'];
+  'onClose', 'onConfirm', 'onCancel', 'onTypedChange', 'onMore', 'onNavigate', 'onNavigationToggle', 'onToggleSeries',
+  'onSignal', 'onPause', 'onResume', 'onInterrupt', 'onStop', 'onWithdraw'];
 
 export const FIXTURES = [
   ['StatusIndicator', { field: 'compute.health', value: 'healthy' }],
@@ -150,6 +151,25 @@ export const FIXTURES = [
   ['StackedBarChart', { title: 'Empty composition', width: 300, series: [] }],
   ['Sparkline', { label: 'Checking balance', endpoints: true, data: [{ x: 1, y: 5 }, { x: 2, y: 7 }, { x: 3, y: null }, { x: 4, y: 9 }], xType: 'number' }],
   ['Sparkline', { label: 'No history', data: [] }],
+  ['AgentStatus', { phase: 'running', inFlight: { generations: 0, actions: ['act-1'] }, signaled: 1, queued: 0 }],
+  ['AgentStatus', { phase: 'pausing', inFlight: { generations: 1, actions: 0 }, reason: 'Checking the numbers', queued: 2 }],
+  ['AgentStatus', { phase: 'paused', reason: 'update upd-1 conflicts: the objective is the US report' }],
+  ['AgentStatus', { phase: 'not_a_phase' }],
+  ['AgentControls', { phase: 'running', onSignal: true, onPause: true, onResume: true, onInterrupt: true, onStop: true }],
+  ['AgentControls', { phase: 'paused', busy: 'resume', onSignal: true, onPause: true, onResume: true, onInterrupt: true, onStop: true }],
+  ['AgentControls', { phase: 'stopped', onSignal: true, onStop: true }],
+  ['AgentControls', { phase: 'running', labels: true, onSignal: true, onPause: true, onInterrupt: true, onStop: true }],
+  ['AgentUpdateComposer', { value: 'Use EU data only.', signaled: true, onChange: true, onSubmit: true }],
+  ['AgentUpdateComposer', { value: '', phase: 'completed', onSubmit: true }],
+  ['AgentUpdateList', { items: [] }],
+  ['AgentUpdateList', { onWithdraw: true, items: [
+    { instructionId: 'ins-1', state: 'incorporated', text: 'Use EU data only.', from: 'user:ada', receivedAt: '2026-11-19T10:00:00Z', resolvedAt: '2026-11-19T10:02:00Z', resolution: { by: 'user:ada', note: 'Switched the remaining steps to EU data.' } },
+    { instructionId: 'ins-2', state: 'delivered', text: 'Add a chart.', from: 'user:ada', deliveredAt: '2026-11-19T10:03:00Z' },
+    { instructionId: 'ins-3', state: 'received', text: 'Cite sources.', from: 'user:bob', receivedAt: '2026-11-19T10:04:00Z' },
+    { instructionId: 'ins-4', state: 'signaled', note: 'about the region', from: 'user:ada', signaledAt: '2026-11-19T10:05:00Z' },
+    { instructionId: 'ins-5', state: 'conflict', text: 'Use EU data only.', from: 'user:ada', resolution: { by: 'user:ada', note: 'Step 1 already used US data.' } },
+    { instructionId: 'ins-6', state: 'abandoned', text: 'Also do Y.', from: 'user:ada', resolution: { by: 'user:ada', note: 'task stopped: not needed' } },
+  ] }],
 ];
 
 export const COMPONENT_NAMES = [
@@ -159,6 +179,7 @@ export const COMPONENT_NAMES = [
   'TextField', 'Select', 'Form', 'Dialog', 'ConfirmAction', 'EvidenceSummary',
   'Alert', 'Checkbox', 'FieldGroup', 'ActivityTimeline', 'BrandMark', 'ThemeSwitch', 'SiteHeader', 'SiteFooter',
   'LineChart', 'AreaChart', 'BarChart', 'StackedBarChart', 'DonutChart', 'Sparkline',
+  'AgentStatus', 'AgentControls', 'AgentUpdateComposer', 'AgentUpdateList',
 ];
 
 /// Replaces `true` placeholders with `handler`, at any depth. The same source
