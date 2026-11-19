@@ -1001,8 +1001,17 @@ export function ActivityTimeline(props) {
 
 const AGENT_TERMINAL = ['completed', 'stopped'];
 const AGENT_LIVE = ['running', 'pausing', 'paused', 'interrupted', 'blocked'];
-// Text-presentation symbols (U+FE0E keeps them from rendering as colour emoji).
-const AGENT_CONTROL_ICONS = { signal: '\u270E\uFE0E', pause: '\u23F8\uFE0E', resume: '\u25B6\uFE0E', interrupt: '\u21AF', stop: '\u23F9\uFE0E' };
+// Icons on a 20-unit grid, filled with the button's text colour so they follow
+// its variant and the theme. Decorative: the button carries the name.
+const AGENT_CONTROL_SHAPES = {
+  signal: [['path', { d: 'M3 14.6V17h2.4l8.2-8.2-2.4-2.4L3 14.6zm13.6-7.9a1 1 0 000-1.4l-1.9-1.9a1 1 0 00-1.4 0l-1.3 1.3 3.3 3.3 1.3-1.3z' }]],
+  pause: [['rect', { x: '4.5', y: '3.5', width: '4', height: '13', rx: '1' }], ['rect', { x: '11.5', y: '3.5', width: '4', height: '13', rx: '1' }]],
+  resume: [['path', { d: 'M6 3.8v12.4a.8.8 0 001.2.7l10-6.2a.8.8 0 000-1.4l-10-6.2A.8.8 0 006 3.8z' }]],
+  interrupt: [['path', { d: 'M11.6 1.8L4 11.2h5.2l-1 7 7.8-9.6h-5.3l.9-6.8z' }]],
+  stop: [['rect', { x: '4', y: '4', width: '12', height: '12', rx: '1.5' }]],
+};
+const agentIcon = (op) => node('svg', { class: 'stack-agent-controls__svg', xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 20 20', focusable: 'false', 'aria-hidden': 'true' },
+  AGENT_CONTROL_SHAPES[op].map(([t, a]) => node(t, { ...a, fill: 'currentColor' })));
 const count = (value) => (Array.isArray(value) ? value.length : Number(value) || 0);
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
@@ -1049,11 +1058,11 @@ export function AgentControls(props) {
   // aria-label and a tooltip, so a symbol is never the only way to know what it does.
   const control = (op, label, enabled, handler, variant, hint) => Button({
     label: [
-      node('span', { class: 'stack-agent-controls__icon', 'aria-hidden': 'true' }, AGENT_CONTROL_ICONS[op]),
+      node('span', { class: 'stack-agent-controls__icon', 'aria-hidden': 'true' }, agentIcon(op)),
       props.labels ? node('span', { class: 'stack-agent-controls__text' }, label) : null,
     ],
     variant: variant || 'secondary',
-    size: 'sm',
+    size: 'md',
     disabled: !enabled || !handler,
     busy: props.busy === op,
     onClick: handler,

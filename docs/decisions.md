@@ -433,7 +433,10 @@ Status of each entry: **Decided** (recommended, PR1 asks for approval),
   AppPort's `appport.agent-control/1` (`appport:spec/agent-control-1.md`): a task's phase, work in flight,
   updates coming and queued, and each update's state and the agent's resolution. Every state is a prop from
   the platform; no component infers state from its own clicks, and callbacks only report intent.
-- **Pause, interrupt and stop stay separate buttons**, enabled from the phase. Only phases the contract
+- **Pause, interrupt and stop stay separate buttons**, enabled from the phase. They show SVG icons (20-unit grid,
+  `currentColor`, so they follow the button variant and theme); each button's name is its accessible name and
+  tooltip, and `labels: true` shows the words beside the icons. Font glyphs were tried first and rendered too
+  small and inconsistently across fonts. Only phases the contract
   defines enable anything. Stop ends the task, so products confirm it (`ConfirmAction`) before calling the
   platform.
 - **Received is not queued plus something else.** The platform has one state for an update that has arrived
